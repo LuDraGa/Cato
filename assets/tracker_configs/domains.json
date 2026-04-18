@@ -1,0 +1,7 @@
+[
+  {"uid": "domain-nutrition", "name": "Nutrition", "icon": "🍽", "color": "#8BA88B", "sortOrder": 0, "isActive": true},
+  {"uid": "domain-fitness", "name": "Fitness", "icon": "💪", "color": "#C4956A", "sortOrder": 1, "isActive": true},
+  {"uid": "domain-rest", "name": "Rest", "icon": "😴", "color": "#8B8DB5", "sortOrder": 2, "isActive": true},
+  {"uid": "domain-mind", "name": "Mind", "icon": "🧠", "color": "#A88BA5", "sortOrder": 3, "isActive": true},
+  {"uid": "domain-vices", "name": "Vices", "icon": "🚬", "color": "#B58B8B", "sortOrder": 4, "isActive": true}
+]
