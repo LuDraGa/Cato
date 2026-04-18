@@ -317,6 +317,7 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
             TextButton(
               onPressed: () async {
                 await appConfigRepository.setValue('sound_enabled', 'true');
+                await ref.read(notificationServiceProvider).syncSchedules();
                 if (widget.hostContext.mounted) {
                   ScaffoldMessenger.of(widget.hostContext).hideCurrentSnackBar();
                 }

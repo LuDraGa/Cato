@@ -122,7 +122,25 @@ class _HeatmapPainter extends CustomPainter {
           ..isAntiAlias = true,
       );
 
+      final strokeRect = cell.filled ? cell.rect.deflate(0.6) : cell.rect;
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          strokeRect,
+          Radius.circular(
+            math.max(0, cell.radius - (cell.filled ? 0.6 : 0)),
+          ),
+        ),
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1
+          ..color = cell.filled
+              ? AppColors.inkBlack.withValues(alpha: 0.045)
+              : AppColors.inkBlack.withValues(alpha: 0.055)
+          ..isAntiAlias = true,
+      );
+
       if (!cell.filled) {
+        _paintDayNumber(canvas, cell);
         continue;
       }
 
@@ -144,23 +162,41 @@ class _HeatmapPainter extends CustomPainter {
           ..isAntiAlias = true,
       );
       canvas.restore();
-
-      final insetRect = cell.rect.deflate(0.6);
-      if (insetRect.width <= 0 || insetRect.height <= 0) {
-        continue;
-      }
-      canvas.drawRRect(
-        RRect.fromRectAndRadius(
-          insetRect,
-          Radius.circular(math.max(0, cell.radius - 0.6)),
-        ),
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1
-          ..color = AppColors.inkBlack.withValues(alpha: 0.045)
-          ..isAntiAlias = true,
-      );
+      _paintDayNumber(canvas, cell);
     }
+  }
+
+  void _paintDayNumber(Canvas canvas, _HeatmapCell cell) {
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: '${cell.date.day}',
+        style: TextStyle(
+          fontSize: math.min(10.5, math.max(8.5, cell.rect.width * 0.24)),
+          fontWeight: FontWeight.w500,
+          color: cell.filled
+              ? _dayNumberColor(cell.value)
+              : AppColors.textTertiary.withValues(alpha: 0.72),
+          height: 1,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+      maxLines: 1,
+    )..layout();
+
+    textPainter.paint(
+      canvas,
+      Offset(
+        cell.rect.left + math.min(4, cell.rect.width * 0.14),
+        cell.rect.top + math.min(4, cell.rect.height * 0.12),
+      ),
+    );
+  }
+
+  Color _dayNumberColor(double? value) {
+    if (value != null && value >= 0.55) {
+      return AppColors.bgElevated.withValues(alpha: 0.88);
+    }
+    return AppColors.inkBlack.withValues(alpha: 0.44);
   }
 
   @override
@@ -204,6 +240,7 @@ class _HeatmapLayout {
             radius: 5.5 + ((dayNumber * 37) % 11) / 10,
             color: _colorFor(tracker, value),
             filled: value != null,
+            value: value,
           );
         });
 
@@ -279,6 +316,7 @@ class _HeatmapCell {
     required this.radius,
     required this.color,
     required this.filled,
+    required this.value,
   });
 
   final DateTime date;
@@ -286,6 +324,7 @@ class _HeatmapCell {
   final double radius;
   final Color color;
   final bool filled;
+  final double? value;
 
   @override
   bool operator ==(Object other) {
@@ -294,11 +333,12 @@ class _HeatmapCell {
         other.rect == rect &&
         other.radius == radius &&
         other.color == color &&
-        other.filled == filled;
+        other.filled == filled &&
+        other.value == value;
   }
 
   @override
-  int get hashCode => Object.hash(date, rect, radius, color, filled);
+  int get hashCode => Object.hash(date, rect, radius, color, filled, value);
 }
 
 class _DayLabel extends StatelessWidget {

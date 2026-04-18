@@ -83,7 +83,8 @@ void main() {
     expect(data[DateTime(2026, 4, 2)], isNull);
   });
 
-  testWidgets('review screen hides excluded trackers and filters by domain',
+  testWidgets(
+      'review screen hides excluded trackers, removes dead-end domains, and keeps review shallower by default',
       (tester) async {
     final breakfast = _tracker(
       uid: 'tracker-breakfast',
@@ -146,7 +147,10 @@ void main() {
 
     expect(find.text('Breakfast'), findsOneWidget);
     expect(find.text('Vice Log'), findsNothing);
+    expect(find.text('Vices'), findsNothing);
     expect(find.text('April 2026'), findsWidgets);
+    expect(find.text('March 2026'), findsNothing);
+    expect(find.text('Show earlier months'), findsWidgets);
 
     await tester.tap(find.text('Rest'));
     await tester.pumpAndSettle();
@@ -154,6 +158,7 @@ void main() {
     expect(find.text('Breakfast'), findsNothing);
     expect(find.text('Sleep'), findsOneWidget);
     expect(find.text('Vice Log'), findsNothing);
+    expect(find.text('Vices'), findsNothing);
   });
 }
 

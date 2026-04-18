@@ -20,21 +20,11 @@ class ReviewScreen extends ConsumerStatefulWidget {
 }
 
 class _ReviewScreenState extends ConsumerState<ReviewScreen> {
-  final ScrollController _scrollController = ScrollController();
   String _selectedDomain = 'all';
-  double? _lastLoadExtent;
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(_maybeLoadMore);
-  }
+  final Map<String, int> _visibleMonthsByTracker = <String, int>{};
 
   @override
   void dispose() {
-    _scrollController
-      ..removeListener(_maybeLoadMore)
-      ..dispose();
     super.dispose();
   }
 
@@ -43,23 +33,21 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
     final currentDate = ref.watch(currentDateProvider);
     final trackers = ref.watch(allTrackersProvider).valueOrNull ?? const <Tracker>[];
     final domains = ref.watch(allDomainsProvider).valueOrNull ?? const [];
-    final monthCount = ref.watch(reviewMonthCountProvider);
+    final reviewTrackers = trackers
+        .where((tracker) => tracker.heatmapMode != 'excluded')
+        .toList();
+    final visibleDomainUids =
+        reviewTrackers.map((tracker) => tracker.domainUid).toSet();
+    final availableDomains = domains
+        .where((domain) => visibleDomainUids.contains(domain.uid))
+        .toList();
 
-    final filtered = trackers.where((tracker) {
-      if (tracker.heatmapMode == 'excluded') {
-        return false;
-      }
+    final filtered = reviewTrackers.where((tracker) {
       return _selectedDomain == 'all' || tracker.domainUid == _selectedDomain;
     }).toList();
 
-    final months = List<DateTime>.generate(
-      monthCount,
-      (index) => firstDayOfMonth(addMonths(currentDate, -index)),
-    );
-
     return SafeArea(
       child: ListView(
-        controller: _scrollController,
         padding: const EdgeInsets.fromLTRB(
           AppSpacing.xl,
           AppSpacing.md,
@@ -81,7 +69,7 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
                   selected: _selectedDomain == 'all',
                   onTap: () => setState(() => _selectedDomain = 'all'),
                 ),
-                ...domains.map(
+                ...availableDomains.map(
                   (domain) => Padding(
                     padding: const EdgeInsets.only(left: AppSpacing.sm),
                     child: _FilterChip(
@@ -100,7 +88,14 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
               padding: const EdgeInsets.only(bottom: AppSpacing.xxl),
               child: _TrackerReviewSection(
                 tracker: tracker,
-                months: months,
+                currentDate: currentDate,
+                visibleMonthCount: _visibleMonthsByTracker[tracker.uid] ?? 1,
+                onShowEarlierMonths: () {
+                  setState(() {
+                    _visibleMonthsByTracker[tracker.uid] =
+                        (_visibleMonthsByTracker[tracker.uid] ?? 1) + 2;
+                  });
+                },
               ),
             ),
           ),
@@ -109,38 +104,28 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
     );
   }
 
-  void _maybeLoadMore() {
-    if (!_scrollController.hasClients) {
-      return;
-    }
-    final threshold = _scrollController.position.maxScrollExtent - 400;
-    if (_scrollController.position.pixels < threshold) {
-      return;
-    }
-    final currentExtent = _scrollController.position.maxScrollExtent;
-    if (_lastLoadExtent == currentExtent) {
-      return;
-    }
-    _lastLoadExtent = currentExtent;
-    if (mounted) {
-      final notifier = ref.read(reviewMonthCountProvider.notifier);
-      notifier.state = notifier.state + 3;
-    }
-  }
 }
 
 class _TrackerReviewSection extends ConsumerWidget {
   const _TrackerReviewSection({
     required this.tracker,
-    required this.months,
+    required this.currentDate,
+    required this.visibleMonthCount,
+    required this.onShowEarlierMonths,
   });
 
   final Tracker tracker;
-  final List<DateTime> months;
+  final DateTime currentDate;
+  final int visibleMonthCount;
+  final VoidCallback onShowEarlierMonths;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final streak = ref.watch(streakProvider(tracker.uid));
+    final months = List<DateTime>.generate(
+      visibleMonthCount,
+      (index) => firstDayOfMonth(addMonths(currentDate, -index)),
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -168,6 +153,21 @@ class _TrackerReviewSection extends ConsumerWidget {
             child: _MonthGrid(
               tracker: tracker,
               month: month,
+            ),
+          ),
+        ),
+        GestureDetector(
+          onTap: onShowEarlierMonths,
+          behavior: HitTestBehavior.opaque,
+          child: Padding(
+            padding: const EdgeInsets.only(top: AppSpacing.xs),
+            child: Text(
+              visibleMonthCount == 1
+                  ? 'Show earlier months'
+                  : 'Show 2 earlier months',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
             ),
           ),
         ),
