@@ -4,9 +4,14 @@ import '../../../app/theme.dart';
 import '../../../providers/review_providers.dart';
 
 class SummaryStats extends StatelessWidget {
-  const SummaryStats({super.key, required this.summary});
+  const SummaryStats({
+    super.key,
+    required this.summary,
+    this.timeScale = TimeScale.month,
+  });
 
   final PeriodSummary summary;
+  final TimeScale timeScale;
 
   @override
   Widget build(BuildContext context) {
@@ -25,16 +30,18 @@ class SummaryStats extends StatelessWidget {
             label: 'Best Streak',
             value: '${summary.longestStreak}d',
           ),
-          _divider(),
-          _StatCell(
-            label: 'Completion',
-            value: '${(summary.completionRate * 100).round()}%',
-          ),
           if (summary.averageScore != null) ...[
             _divider(),
             _StatCell(
               label: 'Avg',
               value: _formatScore(summary),
+            ),
+          ],
+          if (timeScale == TimeScale.year) ...[
+            _divider(),
+            _StatCell(
+              label: 'Total',
+              value: '${summary.completedDays}d',
             ),
           ],
         ],

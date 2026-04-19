@@ -181,6 +181,20 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
                         );
                       },
                     ),
+                    if (widget.seed.existingEvent != null) ...[
+                      const SizedBox(height: AppSpacing.sm),
+                      Center(
+                        child: TextButton(
+                          onPressed: _confirmDelete,
+                          child: Text(
+                            'Delete entry',
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: AppColors.error,
+                                ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -285,6 +299,85 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
       homeFeedback.cancelSave();
       rethrow;
     }
+  }
+
+  Future<void> _confirmDelete() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      barrierColor: AppColors.inkBlack.withValues(alpha: 0.15),
+      builder: (ctx) => Dialog(
+        backgroundColor: AppColors.bgElevated,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18),
+        ),
+        elevation: 0,
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.xl,
+            AppSpacing.xl,
+            AppSpacing.xl,
+            AppSpacing.lg,
+          ),
+          decoration: BoxDecoration(
+            color: AppColors.bgElevated,
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: surfaceShadow(elevated: true),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(
+                'Delete entry?',
+                style: AppTextStyles.title(AppColors.inkBlack),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              const Text(
+                'This cannot be undone.',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xl),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.of(ctx).pop(true),
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    backgroundColor: AppColors.error,
+                    foregroundColor: AppColors.bgElevated,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.lg,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  child: const Text('Delete'),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: const Text(
+                  'Cancel',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    final eventRepository = ref.read(eventRepositoryProvider);
+    await eventRepository.deleteEvent(widget.seed.existingEvent!);
+    if (!mounted) return;
+    Navigator.of(context).pop(null);
   }
 
   Future<void> _maybeShowSoundPrompt(

@@ -206,7 +206,7 @@ class _YearPage extends ConsumerWidget {
           const SizedBox(height: AppSpacing.md),
           _MonthLabels(year: year),
           const SizedBox(height: AppSpacing.xl),
-          SummaryStats(summary: summary),
+          SummaryStats(summary: summary, timeScale: TimeScale.year),
         ],
       ),
     );

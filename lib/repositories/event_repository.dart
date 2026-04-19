@@ -106,6 +106,12 @@ class EventRepository {
     return null;
   }
 
+  Future<void> deleteEvent(Event event) async {
+    await _isar.writeTxn(() async {
+      await _isar.events.delete(event.isarId);
+    });
+  }
+
   Future<void> clearEvents() async {
     await _isar.writeTxn(() async {
       await _isar.events.clear();
