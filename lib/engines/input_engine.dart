@@ -15,6 +15,7 @@ import '../screens/entry/widgets/media_capture.dart';
 import '../screens/entry/widgets/score_slider.dart';
 import '../screens/entry/widgets/time_input.dart';
 import '../widgets/calm_toggle.dart';
+import '../widgets/info_tip.dart';
 
 class DynamicEntryFields extends ConsumerWidget {
   const DynamicEntryFields({
@@ -26,12 +27,22 @@ class DynamicEntryFields extends ConsumerWidget {
   final EntryFormSeed seed;
   final bool showSectionHeaders;
 
+  static const _sleepToggleKeys = {'duration', 'sleep_time', 'wake_time'};
+
+  bool get _hasSleepToggle {
+    final keys = seed.tracker.sortedInputSchema.map((f) => f.key).toSet();
+    return _sleepToggleKeys.every(keys.contains);
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(entryFormProvider(seed));
+    final useSleepToggle = _hasSleepToggle;
 
     final fields = seed.tracker.sortedInputSchema.where((field) {
-      return !(field.key == 'time' && field.type == 'time');
+      if (field.key == 'time' && field.type == 'time') return false;
+      if (useSleepToggle && _sleepToggleKeys.contains(field.key)) return false;
+      return true;
     }).toList();
     final required = fields.where((field) => field.isRequired).toList();
     final optional = fields.where((field) => !field.isRequired).toList();
@@ -39,7 +50,7 @@ class DynamicEntryFields extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        if (showSectionHeaders && required.isNotEmpty)
+        if (showSectionHeaders && (required.isNotEmpty || useSleepToggle))
           const _SectionLabel(label: 'Required'),
         ...required.map(
           (field) => _EntryField(
@@ -49,7 +60,15 @@ class DynamicEntryFields extends ConsumerWidget {
             showValidation: state.showValidation,
           ),
         ),
-        if (showSectionHeaders && required.isNotEmpty && optional.isNotEmpty)
+        if (useSleepToggle)
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+            child: _SleepDurationToggle(
+              seed: seed,
+              showValidation: state.showValidation,
+            ),
+          ),
+        if (showSectionHeaders && (required.isNotEmpty || useSleepToggle) && optional.isNotEmpty)
           const SizedBox(height: AppSpacing.lg),
         if (showSectionHeaders && optional.isNotEmpty)
           const _SectionLabel(label: 'Optional'),
@@ -213,6 +232,8 @@ class _EntryField extends ConsumerWidget {
             final picked = await showTimePicker(
               context: context,
               initialTime: parsed ?? TimeOfDay.now(),
+              helpText: field.label,
+              initialEntryMode: TimePickerEntryMode.dialOnly,
             );
             if (picked != null) {
               controller.setString(field.key, hhMm(picked));
@@ -330,6 +351,209 @@ class _SectionLabel extends StatelessWidget {
         style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: AppColors.textSecondary,
             ),
+      ),
+    );
+  }
+}
+
+class _SleepDurationToggle extends ConsumerStatefulWidget {
+  const _SleepDurationToggle({
+    required this.seed,
+    required this.showValidation,
+  });
+
+  final EntryFormSeed seed;
+  final bool showValidation;
+
+  @override
+  ConsumerState<_SleepDurationToggle> createState() =>
+      _SleepDurationToggleState();
+}
+
+class _SleepDurationToggleState extends ConsumerState<_SleepDurationToggle> {
+  late bool _useTimesMode;
+
+  @override
+  void initState() {
+    super.initState();
+    // Default to times mode if the existing event has sleep/wake times set.
+    final existing = widget.seed.existingEvent;
+    _useTimesMode = existing != null &&
+        existing.metrics.any((m) => m.inputKey == 'sleep_time' && m.hasValue) &&
+        existing.metrics.any((m) => m.inputKey == 'wake_time' && m.hasValue);
+  }
+
+  void _onTimeChanged(String key, String value) {
+    final controller = ref.read(entryFormProvider(widget.seed).notifier);
+    final state = ref.read(entryFormProvider(widget.seed));
+    controller.setString(key, value);
+
+    final sleepStr = key == 'sleep_time'
+        ? value
+        : state.metricFor('sleep_time')?.stringValue;
+    final wakeStr = key == 'wake_time'
+        ? value
+        : state.metricFor('wake_time')?.stringValue;
+
+    if (sleepStr != null &&
+        sleepStr.isNotEmpty &&
+        wakeStr != null &&
+        wakeStr.isNotEmpty) {
+      final sleep = parseHhMm(sleepStr);
+      final wake = parseHhMm(wakeStr);
+      var sleepMins = sleep.hour * 60 + sleep.minute;
+      var wakeMins = wake.hour * 60 + wake.minute;
+      if (wakeMins <= sleepMins) wakeMins += 24 * 60;
+      controller.setDouble('duration', (wakeMins - sleepMins).toDouble());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = ref.watch(entryFormProvider(widget.seed));
+    final controller = ref.read(entryFormProvider(widget.seed).notifier);
+    final durationMissing =
+        widget.showValidation && (state.metricFor('duration')?.hasValue != true);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              _useTimesMode ? 'Sleep times' : 'Duration',
+              style: Theme.of(context).textTheme.labelMedium,
+            ),
+            const Spacer(),
+            const InfoTip(message: 'Switch between duration and sleep/wake times'),
+            const SizedBox(width: AppSpacing.xs),
+            _ModeToggle(
+              useTimesMode: _useTimesMode,
+              onChanged: (value) => setState(() => _useTimesMode = value),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        if (!_useTimesMode)
+          DurationPicker(
+            minutes:
+                state.metricFor('duration')?.doubleValue?.round() ??
+                    0,
+            onChanged: (minutes) =>
+                controller.setDouble('duration', minutes.toDouble()),
+          )
+        else ...[
+          _buildTimeInput(
+            context: context,
+            key: 'sleep_time',
+            label: 'Slept at',
+            state: state,
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          _buildTimeInput(
+            context: context,
+            key: 'wake_time',
+            label: 'Woke at',
+            state: state,
+          ),
+        ],
+        if (durationMissing)
+          Padding(
+            padding: const EdgeInsets.only(top: AppSpacing.xs),
+            child: Text(
+              _useTimesMode
+                  ? 'Set both times to continue.'
+                  : 'This field matters for today\u2019s entry.',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: AppColors.warning,
+                  ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildTimeInput({
+    required BuildContext context,
+    required String key,
+    required String label,
+    required EntryFormState state,
+  }) {
+    final value = state.metricFor(key)?.stringValue;
+    final parsed = value == null || value.isEmpty ? null : parseHhMm(value);
+    return TimeInput(
+      label: label,
+      time: parsed,
+      onTap: () async {
+        final picked = await showTimePicker(
+          context: context,
+          initialTime: parsed ?? TimeOfDay.now(),
+          helpText: label,
+          initialEntryMode: TimePickerEntryMode.dialOnly,
+        );
+        if (picked != null) {
+          _onTimeChanged(key, hhMm(picked));
+        }
+      },
+    );
+  }
+}
+
+class _ModeToggle extends StatelessWidget {
+  const _ModeToggle({
+    required this.useTimesMode,
+    required this.onChanged,
+  });
+
+  final bool useTimesMode;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.bgSurface,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      padding: const EdgeInsets.all(2),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _icon(
+            icon: Icons.timelapse,
+            active: !useTimesMode,
+            onTap: () => onChanged(false),
+          ),
+          _icon(
+            icon: Icons.bedtime_outlined,
+            active: useTimesMode,
+            onTap: () => onChanged(true),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _icon({
+    required IconData icon,
+    required bool active,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          color: active
+              ? AppColors.sage.withValues(alpha: 0.15)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(
+          icon,
+          size: 16,
+          color: active ? AppColors.sage : AppColors.textSecondary,
+        ),
       ),
     );
   }

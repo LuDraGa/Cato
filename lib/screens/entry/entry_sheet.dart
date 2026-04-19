@@ -227,6 +227,8 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
     final time = await showTimePicker(
       context: context,
       initialTime: current.headerTime,
+      helpText: 'Entry time',
+      initialEntryMode: TimePickerEntryMode.dialOnly,
     );
     if (time != null) {
       controller.setHeaderTime(time);
