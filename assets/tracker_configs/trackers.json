@@ -4,7 +4,7 @@
     "domainUid": "domain-nutrition",
     "name": "Breakfast",
     "icon": "🍳",
-    "frequency": "multi_daily",
+    "frequency": "daily",
     "promptTimes": ["08:30"],
     "inputSchema": [
       {"key": "score", "label": "Score", "type": "score", "configJson": "{\"min\":1,\"max\":10,\"step\":1}", "isRequired": true, "sortOrder": 0},
@@ -28,7 +28,7 @@
     "domainUid": "domain-nutrition",
     "name": "Lunch",
     "icon": "🥗",
-    "frequency": "multi_daily",
+    "frequency": "daily",
     "promptTimes": ["13:30"],
     "inputSchema": [
       {"key": "score", "label": "Score", "type": "score", "configJson": "{\"min\":1,\"max\":10,\"step\":1}", "isRequired": true, "sortOrder": 0},
@@ -52,7 +52,7 @@
     "domainUid": "domain-nutrition",
     "name": "Dinner",
     "icon": "🍛",
-    "frequency": "multi_daily",
+    "frequency": "daily",
     "promptTimes": ["20:00"],
     "inputSchema": [
       {"key": "score", "label": "Score", "type": "score", "configJson": "{\"min\":1,\"max\":10,\"step\":1}", "isRequired": true, "sortOrder": 0},
@@ -168,17 +168,16 @@
     "version": 1
   },
   {
-    "uid": "tracker-vices",
+    "uid": "tracker-smoke",
     "domainUid": "domain-vices",
-    "name": "Vices",
+    "name": "Smoke",
     "icon": "🚬",
     "frequency": "multi_daily",
     "promptTimes": [],
     "inputSchema": [
-      {"key": "type", "label": "Type", "type": "single_select", "configJson": "{\"options\":[\"Smoke\",\"Drink\",\"Masturbate\"]}", "isRequired": true, "sortOrder": 0},
-      {"key": "count", "label": "Count", "type": "count", "configJson": "{\"min\":0,\"max\":50}", "isRequired": true, "sortOrder": 1},
-      {"key": "time", "label": "Time", "type": "time", "configJson": null, "isRequired": false, "sortOrder": 2},
-      {"key": "notes", "label": "Notes", "type": "text", "configJson": "{\"maxLines\":2,\"placeholder\":\"Context...\"}", "isRequired": false, "sortOrder": 3}
+      {"key": "count", "label": "Count", "type": "count", "configJson": "{\"min\":0,\"max\":50}", "isRequired": true, "sortOrder": 0},
+      {"key": "time", "label": "Time", "type": "time", "configJson": null, "isRequired": false, "sortOrder": 1},
+      {"key": "notes", "label": "Notes", "type": "text", "configJson": "{\"maxLines\":2,\"placeholder\":\"Context...\"}", "isRequired": false, "sortOrder": 2}
     ],
     "allowedVisualizations": ["streak"],
     "scoreContribution": false,
@@ -188,6 +187,52 @@
     "countsForCompletion": false,
     "heatmapMode": "excluded",
     "sortOrder": 0,
+    "isActive": true,
+    "version": 1
+  },
+  {
+    "uid": "tracker-drink",
+    "domainUid": "domain-vices",
+    "name": "Drink",
+    "icon": "🍺",
+    "frequency": "multi_daily",
+    "promptTimes": [],
+    "inputSchema": [
+      {"key": "count", "label": "Count", "type": "count", "configJson": "{\"min\":0,\"max\":50}", "isRequired": true, "sortOrder": 0},
+      {"key": "time", "label": "Time", "type": "time", "configJson": null, "isRequired": false, "sortOrder": 1},
+      {"key": "notes", "label": "Notes", "type": "text", "configJson": "{\"maxLines\":2,\"placeholder\":\"Context...\"}", "isRequired": false, "sortOrder": 2}
+    ],
+    "allowedVisualizations": ["streak"],
+    "scoreContribution": false,
+    "scoreKey": null,
+    "scoreMin": 0,
+    "scoreMax": 0,
+    "countsForCompletion": false,
+    "heatmapMode": "excluded",
+    "sortOrder": 1,
+    "isActive": true,
+    "version": 1
+  },
+  {
+    "uid": "tracker-masturbate",
+    "domainUid": "domain-vices",
+    "name": "Masturbate",
+    "icon": "🍆",
+    "frequency": "multi_daily",
+    "promptTimes": [],
+    "inputSchema": [
+      {"key": "count", "label": "Count", "type": "count", "configJson": "{\"min\":0,\"max\":50}", "isRequired": true, "sortOrder": 0},
+      {"key": "time", "label": "Time", "type": "time", "configJson": null, "isRequired": false, "sortOrder": 1},
+      {"key": "notes", "label": "Notes", "type": "text", "configJson": "{\"maxLines\":2,\"placeholder\":\"Context...\"}", "isRequired": false, "sortOrder": 2}
+    ],
+    "allowedVisualizations": ["streak"],
+    "scoreContribution": false,
+    "scoreKey": null,
+    "scoreMin": 0,
+    "scoreMax": 0,
+    "countsForCompletion": false,
+    "heatmapMode": "excluded",
+    "sortOrder": 2,
     "isActive": true,
     "version": 1
   }

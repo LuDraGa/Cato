@@ -217,7 +217,11 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
     if (!mounted) {
       return;
     }
-    if (date != null) {
+    if (date != null && !isSameDay(date, current.effectiveDate)) {
+      if (await _hasConflict(date)) {
+        _showConflictMessage();
+        return;
+      }
       controller.setEffectiveDate(date);
     }
     final time = await showTimePicker(
@@ -227,6 +231,32 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
     if (time != null) {
       controller.setHeaderTime(time);
     }
+  }
+
+  Future<bool> _hasConflict(DateTime targetDate) async {
+    final tracker = widget.seed.tracker;
+    if (tracker.frequency != 'daily') {
+      return false;
+    }
+    final eventRepository = ref.read(eventRepositoryProvider);
+    final existing = await eventRepository.getEventsForTrackerAndDate(
+      tracker.uid,
+      targetDate,
+    );
+    final currentEventUid = widget.seed.existingEvent?.uid;
+    return existing.any((e) => e.uid != currentEventUid);
+  }
+
+  void _showConflictMessage() {
+    if (!mounted) return;
+    ScaffoldMessenger.of(widget.hostContext).showSnackBar(
+      SnackBar(
+        content: Text(
+          '${widget.seed.tracker.name} already has an entry for that date.',
+        ),
+        duration: const Duration(seconds: 3),
+      ),
+    );
   }
 
   Future<void> _applyPrevious(
@@ -250,6 +280,11 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
   Future<void> _save() async {
     final controller = ref.read(entryFormProvider(widget.seed).notifier);
     if (!controller.validate()) {
+      return;
+    }
+    final formState = ref.read(entryFormProvider(widget.seed));
+    if (await _hasConflict(formState.effectiveDate)) {
+      _showConflictMessage();
       return;
     }
     controller.setSaving(true);
