@@ -935,8 +935,9 @@ class _SoundPackPickerSheetState extends State<_SoundPackPickerSheet> {
   }
 
   void _playDemo(SoundInteraction interaction) {
-    setState(() => _lastDemoInteraction = interaction);
+    // Pre-fire: sound BEFORE setState for perceptual sync
     widget.soundService.playPackSound(_previewId, interaction);
+    setState(() => _lastDemoInteraction = interaction);
   }
 
   @override
@@ -998,11 +999,10 @@ class _SoundPackPickerSheetState extends State<_SoundPackPickerSheet> {
                 final selected = pack.id == _previewId;
                 return GestureDetector(
                   onTap: () {
-                    setState(() => _previewId = pack.id);
-                    // Auto-play save sound on selection
+                    // Pre-fire: sound BEFORE setState for perceptual sync
                     widget.soundService.playPackSound(pack.id, SoundInteraction.save);
+                    setState(() => _previewId = pack.id);
                   },
-                  onDoubleTap: () => widget.onSelected(pack.id),
                   behavior: HitTestBehavior.opaque,
                   child: _PickerTile(
                     name: pack.name,
@@ -1173,7 +1173,6 @@ class _HapticPickerSheetState extends State<_HapticPickerSheet> {
                     hapticProfileById(profile.id).play(HapticInteraction.save);
                     setState(() => _previewId = profile.id);
                   },
-                  onDoubleTap: () => widget.onSelected(profile.id),
                   behavior: HitTestBehavior.opaque,
                   child: _PickerTile(
                     name: profile.name,

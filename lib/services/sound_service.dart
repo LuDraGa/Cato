@@ -9,6 +9,7 @@ class SoundService {
   final AudioPlayer _player;
   final Set<String> _verifiedAssets = {};
   final Set<String> _missingAssets = {};
+  bool _releaseModeSet = false;
 
   Future<void> playSaveTap() async {
     await _playAsset('sounds/save_tap.wav');
@@ -20,6 +21,7 @@ class SoundService {
 
   /// Play a specific interaction sound from a sound pack.
   /// Falls back to the default save_tap.wav for placeholder assets.
+  /// Fire-and-forget safe — non-critical if it fails.
   Future<void> playPackSound(String packId, SoundInteraction interaction) async {
     final pack = soundPackById(packId);
     final asset = switch (interaction) {
@@ -31,15 +33,19 @@ class SoundService {
     };
     if (asset == null) return; // Silence pack
     if (asset.isPlaceholder) {
-      // Use fallback sound for placeholders
       await _playAsset('sounds/save_tap.wav');
       return;
     }
     await _playAsset(asset.path);
   }
 
-  /// Pre-verify assets at startup to avoid runtime latency.
+  /// Pre-verify assets and set player config at startup.
+  /// Eliminates runtime latency from first-play checks.
   Future<void> warmUp() async {
+    // Set release mode once — saves a platform channel call on every play
+    await _player.setReleaseMode(ReleaseMode.stop);
+    _releaseModeSet = true;
+
     const commonAssets = ['sounds/save_tap.wav', 'sounds/evening_chime.wav'];
     for (final path in commonAssets) {
       try {
@@ -60,13 +66,17 @@ class SoundService {
     if (_missingAssets.contains(assetPath)) return;
 
     try {
-      // Only verify unknown assets
+      // Only verify unknown assets (first encounter)
       if (!_verifiedAssets.contains(assetPath)) {
         await rootBundle.load('assets/$assetPath');
         _verifiedAssets.add(assetPath);
       }
-      await _player.stop();
-      await _player.setReleaseMode(ReleaseMode.stop);
+      // Skip stop() — audioplayers handles overlap internally.
+      // Skip setReleaseMode() — set once during warmUp.
+      if (!_releaseModeSet) {
+        await _player.setReleaseMode(ReleaseMode.stop);
+        _releaseModeSet = true;
+      }
       await _player.play(AssetSource(assetPath));
     } catch (_) {
       _missingAssets.add(assetPath);
