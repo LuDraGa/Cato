@@ -20,8 +20,8 @@ class CalmToggle extends StatelessWidget {
       child: AnimatedContainer(
         duration: AppDurations.short,
         curve: Curves.easeOutCubic,
-        width: 54,
-        height: 32,
+        width: 46,
+        height: 28,
         padding: const EdgeInsets.all(3),
         decoration: BoxDecoration(
           color: value ? AppColors.sage : AppColors.bgSurface,
@@ -36,9 +36,9 @@ class CalmToggle extends StatelessWidget {
           curve: Curves.easeOutCubic,
           alignment: value ? Alignment.centerRight : Alignment.centerLeft,
           child: Container(
-            width: 24,
-            height: 24,
-            decoration: const BoxDecoration(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
               color: AppColors.bgElevated,
               shape: BoxShape.circle,
             ),

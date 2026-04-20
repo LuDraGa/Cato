@@ -46,7 +46,7 @@ class TrendChart extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
           child: Text(
             'Trends',
             style: AppTextStyles.title(AppColors.inkBlack).copyWith(fontSize: 16),
@@ -58,7 +58,7 @@ class TrendChart extends ConsumerWidget {
             height: 32,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
               itemCount: otherTrackers.length,
               separatorBuilder: (_, __) => const SizedBox(width: 6),
               itemBuilder: (context, index) {
@@ -113,7 +113,7 @@ class TrendChart extends ConsumerWidget {
         ],
         const SizedBox(height: AppSpacing.md),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
           child: Container(
             height: 120,
             decoration: BoxDecoration(
@@ -139,7 +139,7 @@ class TrendChart extends ConsumerWidget {
         if (trendData.length > 1) ...[
           const SizedBox(height: AppSpacing.sm),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
             child: Wrap(
               spacing: AppSpacing.md,
               runSpacing: 4,
@@ -177,7 +177,7 @@ class TrendChart extends ConsumerWidget {
 }
 
 Color _lineColorForIndex(int index) {
-  const palette = <Color>[
+  final palette = <Color>[
     AppColors.sage,
     AppColors.fitness,
     AppColors.rest,

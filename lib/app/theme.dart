@@ -1,36 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'themes/cato_theme_data.dart';
+import 'themes/cloud_themes.dart';
+import 'typography/cato_typography.dart';
+import 'typography/typography_registry.dart';
+
 class AppColors {
-  static const bgPrimary = Color(0xFFFAF7F2);
-  static const bgSurface = Color(0xFFF0EBE3);
-  static const bgElevated = Color(0xFFFFFFFF);
+  static CatoThemeData _active = morningMist;
+  static CatoTypography _typography = typographyById(morningMist.defaultTypographyId);
 
-  static const inkBlack = Color(0xFF1A1A1A);
-  static const textPrimary = Color(0xFF3D3833);
-  static const textSecondary = Color(0xFF6B6560);
-  static const textTertiary = Color(0xFF9B9590);
+  static void setTheme(CatoThemeData theme) => _active = theme;
+  static CatoThemeData get active => _active;
 
-  static const sage = Color(0xFF7C9A7C);
-  static const sageLight = Color(0xFFA8C5A8);
-  static const sagePale = Color(0xFFD4E6D4);
+  static void setTypography(CatoTypography typo) => _typography = typo;
+  static CatoTypography get typography => _typography;
 
-  static const nutrition = Color(0xFF8BA88B);
-  static const fitness = Color(0xFFC4956A);
-  static const rest = Color(0xFF8B8DB5);
-  static const mind = Color(0xFFA88BA5);
-  static const vices = Color(0xFFB58B8B);
+  // ── Backgrounds ──
+  static Color get bgPrimary => _active.bgPrimary;
+  static Color get bgSurface => _active.bgSurface;
+  static Color get bgElevated => _active.bgElevated;
 
-  static const heatNoData = Color(0xFFF0EBE3);
-  static const heatMinimal = Color(0xFFE2EBDA);
-  static const heatLow = Color(0xFFD4E6D4);
-  static const heatMid = Color(0xFFA8C5A8);
-  static const heatHigh = Color(0xFF7C9A7C);
-  static const heatStrong = Color(0xFF5A7A5A);
-  static const heatPeak = Color(0xFF3D5C3D);
+  // ── Text ──
+  static Color get inkBlack => _active.inkBlack;
+  static Color get textPrimary => _active.textPrimary;
+  static Color get textSecondary => _active.textSecondary;
+  static Color get textTertiary => _active.textTertiary;
 
-  static const error = Color(0xFFB58B8B);
-  static const warning = Color(0xFFC4956A);
+  // ── Accent ──
+  static Color get sage => _active.accent;
+  static Color get sageLight => _active.accentLight;
+  static Color get sagePale => _active.accentPale;
+
+  // ── Domain colors ──
+  static Color get nutrition => _active.nutrition;
+  static Color get fitness => _active.fitness;
+  static Color get rest => _active.rest;
+  static Color get mind => _active.mind;
+  static Color get vices => _active.vices;
+
+  // ── Heatmap ──
+  static Color get heatNoData => _active.heatNoData;
+  static Color get heatMinimal => _active.heatMinimal;
+  static Color get heatLow => _active.heatLow;
+  static Color get heatMid => _active.heatMid;
+  static Color get heatHigh => _active.heatHigh;
+  static Color get heatStrong => _active.heatStrong;
+  static Color get heatPeak => _active.heatPeak;
+
+  // ── Semantic ──
+  static Color get error => _active.error;
+  static Color get warning => _active.warning;
+
+  // ── Shape ──
+  static bool get isDark => _active.isDark;
+  static double get cornerRadius => _active.cornerRadius;
+  static double get motionScale => _active.motionScale;
 }
 
 class AppSpacing {
@@ -44,36 +69,51 @@ class AppSpacing {
 }
 
 class AppDurations {
-  static const micro = Duration(milliseconds: 120);
-  static const short = Duration(milliseconds: 220);
-  static const medium = Duration(milliseconds: 340);
-  static const long = Duration(milliseconds: 560);
+  static Duration get micro => Duration(
+        milliseconds: (120 * AppColors.motionScale).round(),
+      );
+  static Duration get short => Duration(
+        milliseconds: (220 * AppColors.motionScale).round(),
+      );
+  static Duration get medium => Duration(
+        milliseconds: (340 * AppColors.motionScale).round(),
+      );
+  static Duration get long => Duration(
+        milliseconds: (560 * AppColors.motionScale).round(),
+      );
 }
 
 class AppTextStyles {
-  static TextStyle display(Color color) => GoogleFonts.sourceSerif4(
-        fontSize: 32,
+  static String get _serif => AppColors._typography.serifFont;
+  static String get _sans => AppColors._typography.sansFont;
+
+  static TextStyle display(Color color) => GoogleFonts.getFont(
+        _serif,
+        fontSize: 26,
         fontWeight: FontWeight.w600,
         color: color,
         height: 1.1,
       );
 
-  static TextStyle headline(Color color) => GoogleFonts.sourceSerif4(
-        fontSize: 24,
+  static TextStyle headline(Color color) => GoogleFonts.getFont(
+        _serif,
+        fontSize: 20,
         fontWeight: FontWeight.w600,
         color: color,
         height: 1.15,
       );
 
-  static TextStyle title(Color color) => GoogleFonts.sourceSerif4(
-        fontSize: 20,
+  static TextStyle title(Color color) => GoogleFonts.getFont(
+        _serif,
+        fontSize: 17,
         fontWeight: FontWeight.w500,
         color: color,
         height: 1.2,
       );
 
-  static TextStyle metric(Color color) => GoogleFonts.inter(
-        fontSize: 32,
+  static TextStyle metric(Color color) => GoogleFonts.getFont(
+        _sans,
+        fontSize: 28,
         fontWeight: FontWeight.w600,
         color: color,
         height: 1.0,
@@ -81,14 +121,16 @@ class AppTextStyles {
 }
 
 ThemeData buildAppTheme() {
-  final inter = GoogleFonts.interTextTheme();
+  final sans = AppColors._typography.sansFont;
+  final isDark = AppColors.isDark;
 
   return ThemeData(
     useMaterial3: false,
+    brightness: isDark ? Brightness.dark : Brightness.light,
     scaffoldBackgroundColor: AppColors.bgPrimary,
     splashFactory: NoSplash.splashFactory,
     highlightColor: Colors.transparent,
-    colorScheme: const ColorScheme.light(
+    colorScheme: (isDark ? const ColorScheme.dark() : const ColorScheme.light()).copyWith(
       primary: AppColors.sage,
       onPrimary: AppColors.bgElevated,
       secondary: AppColors.sageLight,
@@ -98,32 +140,37 @@ ThemeData buildAppTheme() {
       surface: AppColors.bgPrimary,
       onSurface: AppColors.textPrimary,
     ),
-    textTheme: inter.copyWith(
-      bodyLarge: GoogleFonts.inter(
-        fontSize: 16,
+    textTheme: TextTheme(
+      bodyLarge: GoogleFonts.getFont(
+        sans,
+        fontSize: 14,
         fontWeight: FontWeight.w400,
         color: AppColors.textPrimary,
         height: 1.45,
       ),
-      bodyMedium: GoogleFonts.inter(
-        fontSize: 16,
+      bodyMedium: GoogleFonts.getFont(
+        sans,
+        fontSize: 14,
         fontWeight: FontWeight.w400,
         color: AppColors.textPrimary,
         height: 1.4,
       ),
-      bodySmall: GoogleFonts.inter(
-        fontSize: 12,
+      bodySmall: GoogleFonts.getFont(
+        sans,
+        fontSize: 11,
         fontWeight: FontWeight.w400,
         color: AppColors.textSecondary,
         height: 1.35,
       ),
-      labelLarge: GoogleFonts.inter(
-        fontSize: 14,
+      labelLarge: GoogleFonts.getFont(
+        sans,
+        fontSize: 13,
         fontWeight: FontWeight.w500,
         color: AppColors.textPrimary,
       ),
-      labelMedium: GoogleFonts.inter(
-        fontSize: 14,
+      labelMedium: GoogleFonts.getFont(
+        sans,
+        fontSize: 13,
         fontWeight: FontWeight.w500,
         color: AppColors.textSecondary,
       ),
@@ -136,7 +183,7 @@ ThemeData buildAppTheme() {
       elevation: 0,
       centerTitle: false,
       titleTextStyle: AppTextStyles.headline(AppColors.inkBlack),
-      iconTheme: const IconThemeData(color: AppColors.textPrimary),
+      iconTheme: IconThemeData(color: AppColors.textPrimary),
     ),
     dividerColor: AppColors.bgSurface,
     cardColor: AppColors.bgElevated,
@@ -148,47 +195,51 @@ ThemeData buildAppTheme() {
       filled: true,
       fillColor: AppColors.bgSurface,
       contentPadding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.lg,
-        vertical: AppSpacing.md,
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
       ),
-      hintStyle: GoogleFonts.inter(
+      hintStyle: GoogleFonts.getFont(
+        sans,
         color: AppColors.textTertiary,
-        fontSize: 16,
-      ),
-      labelStyle: GoogleFonts.inter(
-        color: AppColors.textSecondary,
         fontSize: 14,
+      ),
+      labelStyle: GoogleFonts.getFont(
+        sans,
+        color: AppColors.textSecondary,
+        fontSize: 13,
         fontWeight: FontWeight.w500,
       ),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(10),
         borderSide: BorderSide.none,
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: Color(0x221A1A1A)),
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: AppColors.inkBlack.withValues(alpha: 0.13)),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: AppColors.sage, width: 1.2),
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: AppColors.sage, width: 1.2),
       ),
     ),
     snackBarTheme: SnackBarThemeData(
       backgroundColor: AppColors.inkBlack.withValues(alpha: 0.92),
-      contentTextStyle: GoogleFonts.inter(
+      contentTextStyle: GoogleFonts.getFont(
+        sans,
         color: AppColors.bgPrimary,
         fontSize: 14,
       ),
       behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ),
   );
 }
 
 List<BoxShadow> surfaceShadow({bool elevated = false}) {
+  final opacity = AppColors._active.shadowOpacity;
   return <BoxShadow>[
     BoxShadow(
-      color: AppColors.inkBlack.withValues(alpha: elevated ? 0.06 : 0.04),
+      color: AppColors.inkBlack.withValues(alpha: elevated ? opacity * 1.5 : opacity),
       offset: Offset(0, elevated ? 2 : 1),
       blurRadius: elevated ? 8 : 4,
     ),

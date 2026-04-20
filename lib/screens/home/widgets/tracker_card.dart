@@ -26,28 +26,31 @@ class TrackerCard extends StatelessWidget {
       child: AnimatedContainer(
         duration: AppDurations.short,
         curve: Curves.easeOutCubic,
-        padding: const EdgeInsets.all(AppSpacing.lg),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm + 2,
+        ),
         decoration: BoxDecoration(
           color: deEmphasized ? AppColors.bgSurface : AppColors.bgElevated,
-          borderRadius: BorderRadius.circular(22),
+          borderRadius: BorderRadius.circular(14),
           boxShadow: deEmphasized ? const <BoxShadow>[] : surfaceShadow(elevated: true),
         ),
         child: Row(
           children: <Widget>[
             Container(
-              width: 44,
-              height: 44,
+              width: 36,
+              height: 36,
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: domainColor.withValues(alpha: 0.14),
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
                 tracker.icon,
-                style: const TextStyle(fontSize: 20),
+                style: const TextStyle(fontSize: 16),
               ),
             ),
-            const SizedBox(width: AppSpacing.md),
+            const SizedBox(width: AppSpacing.sm),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,12 +59,12 @@ class TrackerCard extends StatelessWidget {
                     tracker.name,
                     style: AppTextStyles.title(
                       deEmphasized ? AppColors.textSecondary : AppColors.inkBlack,
-                    ).copyWith(fontSize: 18),
+                    ),
                   ),
-                  const SizedBox(height: AppSpacing.xs),
+                  const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: deEmphasized
                               ? AppColors.textTertiary
                               : AppColors.textSecondary,
@@ -97,8 +100,8 @@ class LoggedTrackerItem extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.sm,
+          horizontal: AppSpacing.sm + 2,
+          vertical: AppSpacing.xs + 2,
         ),
         decoration: BoxDecoration(
           color: AppColors.bgSurface.withValues(alpha: 0.7),
@@ -109,7 +112,7 @@ class LoggedTrackerItem extends StatelessWidget {
           children: <Widget>[
             Text(
               icon,
-              style: const TextStyle(fontSize: 14),
+              style: const TextStyle(fontSize: 12),
             ),
             const SizedBox(width: AppSpacing.xs),
             Expanded(

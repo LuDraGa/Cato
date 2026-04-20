@@ -53,7 +53,7 @@ class _ScoreSliderState extends State<ScoreSlider> {
             constraints.maxWidth,
           ),
           child: SizedBox(
-            height: 36,
+            height: 32,
             child: CustomPaint(
               painter: _ScoreSliderPainter(
                 min: widget.min,
@@ -87,12 +87,12 @@ class _ScoreSliderPainter extends CustomPainter {
     final centerY = size.height / 2;
     final trackPaint = Paint()
       ..color = AppColors.bgSurface
-      ..strokeWidth = 8
+      ..strokeWidth = 6
       ..strokeCap = StrokeCap.round
       ..isAntiAlias = true;
     final fillPaint = Paint()
       ..color = AppColors.sage
-      ..strokeWidth = 8
+      ..strokeWidth = 6
       ..strokeCap = StrokeCap.round
       ..isAntiAlias = true;
 
@@ -112,7 +112,7 @@ class _ScoreSliderPainter extends CustomPainter {
       final ratio = count == 1 ? 0.0 : index / (count - 1);
       final dx = start.dx + (end.dx - start.dx) * ratio;
       final circleValue = min + index;
-      final radius = circleValue == value ? 6.5 : 4.5;
+      final radius = circleValue == value ? 5.5 : 3.5;
       final paint = circleValue <= value ? activeDotPaint : dotPaint;
       canvas.drawCircle(Offset(dx, centerY), radius, paint);
       canvas.drawCircle(

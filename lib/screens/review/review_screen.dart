@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/theme.dart';
 import '../../providers/review_providers.dart';
+import '../../providers/theme_provider.dart';
 import 'widgets/month_review.dart';
 import 'widgets/multi_tracker_summary.dart';
 import 'widgets/tracker_selector.dart';
@@ -22,6 +23,8 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Force rebuild when any aesthetic dimension changes
+    ref.watch(aestheticRevisionProvider);
     final timeScale = ref.watch(reviewTimeScaleProvider);
     final trackers = ref.watch(reviewTrackersProvider);
     final selectedTracker = ref.watch(reviewEffectiveTrackerProvider);
@@ -32,9 +35,9 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
           // ── Header ──
           Padding(
             padding: const EdgeInsets.fromLTRB(
-              AppSpacing.xl,
-              AppSpacing.md,
-              AppSpacing.xl,
+              AppSpacing.lg,
+              AppSpacing.sm,
+              AppSpacing.lg,
               0,
             ),
             child: Row(
@@ -94,7 +97,7 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
             ),
           ),
 
-          const SizedBox(height: AppSpacing.lg),
+          const SizedBox(height: AppSpacing.md),
 
           // ── Multi-tracker DEMO or single-tracker focus ──
           if (_showMultiTrackerDemo) ...[
@@ -109,7 +112,7 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
           ] else ...[
             // ── Time-scale tabs ──
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
               child: _TimeScaleTabs(
                 selected: timeScale,
                 onChanged: (scale) {
@@ -119,7 +122,7 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
               ),
             ),
 
-            const SizedBox(height: AppSpacing.lg),
+            const SizedBox(height: AppSpacing.sm),
 
             // ── Tracker selector ──
             TrackerSelector(
@@ -130,7 +133,7 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
               },
             ),
 
-            const SizedBox(height: AppSpacing.lg),
+            const SizedBox(height: AppSpacing.sm),
 
             // ── Main content area ──
             if (selectedTracker == null)
@@ -194,12 +197,12 @@ class _TimeScaleTabs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 36,
+      height: 32,
       decoration: BoxDecoration(
         color: AppColors.bgSurface,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(8),
       ),
-      padding: const EdgeInsets.all(3),
+      padding: const EdgeInsets.all(2),
       child: Row(
         children: TimeScale.values.map((scale) {
           final isSelected = scale == selected;

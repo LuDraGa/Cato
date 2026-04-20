@@ -75,10 +75,10 @@ class _DurationPickerState extends State<DurationPicker> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 108,
+      height: 96,
       decoration: BoxDecoration(
         color: AppColors.bgSurface,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: <Widget>[

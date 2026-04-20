@@ -37,7 +37,7 @@ class InfoTip extends StatelessWidget {
         color: AppColors.inkBlack.withValues(alpha: 0.85),
         borderRadius: BorderRadius.circular(10),
       ),
-      textStyle: const TextStyle(
+      textStyle: TextStyle(
         color: AppColors.bgElevated,
         fontSize: 12,
         height: 1.4,

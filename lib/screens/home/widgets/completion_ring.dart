@@ -70,15 +70,20 @@ class _CompletionRingState extends State<CompletionRing>
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final ringSize = (screenWidth * 0.40).clamp(140.0, 200.0);
+    final strokeWidth = (ringSize * 0.04).clamp(6.0, 8.0);
+
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, _) {
         return SizedBox(
-          width: 228,
-          height: 228,
+          width: ringSize,
+          height: ringSize,
           child: CustomPaint(
             painter: _CompletionRingPainter(
               progress: _controller.value.clamp(0.0, 1.0),
+              strokeWidth: strokeWidth,
             ),
             child: Center(child: widget.child),
           ),
@@ -112,13 +117,16 @@ class _CompletionRingState extends State<CompletionRing>
 }
 
 class _CompletionRingPainter extends CustomPainter {
-  const _CompletionRingPainter({required this.progress});
+  const _CompletionRingPainter({
+    required this.progress,
+    required this.strokeWidth,
+  });
 
   final double progress;
+  final double strokeWidth;
 
   @override
   void paint(Canvas canvas, Size size) {
-    const strokeWidth = 10.0;
     final rect = Offset.zero & size;
     final insetRect = rect.deflate(strokeWidth / 2);
     const startAngle = -math.pi / 2;

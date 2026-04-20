@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../app/theme.dart';
 import '../models/tracker.dart';
 import '../providers/core_providers.dart';
+import '../providers/theme_provider.dart';
 import '../providers/tracker_providers.dart';
 import '../screens/entry/entry_sheet.dart';
 import '../services/notification_service.dart';
@@ -91,20 +92,23 @@ class _AppShellState extends ConsumerState<AppShell>
       },
     );
 
+    // Force rebuild when any aesthetic dimension changes
+    ref.watch(aestheticRevisionProvider);
+
     return Scaffold(
       body: widget.navigationShell,
       bottomNavigationBar: SafeArea(
         top: false,
         child: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: AppColors.bgPrimary,
             border: Border(top: BorderSide(color: AppColors.bgSurface)),
           ),
           padding: const EdgeInsets.fromLTRB(
-            AppSpacing.lg,
-            AppSpacing.sm,
-            AppSpacing.lg,
-            AppSpacing.sm,
+            AppSpacing.md,
+            AppSpacing.xs,
+            AppSpacing.md,
+            AppSpacing.xs,
           ),
           child: Row(
             children: <Widget>[
@@ -151,10 +155,10 @@ class _NavItem extends StatelessWidget {
         child: AnimatedContainer(
           duration: AppDurations.short,
           curve: Curves.easeOutCubic,
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
           decoration: BoxDecoration(
             color: selected ? AppColors.bgSurface : Colors.transparent,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(10),
           ),
           child: Text(
             label,

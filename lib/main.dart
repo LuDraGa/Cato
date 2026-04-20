@@ -40,6 +40,7 @@ Future<void> main() async {
   await notificationService.syncSchedules();
 
   final soundService = SoundService();
+  await soundService.warmUp();
   const sentryDsn = String.fromEnvironment('SENTRY_DSN');
 
   final app = ProviderScope(

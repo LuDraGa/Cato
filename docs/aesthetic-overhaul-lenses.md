@@ -2,9 +2,9 @@
 
 **Date:** 2026-04-19
 **Status:** Living design evaluation framework
-**Purpose:** When any part of Cato feels off, these six lenses provide a systematic way to identify *what* is wrong, *why* it breaks, and *how* to fix it consistently. This is not a task list. It is an evaluation methodology.
+**Purpose:** When any part of Cato feels off, these six lenses provide a systematic way to identify _what_ is wrong, _why_ it breaks, and _how_ to fix it consistently. This is not a task list. It is an evaluation methodology.
 
-**Relationship to Product DNA:** The Product DNA's Aesthetic Craft theme (Theme 8) describes the *philosophy*. These lenses operationalize it into evaluable dimensions. Each lens is anchored to a specific line from the Aesthetic Craft description and the Ritual Design theme.
+**Relationship to Product DNA:** The Product DNA's Aesthetic Craft theme (Theme 8) describes the _philosophy_. These lenses operationalize it into evaluable dimensions. Each lens is anchored to a specific line from the Aesthetic Craft description and the Ritual Design theme.
 
 ---
 
@@ -23,7 +23,7 @@
 
 ## Lens 1: Spatial Composition
 
-**Anchor:** *"Space is treated as a material. Interfaces open with breathing room, isolating what matters."*
+**Anchor:** _"Space is treated as a material. Interfaces open with breathing room, isolating what matters."_
 
 ### What it evaluates
 
@@ -60,11 +60,11 @@ Everything is stacked vertically. Scroll to find things. The screen is either to
 
 ## Lens 2: Interaction Physics
 
-**Anchor:** *"Touch is acknowledged. Interactions offer resistance, subtle and precise — a confirmation that something real has occurred."*
+**Anchor:** _"Touch is acknowledged. Interactions offer resistance, subtle and precise — a confirmation that something real has occurred."_
 
 ### What it evaluates
 
-How every input, gesture, and interaction *feels* in the user's hands. The physical quality of touching, dragging, scrolling, and selecting. Whether inputs feel like manipulating physical objects or clicking digital buttons.
+How every input, gesture, and interaction _feels_ in the user's hands. The physical quality of touching, dragging, scrolling, and selecting. Whether inputs feel like manipulating physical objects or clicking digital buttons.
 
 ### Core principle
 
@@ -97,7 +97,7 @@ A picker snaps between values with no intermediate states. An input opens a syst
 
 ## Lens 3: Surface & Material
 
-**Anchor:** *"Every surface carries intention: soft, matte, and gently lit, like paper resting under natural light. Depth exists, but never calls attention to itself."*
+**Anchor:** _"Every surface carries intention: soft, matte, and gently lit, like paper resting under natural light. Depth exists, but never calls attention to itself."_
 
 ### What it evaluates
 
@@ -105,7 +105,7 @@ The physical quality of every visible element — its material, its edges, its r
 
 ### Core principle
 
-Every surface should feel like it was made of something. Paper, ceramic, frosted glass, brushed stone. This isn't about skeuomorphism — it's about material intention. A button should feel different from a card. A card should feel different from the background. These differences should be communicated through shadow, border, texture, and response to interaction — not just through color.
+Every surface should feel like it was made of something. Paper, ceramic, frosted glass, brushed stone. This isn't about skeuomorphism — it's about material intention. A button should feel different from a card. A card should feel different from the background. These differences should be communicated through shadow, border, texture, and response to interaction — not just through color. The palette favors calm neutrals over earthy pigments — warm cloud, light stone, soft paper — with accents that carry the quiet blue-green of sea glass: soothing, not asserting.
 
 ### The test
 
@@ -133,7 +133,7 @@ Elements are flat colored shapes. No borders, or borders that feel like wirefram
 
 ## Lens 4: Motion & Time
 
-**Anchor:** *"Motion has weight. Elements don't move to respond — they settle, glide, and arrive. Transitions feel governed by inertia, not animation curves."*
+**Anchor:** _"Motion has weight. Elements don't move to respond — they settle, glide, and arrive. Transitions feel governed by inertia, not animation curves."_
 
 ### What it evaluates
 
@@ -170,7 +170,7 @@ Everything updates at once — tap, and the screen jumps to its new state. Or: n
 
 ## Lens 5: Visual Hierarchy
 
-**Anchor:** *"The interface feels composed, not constructed."*
+**Anchor:** _"The interface feels composed, not constructed."_
 
 ### What it evaluates
 
@@ -178,7 +178,7 @@ The typographic, chromatic, and spatial hierarchy of information on every screen
 
 ### Core principle
 
-Every screen is a composition, not a stack of widgets. There is one hero, one supporting cast, and one background. Typography creates three layers: headlines that anchor (serif, architectural), body that communicates (sans, clear), and captions that whisper (sans, muted). Color reinforces this: ink-black for focal data, primary for readable content, secondary and tertiary for progressive de-emphasis. Nothing competes with the hero.
+Every screen is a composition, not a stack of widgets. There is one hero, one supporting cast, and one background. Typography creates three layers: headlines that anchor (serif, architectural), body that communicates (sans, clear), and captions that whisper (sans, muted). Color reinforces this: ink-black for focal data, warm charcoal for readable content, warm grays for progressive de-emphasis. The accent (mist sage) appears only at points of progress or interaction — never competing with the hero. Nothing competes with the hero.
 
 ### The test
 
@@ -207,7 +207,7 @@ Multiple elements compete for attention. Typography sizes are too similar (every
 
 ## Lens 6: Sensory Feedback
 
-**Anchor:** *"Sound replaces notification with presence. Soft, analog cues reinforce actions without demanding attention."*
+**Anchor:** _"Sound replaces notification with presence. Soft, analog cues reinforce actions without demanding attention."_
 
 ### What it evaluates
 
@@ -248,12 +248,12 @@ Haptics feel arbitrary — some things vibrate, others don't. Sounds are synthet
 
 1. **Name the discomfort.** "This doesn't feel right" is too vague. Sharpen it: "This feels flat / busy / mechanical / lost / arbitrary / silent."
 2. **Identify the lens.** Each adjective maps to a lens:
-   - *Flat / lifeless* — Surface & Material (Lens 3)
-   - *Busy / cluttered / noisy* — Visual Hierarchy (Lens 5) or Spatial Composition (Lens 1)
-   - *Mechanical / snappy / weightless / clunky* — Interaction Physics (Lens 2) or Motion & Time (Lens 4)
-   - *Lost / disoriented / overwhelmed* — Spatial Composition (Lens 1)
-   - *Arbitrary / inconsistent / unfinished* — any lens; check all six
-   - *Silent / dead / hollow* — Sensory Feedback (Lens 6)
+   - _Flat / lifeless_ — Surface & Material (Lens 3)
+   - _Busy / cluttered / noisy_ — Visual Hierarchy (Lens 5) or Spatial Composition (Lens 1)
+   - _Mechanical / snappy / weightless / clunky_ — Interaction Physics (Lens 2) or Motion & Time (Lens 4)
+   - _Lost / disoriented / overwhelmed_ — Spatial Composition (Lens 1)
+   - _Arbitrary / inconsistent / unfinished_ — any lens; check all six
+   - _Silent / dead / hollow_ — Sensory Feedback (Lens 6)
 3. **Run the test questions** for that lens against the specific element.
 4. **Define the gap** between current state and what "right" feels like.
 5. **Design the fix** using the reference anchors as calibration.
@@ -264,8 +264,8 @@ Haptics feel arbitrary — some things vibrate, others don't. Sounds are synthet
 Lenses sometimes pull in opposite directions. Resolution principles:
 
 - **More material depth (Lens 3) vs. visual noise (Lens 5):** Depth through shadow and border, not color. Keep the chromatic palette flat; let elevation do the work.
-- **Richer motion (Lens 4) vs. interaction speed (Lens 2):** Animation runs *after* the input is committed, never *before* or *during* the input. The user is never waiting for an animation to finish before they can act.
-- **Richer feedback (Lens 6) vs. sensory clutter:** Max one feedback channel per micro-action (haptic OR visual). Reserve multi-channel feedback (haptic + sound + visual) for the save moment only.
+- **Richer motion (Lens 4) vs. interaction speed (Lens 2):** Animation runs _after_ the input is committed, never _before_ or _during_ the input. The user is never waiting for an animation to finish before they can act.
+- **Richer feedback (Lens 6) vs. sensory clutter:** Max two feedback channel per micro-action (haptic OR visual). Reserve multi-channel feedback (haptic + sound + visual) for the save moment only.
 
 ### Lens priority (when in doubt)
 
@@ -293,7 +293,7 @@ Before building any new UI element, run it through all six lenses as a pre-fligh
 
 Concrete design decisions made through the lens framework. Each entry records what was evaluated, which lens applied, what was decided, and why.
 
-*Decisions are added here as they are made through discussion. This section starts empty.*
+_Decisions are added here as they are made through discussion. This section starts empty._
 
 <!-- Template:
 ### [Element/Screen Name] — [Date]

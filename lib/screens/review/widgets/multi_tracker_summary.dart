@@ -24,7 +24,7 @@ class MultiTrackerSummary extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
           child: Row(
             children: <Widget>[
               Text(
@@ -61,7 +61,7 @@ class MultiTrackerSummary extends ConsumerWidget {
         const SizedBox(height: AppSpacing.md),
         Expanded(
           child: ListView.separated(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
             itemCount: items.length,
             separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.sm),
             itemBuilder: (context, index) {

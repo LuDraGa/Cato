@@ -89,16 +89,16 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
               decoration: BoxDecoration(
                 color: AppColors.bgElevated,
                 borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(28),
+                  top: Radius.circular(20),
                 ),
                 boxShadow: surfaceShadow(elevated: true),
               ),
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.xl,
                   AppSpacing.lg,
-                  AppSpacing.xl,
-                  AppSpacing.xl,
+                  AppSpacing.md,
+                  AppSpacing.lg,
+                  AppSpacing.lg,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,7 +106,7 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
                   children: <Widget>[
                     Center(
                       child: Container(
-                        width: 40,
+                        width: 36,
                         height: 4,
                         decoration: BoxDecoration(
                           color: AppColors.bgSurface,
@@ -114,7 +114,7 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: AppSpacing.lg),
+                    const SizedBox(height: AppSpacing.md),
                     Text(
                       '${widget.seed.tracker.icon}  ${widget.seed.tracker.name}',
                       style: AppTextStyles.title(AppColors.inkBlack),
@@ -133,9 +133,9 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: AppSpacing.xl),
+                    const SizedBox(height: AppSpacing.lg),
                     DynamicEntryFields(seed: widget.seed),
-                    const SizedBox(height: AppSpacing.sm),
+                    const SizedBox(height: AppSpacing.md),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -145,10 +145,10 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
                           backgroundColor: AppColors.sage,
                           foregroundColor: AppColors.bgElevated,
                           padding: const EdgeInsets.symmetric(
-                            vertical: AppSpacing.lg,
+                            vertical: AppSpacing.md,
                           ),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                         child: Text(
@@ -345,19 +345,19 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
       builder: (ctx) => Dialog(
         backgroundColor: AppColors.bgElevated,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(14),
         ),
         elevation: 0,
         child: Container(
           padding: const EdgeInsets.fromLTRB(
-            AppSpacing.xl,
-            AppSpacing.xl,
-            AppSpacing.xl,
             AppSpacing.lg,
+            AppSpacing.lg,
+            AppSpacing.lg,
+            AppSpacing.md,
           ),
           decoration: BoxDecoration(
             color: AppColors.bgElevated,
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(14),
             boxShadow: surfaceShadow(elevated: true),
           ),
           child: Column(
@@ -368,14 +368,14 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
                 style: AppTextStyles.title(AppColors.inkBlack),
               ),
               const SizedBox(height: AppSpacing.sm),
-              const Text(
+              Text(
                 'This cannot be undone.',
                 style: TextStyle(
                   fontSize: 14,
                   color: AppColors.textSecondary,
                 ),
               ),
-              const SizedBox(height: AppSpacing.xl),
+              const SizedBox(height: AppSpacing.lg),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -385,10 +385,10 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
                     backgroundColor: AppColors.error,
                     foregroundColor: AppColors.bgElevated,
                     padding: const EdgeInsets.symmetric(
-                      vertical: AppSpacing.lg,
+                      vertical: AppSpacing.md,
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                   child: const Text('Delete'),
@@ -397,7 +397,7 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
               const SizedBox(height: AppSpacing.xs),
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(false),
-                child: const Text(
+                child: Text(
                   'Cancel',
                   style: TextStyle(
                     fontSize: 14,

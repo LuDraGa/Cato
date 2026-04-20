@@ -19,10 +19,10 @@ class TrackerSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 40,
+      height: 34,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
         itemCount: trackers.length,
         separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.sm),
         itemBuilder: (context, index) {
@@ -37,8 +37,8 @@ class TrackerSelector extends StatelessWidget {
               duration: AppDurations.short,
               curve: Curves.easeOutCubic,
               padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.lg,
-                vertical: AppSpacing.sm,
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.xs + 2,
               ),
               decoration: BoxDecoration(
                 color: selected ? AppColors.inkBlack : AppColors.bgSurface,

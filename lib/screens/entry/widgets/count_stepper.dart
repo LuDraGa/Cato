@@ -25,27 +25,27 @@ class CountStepper extends StatelessWidget {
           enabled: value > min,
           onTap: () => onChanged((value - 1).clamp(min, max)),
         ),
-        const SizedBox(width: AppSpacing.lg),
+        const SizedBox(width: AppSpacing.md),
         Expanded(
           child: GestureDetector(
             onLongPress: () => _showManualInput(context),
             child: Container(
-              height: 56,
+              height: 44,
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: AppColors.bgSurface,
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
                 '$value',
                 style: AppTextStyles.metric(AppColors.inkBlack).copyWith(
-                  fontSize: 24,
+                  fontSize: 20,
                 ),
               ),
             ),
           ),
         ),
-        const SizedBox(width: AppSpacing.lg),
+        const SizedBox(width: AppSpacing.md),
         _StepperButton(
           icon: Icons.add_rounded,
           enabled: value < max,
@@ -107,8 +107,8 @@ class _StepperButton extends StatelessWidget {
     return GestureDetector(
       onTap: enabled ? onTap : null,
       child: Container(
-        width: 52,
-        height: 52,
+        width: 40,
+        height: 40,
         decoration: BoxDecoration(
           color: enabled ? AppColors.bgSurface : AppColors.bgPrimary,
           shape: BoxShape.circle,

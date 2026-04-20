@@ -11,6 +11,7 @@ import '../../providers/core_providers.dart';
 import '../../providers/event_providers.dart';
 import '../../providers/score_providers.dart';
 import '../../providers/tracker_providers.dart';
+import '../../providers/theme_provider.dart';
 import '../entry/entry_sheet.dart';
 import 'widgets/completion_ring.dart';
 import 'widgets/daily_score_display.dart';
@@ -36,6 +37,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(aestheticRevisionProvider);
     final today = ref.watch(currentDateProvider);
     final domains = ref.watch(domainsByUidProvider);
     final latestHomeSections = ref.watch(homeSectionsProvider);
@@ -77,69 +79,62 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return SafeArea(
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final heroMinHeight = constraints.maxHeight < 760 ? 380.0 : 332.0;
-
           return SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(
-              AppSpacing.xl,
-              AppSpacing.md,
-              AppSpacing.xl,
-              AppSpacing.xl,
+              AppSpacing.lg,
+              AppSpacing.sm,
+              AppSpacing.lg,
+              AppSpacing.lg,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: heroMinHeight),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        DateFormat('EEEE, MMMM d').format(today),
-                        style: AppTextStyles.headline(AppColors.inkBlack),
-                      ),
-                      const SizedBox(height: AppSpacing.xxl),
-                      Center(
-                        child: CompletionRing(
-                          progress: completion.progress,
-                          feedbackState: feedbackState,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              DailyScoreDisplay(
-                                score: score,
-                                feedbackState: feedbackState,
-                              ),
-                              const SizedBox(height: AppSpacing.sm),
-                              Text(
-                                completion.completed == 0
-                                    ? 'Today · not yet logged'
-                                    : '${completion.completed} of ${completion.total} logged',
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: completion.completed == 0
-                                          ? AppColors.textTertiary
-                                          : AppColors.textSecondary,
-                                    ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: StreakBadge(
-                          streak: streak,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: <Widget>[
+                    Text(
+                      DateFormat('EEEE, MMMM d').format(today),
+                      style: AppTextStyles.headline(AppColors.inkBlack),
+                    ),
+                    StreakBadge(
+                      streak: streak,
+                      feedbackState: feedbackState,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                Center(
+                  child: CompletionRing(
+                    progress: completion.progress,
+                    feedbackState: feedbackState,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        DailyScoreDisplay(
+                          score: score,
                           feedbackState: feedbackState,
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: AppSpacing.xs),
+                        Text(
+                          completion.completed == 0
+                              ? 'Today · not yet logged'
+                              : '${completion.completed} of ${completion.total} logged',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: completion.completed == 0
+                                    ? AppColors.textTertiary
+                                    : AppColors.textSecondary,
+                              ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(height: AppSpacing.xl),
+                const SizedBox(height: AppSpacing.lg),
                 ...homeSections.pendingActionable.map(
                   (item) => Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                    padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                     child: TrackerCard(
                       tracker: item.tracker,
                       subtitle: 'Tap to log',
@@ -154,7 +149,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
                 if (homeSections.pendingActionable.length > 1)
                   Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+                    padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                     child: GestureDetector(
                       onTap: () => context.push('/batch'),
                       child: Text(
@@ -167,7 +162,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                 ...homeSections.pendingSupplemental.map(
                   (item) => Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+                    padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                     child: TrackerCard(
                       tracker: item.tracker,
                       subtitle: 'Optional, kept separate',

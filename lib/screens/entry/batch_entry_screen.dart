@@ -45,10 +45,10 @@ class BatchEntryScreen extends ConsumerWidget {
               )
             : ListView(
                 padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.xl,
-                  AppSpacing.md,
-                  AppSpacing.xl,
-                  AppSpacing.xl,
+                  AppSpacing.lg,
+                  AppSpacing.sm,
+                  AppSpacing.lg,
+                  AppSpacing.lg,
                 ),
                 children: <Widget>[
                   Text(
@@ -76,9 +76,9 @@ class BatchEntryScreen extends ConsumerWidget {
                         elevation: 0,
                         backgroundColor: AppColors.sage,
                         foregroundColor: AppColors.bgElevated,
-                        padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                       child: Text('Save all (${pending.length})'),
@@ -163,10 +163,10 @@ class _BatchCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final seed = EntryFormSeed(tracker: tracker, effectiveDate: date);
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.bgElevated,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(14),
         boxShadow: surfaceShadow(elevated: true),
       ),
       child: Column(
@@ -176,7 +176,7 @@ class _BatchCard extends StatelessWidget {
             '${tracker.icon}  ${tracker.name}',
             style: AppTextStyles.title(AppColors.inkBlack),
           ),
-          const SizedBox(height: AppSpacing.md),
+          const SizedBox(height: AppSpacing.sm),
           DynamicEntryFields(
             seed: seed,
             showSectionHeaders: false,

@@ -43,8 +43,8 @@ class ChipSelector extends StatelessWidget {
             duration: AppDurations.short,
             curve: Curves.easeOutCubic,
             padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.md,
-              vertical: AppSpacing.sm,
+              horizontal: AppSpacing.sm + 2,
+              vertical: AppSpacing.xs + 2,
             ),
             decoration: BoxDecoration(
               color: selected ? AppColors.sageLight : AppColors.bgSurface,

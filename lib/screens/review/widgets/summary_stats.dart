@@ -16,10 +16,10 @@ class SummaryStats extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.bgSurface,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: AppColors.inkBlack.withValues(alpha: 0.04),
         ),
@@ -83,17 +83,17 @@ class _StatCell extends StatelessWidget {
           Text(
             value,
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 17,
               fontWeight: FontWeight.w600,
               color: AppColors.inkBlack,
               height: 1.1,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 3),
           Text(
             label,
             style: TextStyle(
-              fontSize: 11,
+              fontSize: 10,
               fontWeight: FontWeight.w500,
               color: AppColors.textTertiary,
               letterSpacing: 0.3,

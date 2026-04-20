@@ -33,10 +33,10 @@ class HeatmapGrid extends StatelessWidget {
       child: Stack(
         children: <Widget>[
           Container(
-            padding: const EdgeInsets.all(AppSpacing.lg),
+            padding: const EdgeInsets.all(AppSpacing.md),
             decoration: BoxDecoration(
               color: AppColors.bgSurface,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(10),
             ),
             child: LayoutBuilder(
               builder: (context, constraints) {
