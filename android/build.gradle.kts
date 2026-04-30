@@ -1,3 +1,5 @@
+import com.android.build.api.variant.LibraryAndroidComponentsExtension
+
 allprojects {
     repositories {
         google()
@@ -22,6 +24,9 @@ subprojects {
                     it.name == "setNamespace" && it.parameterCount == 1
                 }
             setNamespace?.invoke(androidExtension, "dev.isar.isar_flutter_libs")
+
+            extensions.findByType(LibraryAndroidComponentsExtension::class.java)
+                ?.finalizeDsl { ext -> ext.compileSdk = 36 }
         }
     }
 }
