@@ -69,7 +69,7 @@ Gentle, Balanced, Crisp, Firm, Minimal, None
 - `CatoThemeData` — colors + cornerRadius + shadowOpacity + motionScale + default IDs
 - `CatoTypography` — serif + sans font names
 - `CatoSoundPack` — paths for save/complete/milestone/tick/delete + descriptions
-- `CatoHapticProfile` — HapticType enum per interaction
+- `CatoHapticProfile` — `PatternBinding` per interaction (save / complete / milestone / tick / delete / error)
 
 ## Provider System
 
