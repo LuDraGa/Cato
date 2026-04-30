@@ -8,7 +8,7 @@ const _channel = MethodChannel('com.cato.cato/haptics');
 
 /// The 10 patterns shipped with the native engine.
 /// Stable ids MUST match `Patterns` object in HapticEngine.kt.
-/// See execution_docs/haptic_redesign.md §6 for recipes.
+/// See docs/execution-docs/haptic_redesign.md §6 for recipes.
 enum HapticPattern {
   ceramicTap('ceramic_tap'),
   glassBeadTick('glass_bead_tick'),

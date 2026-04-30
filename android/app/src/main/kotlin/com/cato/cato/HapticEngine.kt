@@ -13,7 +13,7 @@ import io.flutter.plugin.common.MethodChannel
 /**
  * Native haptic engine.
  *
- * Architecture (see execution_docs/haptic_redesign.md):
+ * Architecture (see docs/execution-docs/haptic_redesign.md):
  *   Interaction intent → Pattern → Runtime tier → Native effect
  *
  * Tier resolution per pattern (cached at init):

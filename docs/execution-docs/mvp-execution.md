@@ -1424,9 +1424,11 @@ In `main.dart`: `await Firebase.initializeApp(options: DefaultFirebaseOptions.cu
 
 ```
 dailytracker/
-├── product-dna.md
-├── mvp-execution.md
-├── planning/
+├── docs/
+│   ├── product-dna.md
+│   ├── planning/
+│   └── execution-docs/
+│       └── mvp-execution.md
 ├── lib/
 │   ├── main.dart
 │   ├── app/
@@ -1526,4 +1528,4 @@ flutter:
 
 **Acceptance Criteria:** ✅ All 9 MVP DoD items met (app runs on device, all trackers render, entries persist, calm home, review grid, backfill, max 2 notifs, batch mode, Design Contract visual language)
 
-**Release readiness:** See `/execution_docs/mvp-completion-and-release-readiness.md` for full audit
+**Release readiness:** See `/docs/execution-docs/mvp-completion-and-release-readiness.md` for full audit

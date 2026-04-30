@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,7 +29,11 @@ class SettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
-  int _aboutLongPresses = 0;
+  static const int _devPanelUnlockTapCount = 5;
+  static const Duration _devPanelMaxTapGap = Duration(milliseconds: 800);
+
+  int _aboutTaps = 0;
+  DateTime? _lastAboutTapAt;
   Timer? _aboutTimer;
 
   @override
@@ -200,22 +205,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               // ── About ──
               _Section(
                 title: 'About',
-                child: _SettingsRow(
-                  label: 'Version',
-                  trailingWidget: GestureDetector(
-                    onTap: _handleAboutLongPress,
-                    behavior: HitTestBehavior.opaque,
-                    child: Padding(
-                      padding:
-                          const EdgeInsets.symmetric(vertical: AppSpacing.xs),
-                      child: Text(
-                        'Cato v${packageInfo?.version ?? '0.1.0'}',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: AppColors.textSecondary,
-                            ),
-                      ),
-                    ),
-                  ),
+                child: _DevPanelVersionRow(
+                  version: packageInfo?.version ?? '0.1.0',
+                  activeTaps: _aboutTaps,
+                  requiredTaps: _devPanelUnlockTapCount,
+                  onTap: kReleaseMode ? null : _handleAboutTap,
                 ),
               ),
             ],
@@ -362,18 +356,25 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
-  Future<void> _handleAboutLongPress() async {
-    _aboutLongPresses += 1;
+  Future<void> _handleAboutTap() async {
+    final now = DateTime.now();
+    final lastTapAt = _lastAboutTapAt;
+    final continuesSequence = lastTapAt != null &&
+        now.difference(lastTapAt) <= _devPanelMaxTapGap;
+    final nextTapCount = continuesSequence ? _aboutTaps + 1 : 1;
+
+    _lastAboutTapAt = now;
     _aboutTimer?.cancel();
-    _aboutTimer = Timer(
-      const Duration(seconds: 3),
-      () => _aboutLongPresses = 0,
-    );
-    if (_aboutLongPresses >= 5) {
-      _aboutLongPresses = 0;
-      if (!mounted) {
-        return;
-      }
+
+    if (nextTapCount >= _devPanelUnlockTapCount) {
+      unawaited(HapticFeedback.mediumImpact());
+      setState(() {
+        _aboutTaps = 0;
+        _lastAboutTapAt = null;
+      });
+      _showDevPanelProgressSnackBar('Dev Panel unlocked');
+      await Future<void>.delayed(AppDurations.micro);
+      if (!mounted) return;
       await Navigator.of(context).push(
         MaterialPageRoute<void>(
           builder: (context) => Theme(
@@ -385,7 +386,50 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
         ),
       );
+      return;
     }
+
+    unawaited(HapticFeedback.selectionClick());
+    setState(() => _aboutTaps = nextTapCount);
+    final remaining = _devPanelUnlockTapCount - nextTapCount;
+    _showDevPanelProgressSnackBar(
+      '$remaining ${remaining == 1 ? 'tap' : 'taps'} away from Dev Panel',
+    );
+    _aboutTimer = Timer(_devPanelMaxTapGap, () {
+      if (!mounted) {
+        _aboutTaps = 0;
+        _lastAboutTapAt = null;
+        return;
+      }
+      setState(() {
+        _aboutTaps = 0;
+        _lastAboutTapAt = null;
+      });
+    });
+  }
+
+  void _showDevPanelProgressSnackBar(String message) {
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            style: TextStyle(
+              color: AppColors.bgElevated,
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          duration: const Duration(milliseconds: 900),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: AppColors.inkBlack.withValues(alpha: 0.92),
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppColors.cornerRadius),
+          ),
+        ),
+      );
   }
 }
 
@@ -473,6 +517,89 @@ class _SettingsRow extends StatelessWidget {
                   ),
                 ],
               ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DevPanelVersionRow extends StatelessWidget {
+  const _DevPanelVersionRow({
+    required this.version,
+    required this.activeTaps,
+    required this.requiredTaps,
+    required this.onTap,
+  });
+
+  final String version;
+  final int activeTaps;
+  final int requiredTaps;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final active = activeTaps > 0;
+    final progress = active ? activeTaps / requiredTaps : 0.0;
+
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedContainer(
+        duration: AppDurations.micro,
+        curve: Curves.easeOutCubic,
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm,
+        ),
+        decoration: BoxDecoration(
+          color: active
+              ? AppColors.sagePale.withValues(alpha: 0.72)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text(
+                    'Version',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ),
+                AnimatedSwitcher(
+                  duration: AppDurations.micro,
+                  child: Text(
+                    active
+                        ? '${requiredTaps - activeTaps} taps away'
+                        : 'Cato v$version',
+                    key: ValueKey<int>(activeTaps),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color:
+                              active ? AppColors.sage : AppColors.textSecondary,
+                          fontWeight:
+                              active ? FontWeight.w600 : FontWeight.w400,
+                        ),
+                  ),
+                ),
+              ],
+            ),
+            AnimatedContainer(
+              duration: AppDurations.micro,
+              curve: Curves.easeOutCubic,
+              height: active ? AppSpacing.xs : 0,
+              margin: EdgeInsets.only(top: active ? AppSpacing.sm : 0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(999),
+                child: LinearProgressIndicator(
+                  value: progress,
+                  minHeight: AppSpacing.xs,
+                  backgroundColor: AppColors.bgSurface,
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.sage),
+                ),
+              ),
+            ),
           ],
         ),
       ),

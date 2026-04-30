@@ -261,8 +261,8 @@
 - [x] Gradle warnings captured (Kotlin source/target obsolete, not critical)
 
 ### Documentation
-- [x] mvp-execution.md (design spec complete)
-- [x] product-dna.md (product vision documented)
+- [x] docs/execution-docs/mvp-execution.md (design spec complete)
+- [x] docs/product-dna.md (product vision documented)
 - [x] Execution docs for each phase (context preserved)
 - [x] CLAUDE.md (project instructions)
 - [ ] README with build/run instructions (optional for MVP)
@@ -320,9 +320,9 @@ flutter build apk --release
 
 ## File References
 
-- **Execution specs:** `/mvp-execution.md` (Sections 1-5, full Design Contract)
-- **Product vision:** `/product-dna.md`
-- **Phase execution docs:** `/execution_docs/` (frequency-enforcement, haptic_redesign, multi_daily_review_navigation, etc.)
+- **Execution specs:** `/docs/execution-docs/mvp-execution.md` (Sections 1-5, full Design Contract)
+- **Product vision:** `/docs/product-dna.md`
+- **Phase execution docs:** `/docs/execution-docs/` (frequency-enforcement, haptic_redesign, multi_daily_review_navigation, etc.)
 - **Test suites:** `/test/` (phase*_test.dart files)
 - **Core implementation:**
   - Home: `lib/screens/home/home_screen.dart` + widgets (completion_ring, daily_score_display, streak_badge)
