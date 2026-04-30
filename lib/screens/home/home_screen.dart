@@ -191,29 +191,55 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     builder: (context, loggedConstraints) {
                       final itemWidth =
                           (loggedConstraints.maxWidth - AppSpacing.sm) / 2;
-                      return Wrap(
-                        spacing: AppSpacing.sm,
-                        runSpacing: AppSpacing.sm,
-                        children: homeSections.logged.map((item) {
+                      final pills = <Widget>[];
+                      for (final item in homeSections.logged) {
+                        if (item.tracker.frequency == 'multi_daily') {
+                          for (final event in item.events) {
+                            pills.add(
+                              SizedBox(
+                                width: itemWidth,
+                                child: LoggedTrackerItem(
+                                  icon: item.tracker.icon,
+                                  label: item.tracker.name,
+                                  tertiary: item.deEmphasized,
+                                  onTap: () => showTrackerEntrySheet(
+                                    context: context,
+                                    tracker: item.tracker,
+                                    effectiveDate: today,
+                                    existingEvent: event,
+                                    isBackfill: event.isBackfill,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                        } else {
                           final event = item.primaryEvent;
-                          return SizedBox(
-                            width: itemWidth,
-                            child: LoggedTrackerItem(
-                              icon: item.tracker.icon,
-                              label: item.scoreLabel == null
-                                  ? item.tracker.name
-                                  : '${item.tracker.name} · ${item.scoreLabel}',
-                              tertiary: item.deEmphasized,
-                              onTap: () => showTrackerEntrySheet(
-                                context: context,
-                                tracker: item.tracker,
-                                effectiveDate: today,
-                                existingEvent: event,
-                                isBackfill: event?.isBackfill ?? false,
+                          pills.add(
+                            SizedBox(
+                              width: itemWidth,
+                              child: LoggedTrackerItem(
+                                icon: item.tracker.icon,
+                                label: item.scoreLabel == null
+                                    ? item.tracker.name
+                                    : '${item.tracker.name} · ${item.scoreLabel}',
+                                tertiary: item.deEmphasized,
+                                onTap: () => showTrackerEntrySheet(
+                                  context: context,
+                                  tracker: item.tracker,
+                                  effectiveDate: today,
+                                  existingEvent: event,
+                                  isBackfill: event?.isBackfill ?? false,
+                                ),
                               ),
                             ),
                           );
-                        }).toList(),
+                        }
+                      }
+                      return Wrap(
+                        spacing: AppSpacing.sm,
+                        runSpacing: AppSpacing.sm,
+                        children: pills,
                       );
                     },
                   ),
