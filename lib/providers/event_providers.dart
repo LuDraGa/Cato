@@ -177,7 +177,9 @@ final homeSectionsProvider = Provider<HomeSections>((ref) {
 
     if (events.isNotEmpty) {
       logged.add(item);
-      continue;
+      if (tracker.frequency != 'multi_daily') {
+        continue;
+      }
     }
 
     if (tracker.countsForCompletion) {

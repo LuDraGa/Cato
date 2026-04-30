@@ -20,6 +20,9 @@ Future<Event?> showTrackerEntrySheet({
   DateTime? effectiveDate,
   Event? existingEvent,
   bool isBackfill = false,
+  List<Event>? carouselEntries,
+  VoidCallback? onCarouselNext,
+  VoidCallback? onCarouselPrevious,
 }) {
   final seed = EntryFormSeed(
     tracker: tracker,
@@ -36,6 +39,9 @@ Future<Event?> showTrackerEntrySheet({
     builder: (sheetContext) => _EntrySheet(
       seed: seed,
       hostContext: context,
+      carouselEntries: carouselEntries,
+      onCarouselNext: onCarouselNext,
+      onCarouselPrevious: onCarouselPrevious,
     ),
   );
 }
@@ -44,10 +50,16 @@ class _EntrySheet extends ConsumerStatefulWidget {
   const _EntrySheet({
     required this.seed,
     required this.hostContext,
+    this.carouselEntries,
+    this.onCarouselNext,
+    this.onCarouselPrevious,
   });
 
   final EntryFormSeed seed;
   final BuildContext hostContext;
+  final List<Event>? carouselEntries;
+  final VoidCallback? onCarouselNext;
+  final VoidCallback? onCarouselPrevious;
 
   @override
   ConsumerState<_EntrySheet> createState() => _EntrySheetState();
@@ -93,14 +105,27 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
                 ),
                 boxShadow: surfaceShadow(elevated: true),
               ),
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.lg,
-                  AppSpacing.md,
-                  AppSpacing.lg,
-                  AppSpacing.lg,
-                ),
-                child: Column(
+              child: GestureDetector(
+                onVerticalDragEnd: (details) {
+                  if (details.velocity.pixelsPerSecond.dy > 300) {
+                    Navigator.of(context).pop();
+                  }
+                },
+                onHorizontalDragEnd: (details) {
+                  if (details.velocity.pixelsPerSecond.dx > 300 && widget.onCarouselPrevious != null) {
+                    widget.onCarouselPrevious!();
+                  } else if (details.velocity.pixelsPerSecond.dx < -300 && widget.onCarouselNext != null) {
+                    widget.onCarouselNext!();
+                  }
+                },
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.lg,
+                    AppSpacing.md,
+                    AppSpacing.lg,
+                    AppSpacing.lg,
+                  ),
+                  child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
@@ -115,10 +140,32 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.md),
-                    Text(
-                      '${widget.seed.tracker.icon}  ${widget.seed.tracker.name}',
-                      style: AppTextStyles.title(AppColors.inkBlack),
-                    ),
+                    if (widget.carouselEntries != null && widget.carouselEntries!.isNotEmpty) ...[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          IconButton(
+                            icon: const Icon(Icons.chevron_left),
+                            onPressed: widget.onCarouselPrevious,
+                            tooltip: 'Previous entry',
+                          ),
+                          Text(
+                            '${widget.seed.tracker.icon}  ${widget.seed.tracker.name}',
+                            style: AppTextStyles.title(AppColors.inkBlack),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.chevron_right),
+                            onPressed: widget.onCarouselNext,
+                            tooltip: 'Next entry',
+                          ),
+                        ],
+                      ),
+                    ] else ...[
+                      Text(
+                        '${widget.seed.tracker.icon}  ${widget.seed.tracker.name}',
+                        style: AppTextStyles.title(AppColors.inkBlack),
+                      ),
+                    ],
                     const SizedBox(height: AppSpacing.sm),
                     GestureDetector(
                       onTap: _editDateTime,
@@ -196,6 +243,7 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
                       ),
                     ],
                   ],
+                ),
                 ),
               ),
             ),

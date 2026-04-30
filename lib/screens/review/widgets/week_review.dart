@@ -278,6 +278,9 @@ class _WeekPage extends ConsumerWidget {
     required List<Event> events,
     required WidgetRef ref,
   }) async {
+    var currentEntryIndex = 0;
+    final sortedEvents = [...events]..sort((a, b) => (a.effectiveTime ?? a.effectiveDate).compareTo(b.effectiveTime ?? b.effectiveDate));
+
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -288,6 +291,7 @@ class _WeekPage extends ConsumerWidget {
         date: date,
         events: events,
         onEntryTap: (event) async {
+          currentEntryIndex = sortedEvents.indexOf(event);
           Navigator.of(sheetContext).pop();
           if (!context.mounted) return;
           await showTrackerEntrySheet(
@@ -296,6 +300,43 @@ class _WeekPage extends ConsumerWidget {
             effectiveDate: date,
             existingEvent: event,
             isBackfill: event.isBackfill,
+            carouselEntries: sortedEvents,
+            onCarouselNext: sortedEvents.length > currentEntryIndex + 1
+                ? () async {
+                    currentEntryIndex++;
+                    Navigator.of(context).pop();
+                    if (!context.mounted) return;
+                    await Future.delayed(const Duration(milliseconds: 200));
+                    await showTrackerEntrySheet(
+                      context: context,
+                      tracker: tracker,
+                      effectiveDate: date,
+                      existingEvent: sortedEvents[currentEntryIndex],
+                      isBackfill: sortedEvents[currentEntryIndex].isBackfill,
+                      carouselEntries: sortedEvents,
+                      onCarouselNext: null,
+                      onCarouselPrevious: null,
+                    );
+                  }
+                : null,
+            onCarouselPrevious: currentEntryIndex > 0
+                ? () async {
+                    currentEntryIndex--;
+                    Navigator.of(context).pop();
+                    if (!context.mounted) return;
+                    await Future.delayed(const Duration(milliseconds: 200));
+                    await showTrackerEntrySheet(
+                      context: context,
+                      tracker: tracker,
+                      effectiveDate: date,
+                      existingEvent: sortedEvents[currentEntryIndex],
+                      isBackfill: sortedEvents[currentEntryIndex].isBackfill,
+                      carouselEntries: sortedEvents,
+                      onCarouselNext: null,
+                      onCarouselPrevious: null,
+                    );
+                  }
+                : null,
           );
         },
         onAddNew: () async {

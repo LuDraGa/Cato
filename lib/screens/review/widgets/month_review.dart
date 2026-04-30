@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/theme.dart';
+import '../../../models/event.dart';
 import '../../../models/tracker.dart';
 import '../../../providers/core_providers.dart';
 import '../../../providers/event_providers.dart';
 import '../../../providers/heatmap_providers.dart';
 import '../../../providers/review_providers.dart';
 import '../../entry/entry_sheet.dart';
+import 'day_entry_summary.dart';
 import 'heatmap_grid.dart';
 import 'summary_stats.dart';
 
@@ -206,18 +208,109 @@ class _MonthPage extends ConsumerWidget {
                   .read(eventRepositoryProvider)
                   .getEventsForTrackerAndDate(tracker.uid, date);
               if (!context.mounted) return;
-              await showTrackerEntrySheet(
-                context: context,
-                tracker: tracker,
-                effectiveDate: date,
-                existingEvent: events.isEmpty ? null : events.first,
-                isBackfill: events.isEmpty,
-              );
+              if (tracker.frequency == 'multi_daily' && events.isNotEmpty) {
+                await _showDayEntrySummary(
+                  context: context,
+                  tracker: tracker,
+                  date: date,
+                  events: events,
+                  ref: ref,
+                );
+              } else {
+                await showTrackerEntrySheet(
+                  context: context,
+                  tracker: tracker,
+                  effectiveDate: date,
+                  existingEvent: events.isEmpty ? null : events.first,
+                  isBackfill: events.isEmpty,
+                );
+              }
             },
           ),
           const SizedBox(height: AppSpacing.lg),
           SummaryStats(summary: summary),
         ],
+      ),
+    );
+  }
+
+  Future<void> _showDayEntrySummary({
+    required BuildContext context,
+    required Tracker tracker,
+    required DateTime date,
+    required List<Event> events,
+    required WidgetRef ref,
+  }) async {
+    var currentEntryIndex = 0;
+    final sortedEvents = [...events]..sort((a, b) => (a.effectiveTime ?? a.effectiveDate).compareTo(b.effectiveTime ?? b.effectiveDate));
+
+    return showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: AppColors.inkBlack.withValues(alpha: 0.15),
+      builder: (sheetContext) => DayEntrySummary(
+        tracker: tracker,
+        date: date,
+        events: events,
+        onEntryTap: (event) async {
+          currentEntryIndex = sortedEvents.indexOf(event);
+          Navigator.of(sheetContext).pop();
+          if (!context.mounted) return;
+          await showTrackerEntrySheet(
+            context: context,
+            tracker: tracker,
+            effectiveDate: date,
+            existingEvent: event,
+            isBackfill: event.isBackfill,
+            carouselEntries: sortedEvents,
+            onCarouselNext: sortedEvents.length > currentEntryIndex + 1
+                ? () async {
+                    currentEntryIndex++;
+                    Navigator.of(context).pop();
+                    if (!context.mounted) return;
+                    await Future.delayed(const Duration(milliseconds: 200));
+                    await showTrackerEntrySheet(
+                      context: context,
+                      tracker: tracker,
+                      effectiveDate: date,
+                      existingEvent: sortedEvents[currentEntryIndex],
+                      isBackfill: sortedEvents[currentEntryIndex].isBackfill,
+                      carouselEntries: sortedEvents,
+                      onCarouselNext: null,
+                      onCarouselPrevious: null,
+                    );
+                  }
+                : null,
+            onCarouselPrevious: currentEntryIndex > 0
+                ? () async {
+                    currentEntryIndex--;
+                    Navigator.of(context).pop();
+                    if (!context.mounted) return;
+                    await Future.delayed(const Duration(milliseconds: 200));
+                    await showTrackerEntrySheet(
+                      context: context,
+                      tracker: tracker,
+                      effectiveDate: date,
+                      existingEvent: sortedEvents[currentEntryIndex],
+                      isBackfill: sortedEvents[currentEntryIndex].isBackfill,
+                      carouselEntries: sortedEvents,
+                      onCarouselNext: null,
+                      onCarouselPrevious: null,
+                    );
+                  }
+                : null,
+          );
+        },
+        onAddNew: () async {
+          Navigator.of(sheetContext).pop();
+          if (!context.mounted) return;
+          await showTrackerEntrySheet(
+            context: context,
+            tracker: tracker,
+            effectiveDate: date,
+          );
+        },
       ),
     );
   }
