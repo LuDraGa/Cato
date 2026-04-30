@@ -99,7 +99,7 @@
     "domainUid": "domain-fitness",
     "name": "Workout",
     "icon": "🏋",
-    "frequency": "daily",
+    "frequency": "multi_daily",
     "promptTimes": ["18:00"],
     "inputSchema": [
       {"key": "type", "label": "Type", "type": "single_select", "configJson": "{\"options\":[\"Cardio\",\"Strength\",\"Mixed\"]}", "isRequired": true, "sortOrder": 0},
@@ -124,7 +124,7 @@
     "domainUid": "domain-rest",
     "name": "Sleep",
     "icon": "😴",
-    "frequency": "daily",
+    "frequency": "multi_daily",
     "promptTimes": ["07:30"],
     "inputSchema": [
       {"key": "quality", "label": "Quality", "type": "score", "configJson": "{\"min\":1,\"max\":10,\"step\":1}", "isRequired": true, "sortOrder": 0},
@@ -149,7 +149,7 @@
     "domainUid": "domain-mind",
     "name": "Mood",
     "icon": "😊",
-    "frequency": "daily",
+    "frequency": "multi_daily",
     "promptTimes": ["15:00"],
     "inputSchema": [
       {"key": "feeling", "label": "Right now I feel like...", "type": "single_select", "configJson": "{\"options\":[\"Starting something new\",\"Finishing a chore\",\"Scrolling mindlessly\",\"Going outside\",\"Working out\",\"Talking to someone\",\"Being alone\",\"Creating something\"]}", "isRequired": true, "sortOrder": 0},
