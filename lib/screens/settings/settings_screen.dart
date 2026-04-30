@@ -203,7 +203,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 child: _SettingsRow(
                   label: 'Version',
                   trailingWidget: GestureDetector(
-                    onLongPress: _handleAboutLongPress,
+                    onTap: _handleAboutLongPress,
                     behavior: HitTestBehavior.opaque,
                     child: Padding(
                       padding:
