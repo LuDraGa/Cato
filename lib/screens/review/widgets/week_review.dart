@@ -4,12 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/date_utils.dart';
 import '../../../app/theme.dart';
+import '../../../models/event.dart';
 import '../../../models/tracker.dart';
 import '../../../providers/core_providers.dart';
 import '../../../providers/event_providers.dart';
 import '../../../providers/heatmap_providers.dart';
 import '../../../providers/review_providers.dart';
 import '../../entry/entry_sheet.dart';
+import 'day_entry_summary.dart';
 import 'summary_stats.dart';
 
 /// Swipeable week view showing 7-day detail cards for a single tracker.
@@ -238,14 +240,24 @@ class _WeekPage extends ConsumerWidget {
                                 .getEventsForTrackerAndDate(
                                     tracker.uid, date);
                             if (!context.mounted) return;
-                            await showTrackerEntrySheet(
-                              context: context,
-                              tracker: tracker,
-                              effectiveDate: date,
-                              existingEvent:
-                                  events.isEmpty ? null : events.first,
-                              isBackfill: events.isEmpty,
-                            );
+                            if (tracker.frequency == 'multi_daily' && events.isNotEmpty) {
+                              await _showDayEntrySummary(
+                                context: context,
+                                tracker: tracker,
+                                date: date,
+                                events: events,
+                                ref: ref,
+                              );
+                            } else {
+                              await showTrackerEntrySheet(
+                                context: context,
+                                tracker: tracker,
+                                effectiveDate: date,
+                                existingEvent:
+                                    events.isEmpty ? null : events.first,
+                                isBackfill: events.isEmpty,
+                              );
+                            }
                           },
                   ),
                 ),
@@ -255,6 +267,46 @@ class _WeekPage extends ConsumerWidget {
           const SizedBox(height: AppSpacing.xl),
           SummaryStats(summary: summary),
         ],
+      ),
+    );
+  }
+
+  Future<void> _showDayEntrySummary({
+    required BuildContext context,
+    required Tracker tracker,
+    required DateTime date,
+    required List<Event> events,
+    required WidgetRef ref,
+  }) async {
+    return showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: AppColors.inkBlack.withValues(alpha: 0.15),
+      builder: (sheetContext) => DayEntrySummary(
+        tracker: tracker,
+        date: date,
+        events: events,
+        onEntryTap: (event) async {
+          Navigator.of(sheetContext).pop();
+          if (!context.mounted) return;
+          await showTrackerEntrySheet(
+            context: context,
+            tracker: tracker,
+            effectiveDate: date,
+            existingEvent: event,
+            isBackfill: event.isBackfill,
+          );
+        },
+        onAddNew: () async {
+          Navigator.of(sheetContext).pop();
+          if (!context.mounted) return;
+          await showTrackerEntrySheet(
+            context: context,
+            tracker: tracker,
+            effectiveDate: date,
+          );
+        },
       ),
     );
   }
