@@ -1512,12 +1512,18 @@ flutter:
 
 # Completion Tracker
 
-| Phase | Description | Priority | Status |
-|---|---|---|---|
-| Phase 1 | Scaffold | MUST-HAVE | [ ] |
-| Phase 2 | Data layer + seed | MUST-HAVE | [ ] |
-| Phase 3 | Home + entry | MUST-HAVE | [ ] |
-| Phase 4 | Ring + score + streaks | MUST-HAVE | [ ] |
-| Phase 5 | Review + heatmap | MUST-HAVE | [ ] |
-| Phase 6 | Batch + notifications | MUST-HAVE | [ ] |
-| Phase 7 | Dev panel + polish | DEFERRABLE | [ ] |
+**Updated:** 2026-05-01 | **Status:** All phases complete, RC1 ready for release
+
+| Phase | Description | Priority | Status | Date Completed |
+|---|---|---|---|---|
+| Phase 1 | Scaffold | MUST-HAVE | ✅ COMPLETE | 2026-04-18 |
+| Phase 2 | Data layer + seed | MUST-HAVE | ✅ COMPLETE | 2026-04-18 |
+| Phase 3 | Home + entry | MUST-HAVE | ✅ COMPLETE | 2026-04-19 |
+| Phase 4 | Ring + score + streaks | MUST-HAVE | ✅ COMPLETE | 2026-04-30 |
+| Phase 5 | Review + heatmap | MUST-HAVE | ✅ COMPLETE | 2026-04-29 |
+| Phase 6 | Batch + notifications | MUST-HAVE | ✅ COMPLETE | 2026-04-26 |
+| Phase 7 | Dev panel + polish | DEFERRABLE | ✅ COMPLETE | 2026-04-25 |
+
+**Acceptance Criteria:** ✅ All 9 MVP DoD items met (app runs on device, all trackers render, entries persist, calm home, review grid, backfill, max 2 notifs, batch mode, Design Contract visual language)
+
+**Release readiness:** See `/execution_docs/mvp-completion-and-release-readiness.md` for full audit

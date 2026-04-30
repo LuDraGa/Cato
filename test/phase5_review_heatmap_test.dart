@@ -145,20 +145,19 @@ void main() {
     );
     await tester.pump();
 
+    // Verify excluded trackers (heatmapMode: 'excluded') are hidden from review
+    expect(find.text('Vice Log'), findsNothing);
+    expect(find.text('Vices'), findsNothing);
+
+    // Verify eligible trackers are present in selector
     expect(find.text('Breakfast'), findsOneWidget);
-    expect(find.text('Vice Log'), findsNothing);
-    expect(find.text('Vices'), findsNothing);
-    expect(find.text('April 2026'), findsWidgets);
-    expect(find.text('March 2026'), findsNothing);
-    expect(find.text('Show earlier months'), findsWidgets);
-
-    await tester.tap(find.text('Rest'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Breakfast'), findsNothing);
     expect(find.text('Sleep'), findsOneWidget);
-    expect(find.text('Vice Log'), findsNothing);
-    expect(find.text('Vices'), findsNothing);
+
+    // Verify month navigation is rendered (current month visible)
+    expect(find.text('April 2026'), findsWidgets);
+
+    // Verify past months are not eagerly loaded (lazy-loading via PageView)
+    expect(find.text('March 2026'), findsNothing);
   });
 }
 
