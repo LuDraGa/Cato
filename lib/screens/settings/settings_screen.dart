@@ -1241,6 +1241,7 @@ class _HapticPickerSheetState extends State<_HapticPickerSheet> {
       HapticInteraction.milestone => 'Mile',
       HapticInteraction.tick => 'Tick',
       HapticInteraction.delete => 'Del',
+      HapticInteraction.error => 'Err',
     };
   }
 }
