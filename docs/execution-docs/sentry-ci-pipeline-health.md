@@ -24,3 +24,6 @@ repeated failures in the same job group together.
 
 The workflow uses `SENTRY_DSN` only. `SENTRY_AUTH_TOKEN` is still only required
 for release/debug-file uploads.
+
+The Sentry reporting step is best-effort and uses `continue-on-error` so a
+telemetry submission problem does not mask the original CI failure.

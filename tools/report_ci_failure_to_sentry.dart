@@ -179,7 +179,7 @@ class _SentryDsn {
       publicKey: publicKey,
       envelopeUri: uri.replace(
         userInfo: '',
-        pathSegments: <String>[...pathPrefix, 'api', projectId, 'envelope'],
+        pathSegments: <String>[...pathPrefix, 'api', projectId, 'envelope', ''],
         query: null,
         fragment: null,
       ),
