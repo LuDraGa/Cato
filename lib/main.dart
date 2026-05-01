@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,6 +43,11 @@ Future<void> main() async {
   final soundService = SoundService();
   await soundService.warmUp();
   const sentryDsn = String.fromEnvironment('SENTRY_DSN');
+  const sentryEnvironment = String.fromEnvironment(
+    'SENTRY_ENVIRONMENT',
+    defaultValue: kReleaseMode ? 'production' : 'development',
+  );
+  const sentryRelease = String.fromEnvironment('SENTRY_RELEASE');
 
   final app = ProviderScope(
     overrides: <Override>[
@@ -62,8 +68,16 @@ Future<void> main() async {
   await SentryFlutter.init(
     (options) {
       options.dsn = sentryDsn;
-      options.environment = 'development';
+      options.environment = sentryEnvironment;
+      if (sentryRelease.isNotEmpty) {
+        options.release = sentryRelease;
+      }
+      options.sendDefaultPii = false;
       options.tracesSampleRate = 0.0;
+      options.attachScreenshot = false;
+      options.attachViewHierarchy = false;
+      options.reportViewHierarchyIdentifiers = false;
+      options.enableUserInteractionTracing = false;
     },
     appRunner: () => runApp(app),
   );

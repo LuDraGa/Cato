@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../app/date_utils.dart';
 import '../../app/haptics/cato_haptic_profile.dart';
 import '../../app/haptics/haptic_registry.dart';
+import '../../app/release_links.dart';
 import '../../app/sounds/sound_registry.dart';
 import '../../app/theme.dart';
 import '../../services/sound_service.dart';
@@ -205,11 +207,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               // ── About ──
               _Section(
                 title: 'About',
-                child: _DevPanelVersionRow(
-                  version: packageInfo?.version ?? '0.1.0',
-                  activeTaps: _aboutTaps,
-                  requiredTaps: _devPanelUnlockTapCount,
-                  onTap: kReleaseMode ? null : _handleAboutTap,
+                child: Column(
+                  children: <Widget>[
+                    _SettingsRow(
+                      label: 'Privacy Policy',
+                      onTap: _openPrivacyPolicy,
+                    ),
+                    _DevPanelVersionRow(
+                      version: packageInfo?.version ?? '0.1.0',
+                      activeTaps: _aboutTaps,
+                      requiredTaps: _devPanelUnlockTapCount,
+                      onTap: kReleaseMode ? null : _handleAboutTap,
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -244,6 +254,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         .read(appConfigRepositoryProvider)
         .setValue('sound_enabled', '$value');
     await ref.read(notificationServiceProvider).syncSchedules();
+  }
+
+  Future<void> _openPrivacyPolicy() async {
+    final uri = Uri.parse(privacyPolicyUrl);
+    final launched = await launchUrl(
+      uri,
+      mode: LaunchMode.externalApplication,
+    );
+    if (!launched && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not open privacy policy')),
+      );
+    }
   }
 
   void _showThemePicker(BuildContext context, WidgetRef ref) {

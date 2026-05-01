@@ -307,6 +307,7 @@ class _WeekPage extends ConsumerWidget {
                     Navigator.of(context).pop();
                     if (!context.mounted) return;
                     await Future.delayed(const Duration(milliseconds: 200));
+                    if (!context.mounted) return;
                     await showTrackerEntrySheet(
                       context: context,
                       tracker: tracker,
@@ -325,6 +326,7 @@ class _WeekPage extends ConsumerWidget {
                     Navigator.of(context).pop();
                     if (!context.mounted) return;
                     await Future.delayed(const Duration(milliseconds: 200));
+                    if (!context.mounted) return;
                     await showTrackerEntrySheet(
                       context: context,
                       tracker: tracker,
@@ -439,7 +441,7 @@ class _DayCard extends StatelessWidget {
               Container(
                 width: 4,
                 height: 4,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   shape: BoxShape.circle,
                   color: Colors.transparent,
                 ),

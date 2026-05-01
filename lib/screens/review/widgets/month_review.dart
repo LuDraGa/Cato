@@ -270,6 +270,7 @@ class _MonthPage extends ConsumerWidget {
                     Navigator.of(context).pop();
                     if (!context.mounted) return;
                     await Future.delayed(const Duration(milliseconds: 200));
+                    if (!context.mounted) return;
                     await showTrackerEntrySheet(
                       context: context,
                       tracker: tracker,
@@ -288,6 +289,7 @@ class _MonthPage extends ConsumerWidget {
                     Navigator.of(context).pop();
                     if (!context.mounted) return;
                     await Future.delayed(const Duration(milliseconds: 200));
+                    if (!context.mounted) return;
                     await showTrackerEntrySheet(
                       context: context,
                       tracker: tracker,

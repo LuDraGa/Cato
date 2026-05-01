@@ -236,14 +236,20 @@ final trendDataProvider =
   final lines = <TrendLine>[];
   for (final uid in request.trackerUids) {
     final tracker = trackerMap[uid];
-    if (tracker == null) continue;
+    if (tracker == null) {
+      continue;
+    }
 
     final byDate = <DateTime, List<Event>>{};
     for (final e in events) {
-      if (e.trackerUid != uid) continue;
+      if (e.trackerUid != uid) {
+        continue;
+      }
       final date = normalizeDate(e.effectiveDate);
       if (date.isBefore(normalizeDate(request.start)) ||
-          date.isAfter(normalizeDate(request.end))) continue;
+          date.isAfter(normalizeDate(request.end))) {
+        continue;
+      }
       byDate.putIfAbsent(date, () => <Event>[]).add(e);
     }
 
@@ -313,10 +319,14 @@ final multiTrackerSummaryProvider =
   return reviewTrackers.map((tracker) {
     final byDate = <DateTime, List<Event>>{};
     for (final e in events) {
-      if (e.trackerUid != tracker.uid) continue;
+      if (e.trackerUid != tracker.uid) {
+        continue;
+      }
       final date = normalizeDate(e.effectiveDate);
       if (date.isBefore(normalizeDate(start)) ||
-          date.isAfter(currentDate)) continue;
+          date.isAfter(currentDate)) {
+        continue;
+      }
       byDate.putIfAbsent(date, () => <Event>[]).add(e);
     }
 
@@ -325,7 +335,9 @@ final multiTrackerSummaryProvider =
     for (final date in enumerateDays(start, currentDate)) {
       final d = normalizeDate(date);
       final dayEvents = byDate[d] ?? const <Event>[];
-      if (dayEvents.isNotEmpty) completedDays++;
+      if (dayEvents.isNotEmpty) {
+        completedDays++;
+      }
 
       double? value;
       if (dayEvents.isNotEmpty && tracker.scoreKey != null) {

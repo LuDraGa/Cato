@@ -64,11 +64,10 @@ class TrendChart extends ConsumerWidget {
               itemBuilder: (context, index) {
                 final t = otherTrackers[index];
                 final selected = comparisonUids.contains(t.uid);
-                final color = _lineColorForIndex(
-                  allUids.indexOf(t.uid) == -1
-                      ? index + 1
-                      : allUids.indexOf(t.uid),
-                );
+                final colorIndex = allUids.contains(t.uid)
+                    ? allUids.indexOf(t.uid)
+                    : index + 1;
+                final color = _lineColorForIndex(colorIndex);
                 return GestureDetector(
                   onTap: () {
                     final current =
@@ -252,7 +251,7 @@ class _TrendPainter extends CustomPainter {
           fillPath,
           Paint()
             ..shader = ui.Gradient.linear(
-              Offset(0, 0),
+              const Offset(0, 0),
               Offset(0, size.height),
               [
                 color.withValues(alpha: 0.12),

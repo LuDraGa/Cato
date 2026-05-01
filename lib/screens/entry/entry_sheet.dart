@@ -272,12 +272,18 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
       }
       controller.setEffectiveDate(date);
     }
+    if (!mounted) {
+      return;
+    }
     final time = await showTimePicker(
       context: context,
       initialTime: current.headerTime,
       helpText: 'Entry time',
       initialEntryMode: TimePickerEntryMode.dialOnly,
     );
+    if (!mounted) {
+      return;
+    }
     if (time != null) {
       controller.setHeaderTime(time);
     }
