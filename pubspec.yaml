@@ -86,5 +86,6 @@ flutter_native_splash:
 sentry:
   upload_debug_symbols: true
   upload_source_maps: true
+  upload_sources: true
   project: flutter
   org: waldobear-labs

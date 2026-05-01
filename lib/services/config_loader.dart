@@ -10,12 +10,13 @@ import '../models/tracker.dart';
 import '../repositories/app_config_repository.dart';
 import '../repositories/domain_repository.dart';
 import '../repositories/tracker_repository.dart';
+import 'sentry_monitor.dart';
 
 class ConfigLoader {
   ConfigLoader(this._isar)
-      : _domainRepository = DomainRepository(_isar),
-        _trackerRepository = TrackerRepository(_isar),
-        _appConfigRepository = AppConfigRepository(_isar);
+    : _domainRepository = DomainRepository(_isar),
+      _trackerRepository = TrackerRepository(_isar),
+      _appConfigRepository = AppConfigRepository(_isar);
 
   final Isar _isar;
   final DomainRepository _domainRepository;
@@ -28,8 +29,11 @@ class ConfigLoader {
       defaultValue: false,
     );
     if (seeded) {
+      await SentryMonitor.breadcrumb('config seed skipped', category: 'config');
       return;
     }
+
+    await SentryMonitor.breadcrumb('config seed started', category: 'config');
 
     final domainsJson = await rootBundle.loadString(
       'assets/tracker_configs/domains.json',
@@ -53,10 +57,22 @@ class ConfigLoader {
     await _appConfigRepository.setValue('day_end_time', '21:30');
     await _appConfigRepository.setValue('sound_enabled', 'false');
     await _appConfigRepository.setValue('sound_prompt_shown', 'false');
-    await _appConfigRepository.setValue('notification_permission_requested', 'false');
+    await _appConfigRepository.setValue(
+      'notification_permission_requested',
+      'false',
+    );
+    await SentryMonitor.breadcrumb(
+      'config seed completed',
+      category: 'config',
+      data: <String, dynamic>{
+        'domains_count': domains.length,
+        'trackers_count': trackers.length,
+      },
+    );
   }
 
   Future<void> resetAndReseed() async {
+    await SentryMonitor.breadcrumb('config reset started', category: 'config');
     await _isar.writeTxn(() async {
       await _isar.events.clear();
       await _isar.trackers.clear();
@@ -64,5 +80,9 @@ class ConfigLoader {
       await _isar.appConfigs.clear();
     });
     await seedIfNeeded();
+    await SentryMonitor.breadcrumb(
+      'config reset completed',
+      category: 'config',
+    );
   }
 }

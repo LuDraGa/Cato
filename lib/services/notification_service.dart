@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:isar/isar.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -14,6 +15,7 @@ import '../models/tracker.dart';
 import '../repositories/app_config_repository.dart';
 import '../repositories/event_repository.dart';
 import '../repositories/tracker_repository.dart';
+import 'sentry_monitor.dart';
 
 enum AppActionType { openHome, openBatch, openEntrySheet }
 
@@ -134,9 +136,9 @@ List<NotificationPlan> buildNotificationPlans({
 
 class NotificationService {
   NotificationService(Isar isar)
-      : _appConfigRepository = AppConfigRepository(isar),
-        _trackerRepository = TrackerRepository(isar),
-        _eventRepository = EventRepository(isar);
+    : _appConfigRepository = AppConfigRepository(isar),
+      _trackerRepository = TrackerRepository(isar),
+      _eventRepository = EventRepository(isar);
 
   static const int middayNotificationId = 101;
   static const int dayEndNotificationId = 202;
@@ -159,11 +161,21 @@ class NotificationService {
   Stream<PendingAppAction> get actions => _actionsController.stream;
 
   Future<PendingAppAction?> initialize() async {
+    await SentryMonitor.breadcrumb(
+      'notification initialization started',
+      category: 'notifications',
+    );
     tz.initializeTimeZones();
     String timezoneName = 'UTC';
     try {
       timezoneName = await FlutterTimezone.getLocalTimezone();
-    } catch (_) {
+    } catch (error, stackTrace) {
+      await SentryMonitor.captureException(
+        error,
+        stackTrace,
+        area: 'notifications.timezone',
+        level: SentryLevel.warning,
+      );
       // Notifications should degrade gracefully if platform timezone lookup fails.
     }
     tz.setLocalLocation(_resolveTimezoneLocation(timezoneName));
@@ -186,8 +198,18 @@ class NotificationService {
     final launchDetails = await _plugin.getNotificationAppLaunchDetails();
     final launchPayload = launchDetails?.notificationResponse?.payload;
     if (launchPayload == null) {
+      await SentryMonitor.breadcrumb(
+        'notification initialization completed',
+        category: 'notifications',
+        data: <String, dynamic>{'launch_payload': false},
+      );
       return null;
     }
+    await SentryMonitor.breadcrumb(
+      'notification launch action received',
+      category: 'notifications',
+      data: <String, dynamic>{'launch_payload': true},
+    );
     return PendingAppAction.fromPayload(launchPayload);
   }
 
@@ -220,17 +242,30 @@ class NotificationService {
 
     final androidPlugin = _plugin
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
+          AndroidFlutterLocalNotificationsPlugin
+        >();
     final granted = await androidPlugin?.requestNotificationsPermission();
-    await _appConfigRepository.setValue('notification_permission_requested', 'true');
+    await _appConfigRepository.setValue(
+      'notification_permission_requested',
+      'true',
+    );
     if (granted == false) {
       await _appConfigRepository.setValue('notifications_enabled', 'false');
       await cancelAll();
     }
+    await SentryMonitor.breadcrumb(
+      'notification permission requested',
+      category: 'notifications',
+      data: <String, dynamic>{'granted': granted},
+    );
   }
 
   Future<void> cancelAll() async {
     await _plugin.cancelAll();
+    await SentryMonitor.breadcrumb(
+      'notifications cancelled',
+      category: 'notifications',
+    );
   }
 
   Future<void> syncSchedules() async {
@@ -240,22 +275,34 @@ class NotificationService {
     );
     if (!enabled) {
       await cancelAll();
+      await SentryMonitor.breadcrumb(
+        'notification sync skipped',
+        category: 'notifications',
+        data: <String, dynamic>{'reason': 'disabled'},
+      );
       return;
     }
 
     final androidPlugin = _plugin
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
+          AndroidFlutterLocalNotificationsPlugin
+        >();
     final allowed = await androidPlugin?.areNotificationsEnabled() ?? true;
     if (!allowed) {
+      await SentryMonitor.breadcrumb(
+        'notification sync skipped',
+        category: 'notifications',
+        data: <String, dynamic>{'reason': 'permission_denied'},
+      );
       return;
     }
 
     await cancelAll();
 
     final trackers = await _trackerRepository.getAllActive();
-    final completionTrackers =
-        trackers.where((tracker) => tracker.countsForCompletion).toList();
+    final completionTrackers = trackers
+        .where((tracker) => tracker.countsForCompletion)
+        .toList();
     final today = normalizeDate(DateTime.now());
     final events = await _eventRepository.getEventsForDate(today);
 
@@ -289,6 +336,15 @@ class NotificationService {
         playSound: isDayEnd && soundEnabled,
       );
     }
+    await SentryMonitor.breadcrumb(
+      'notification sync completed',
+      category: 'notifications',
+      data: <String, dynamic>{
+        'scheduled_count': plans.length,
+        'completion_tracker_count': completionTrackers.length,
+        'sound_enabled': soundEnabled,
+      },
+    );
   }
 
   Future<void> updateNotificationsEnabled(bool enabled) async {
@@ -331,7 +387,9 @@ class NotificationService {
         ? (playSound ? _dayEndChimeChannelId : _dayEndSilentChannelId)
         : _middayChannelId;
     final channelName = isDayEnd
-        ? (playSound ? 'Cato Day-end Reflection Chime' : 'Cato Day-end Reflection')
+        ? (playSound
+              ? 'Cato Day-end Reflection Chime'
+              : 'Cato Day-end Reflection')
         : 'Cato Midday Check-in';
     final channelDescription = isDayEnd
         ? 'Day-end reflection reminders for Cato'

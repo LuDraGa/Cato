@@ -6,17 +6,40 @@
 
 ## Release Build Defines
 
-Use build-time defines so secrets and release URLs do not live in source:
+Use `.env` and `make build-production` so secrets and release URLs do not live in source:
 
 ```bash
-flutter build appbundle --release \
-  --dart-define=PRIVACY_POLICY_URL="https://gist.github.com/abhiroopprasad/TODO" \
-  --dart-define=SENTRY_DSN="TODO" \
-  --dart-define=SENTRY_ENVIRONMENT="production" \
-  --dart-define=SENTRY_RELEASE="cato@0.1.0+1"
+cp .env.example .env
+# Fill in SENTRY_DSN and PRIVACY_POLICY_URL.
+make build-production
 ```
 
-If Sentry is not ready, omit `SENTRY_DSN`. The app will run without Sentry.
+`tools/build_production_appbundle.sh` always emits split debug information to
+`build/sentry-debug-info` unless `SPLIT_DEBUG_INFO_DIR` is overridden.
+
+## GitHub Actions
+
+The repo has two release-support workflows:
+
+- `ci.yml` runs formatting, analyze, and tests on PRs and `main`. On `main`
+  pushes and manual dispatches, it also builds a release AAB artifact.
+- `sync-privacy-policy.yml` updates the public Privacy Policy Gist when
+  `docs/privacy-policy.md` changes on `main`.
+
+Required repository secrets:
+
+| Secret | Purpose |
+|---|---|
+| `SENTRY_DSN` | Enables Sentry in CI release builds |
+| `SENTRY_AUTH_TOKEN` | Lets `sentry_dart_plugin` upload debug files/source context |
+| `PRIVACY_POLICY_URL` | Injects the Play-visible privacy policy URL into the app |
+| `GIST_TOKEN` | Lets GitHub Actions patch the Privacy Policy Gist |
+ 
+The privacy policy Gist is
+`https://gist.github.com/LuDraGa/a934812433d827796414ee475d189628`.
+
+The first Sentry CI integration uploads debug files/source context only. Sentry's
+GitHub app can be connected later for issue linking and commit association.
 
 ## Firebase Decision
 

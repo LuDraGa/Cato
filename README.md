@@ -19,23 +19,37 @@ flutter run
 
 ## Release Build
 
+Create a local `.env` from `.env.example`, then fill in the production values.
+The local `.env` is ignored by git.
+
 Build the Play Store app bundle:
 
 ```bash
-flutter build appbundle --release \
-  --dart-define=PRIVACY_POLICY_URL="https://gist.github.com/abhiroopprasad/TODO" \
-  --dart-define=SENTRY_DSN="TODO" \
-  --dart-define=SENTRY_ENVIRONMENT="production" \
-  --dart-define=SENTRY_RELEASE="cato@0.1.0+1"
+make build-production
 ```
-
-If Sentry is not ready for a release, omit `SENTRY_DSN`.
 
 The generated app bundle is written to:
 
 ```text
 build/app/outputs/bundle/release/app-release.aab
 ```
+
+## GitHub Actions
+
+CI runs on pull requests and `main` pushes. Pushes to `main` also build a
+release AAB artifact and upload Sentry debug files when secrets are configured.
+
+Required repository secrets:
+
+```text
+SENTRY_DSN
+SENTRY_AUTH_TOKEN
+PRIVACY_POLICY_URL
+GIST_TOKEN
+```
+
+`GIST_TOKEN` needs permission to write Gists so the privacy policy workflow can
+sync `docs/privacy-policy.md` to the public Privacy Policy Gist.
 
 ## Branding Assets
 
@@ -62,4 +76,3 @@ Replace the placeholder SVGs before final Play Store branding.
 - `docs/execution-docs/play-store-data-safety-answers.md`
 - `docs/execution-docs/play-store-listing-copy.md`
 - `docs/execution-docs/release-operations.md`
-

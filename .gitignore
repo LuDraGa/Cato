@@ -54,3 +54,4 @@ windows/
 
 sentry.properties
 sentry-wizard
+.env

@@ -1,0 +1,87 @@
+name: Sync Privacy Policy Gist
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - docs/privacy-policy.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  GIST_ID: a934812433d827796414ee475d189628
+  GIST_FILENAME: privacy-policy.md
+  POLICY_PATH: docs/privacy-policy.md
+
+jobs:
+  sync:
+    name: Update privacy policy gist
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Validate gist token
+        env:
+          GIST_TOKEN: ${{ secrets.GIST_TOKEN }}
+        run: |
+          if [[ -z "$GIST_TOKEN" ]]; then
+            echo "::error::GIST_TOKEN secret is required to update the privacy policy gist"
+            exit 1
+          fi
+
+      - name: Patch gist file
+        env:
+          GIST_TOKEN: ${{ secrets.GIST_TOKEN }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import sys
+          import urllib.error
+          import urllib.request
+
+          gist_id = os.environ["GIST_ID"]
+          filename = os.environ["GIST_FILENAME"]
+          policy_path = os.environ["POLICY_PATH"]
+          token = os.environ["GIST_TOKEN"]
+
+          with open(policy_path, "r", encoding="utf-8") as policy_file:
+              content = policy_file.read()
+
+          payload = {
+              "description": "Cato Privacy Policy",
+              "files": {
+                  filename: {
+                      "content": content,
+                  },
+              },
+          }
+
+          request = urllib.request.Request(
+              f"https://api.github.com/gists/{gist_id}",
+              data=json.dumps(payload).encode("utf-8"),
+              method="PATCH",
+              headers={
+                  "Accept": "application/vnd.github+json",
+                  "Authorization": f"Bearer {token}",
+                  "Content-Type": "application/json",
+                  "X-GitHub-Api-Version": "2022-11-28",
+              },
+          )
+
+          try:
+              with urllib.request.urlopen(request) as response:
+                  body = json.loads(response.read().decode("utf-8"))
+          except urllib.error.HTTPError as error:
+              sys.stderr.write(error.read().decode("utf-8"))
+              raise
+
+          html_url = body.get("html_url", "")
+          print(f"Updated {filename} in gist {gist_id}: {html_url}")
+          PY
+

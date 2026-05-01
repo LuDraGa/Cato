@@ -13,6 +13,7 @@ import '../../models/tracker.dart';
 import '../../providers/core_providers.dart';
 import '../../providers/entry_form_provider.dart';
 import '../../repositories/event_repository.dart';
+import '../../services/sentry_monitor.dart';
 
 Future<Event?> showTrackerEntrySheet({
   required BuildContext context,
@@ -112,9 +113,11 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
                   }
                 },
                 onHorizontalDragEnd: (details) {
-                  if (details.velocity.pixelsPerSecond.dx > 300 && widget.onCarouselPrevious != null) {
+                  if (details.velocity.pixelsPerSecond.dx > 300 &&
+                      widget.onCarouselPrevious != null) {
                     widget.onCarouselPrevious!();
-                  } else if (details.velocity.pixelsPerSecond.dx < -300 && widget.onCarouselNext != null) {
+                  } else if (details.velocity.pixelsPerSecond.dx < -300 &&
+                      widget.onCarouselNext != null) {
                     widget.onCarouselNext!();
                   }
                 },
@@ -126,124 +129,121 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
                     AppSpacing.lg,
                   ),
                   child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Center(
-                      child: Container(
-                        width: 36,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: AppColors.bgSurface,
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    if (widget.carouselEntries != null && widget.carouselEntries!.isNotEmpty) ...[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          IconButton(
-                            icon: const Icon(Icons.chevron_left),
-                            onPressed: widget.onCarouselPrevious,
-                            tooltip: 'Previous entry',
-                          ),
-                          Text(
-                            '${widget.seed.tracker.icon}  ${widget.seed.tracker.name}',
-                            style: AppTextStyles.title(AppColors.inkBlack),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.chevron_right),
-                            onPressed: widget.onCarouselNext,
-                            tooltip: 'Next entry',
-                          ),
-                        ],
-                      ),
-                    ] else ...[
-                      Text(
-                        '${widget.seed.tracker.icon}  ${widget.seed.tracker.name}',
-                        style: AppTextStyles.title(AppColors.inkBlack),
-                      ),
-                    ],
-                    const SizedBox(height: AppSpacing.sm),
-                    GestureDetector(
-                      onTap: _editDateTime,
-                      child: Row(
-                        children: <Widget>[
-                          Text(
-                            '${MaterialLocalizations.of(context).formatMediumDate(formState.effectiveDate)} · ${MaterialLocalizations.of(context).formatTimeOfDay(formState.headerTime)}',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                          const SizedBox(width: AppSpacing.xs),
-                          const Text('✎'),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    DynamicEntryFields(seed: widget.seed),
-                    const SizedBox(height: AppSpacing.md),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: formState.isSaving ? null : _save,
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          backgroundColor: AppColors.sage,
-                          foregroundColor: AppColors.bgElevated,
-                          padding: const EdgeInsets.symmetric(
-                            vertical: AppSpacing.md,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Center(
+                        child: Container(
+                          width: 36,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: AppColors.bgSurface,
+                            borderRadius: BorderRadius.circular(999),
                           ),
                         ),
-                        child: Text(
-                          formState.isSaving ? 'Saving…' : 'Save',
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      if (widget.carouselEntries != null &&
+                          widget.carouselEntries!.isNotEmpty) ...[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            IconButton(
+                              icon: const Icon(Icons.chevron_left),
+                              onPressed: widget.onCarouselPrevious,
+                              tooltip: 'Previous entry',
+                            ),
+                            Text(
+                              '${widget.seed.tracker.icon}  ${widget.seed.tracker.name}',
+                              style: AppTextStyles.title(AppColors.inkBlack),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.chevron_right),
+                              onPressed: widget.onCarouselNext,
+                              tooltip: 'Next entry',
+                            ),
+                          ],
+                        ),
+                      ] else ...[
+                        Text(
+                          '${widget.seed.tracker.icon}  ${widget.seed.tracker.name}',
+                          style: AppTextStyles.title(AppColors.inkBlack),
+                        ),
+                      ],
+                      const SizedBox(height: AppSpacing.sm),
+                      GestureDetector(
+                        onTap: _editDateTime,
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              '${MaterialLocalizations.of(context).formatMediumDate(formState.effectiveDate)} · ${MaterialLocalizations.of(context).formatTimeOfDay(formState.headerTime)}',
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                            const SizedBox(width: AppSpacing.xs),
+                            const Text('✎'),
+                          ],
                         ),
                       ),
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    FutureBuilder<Event?>(
-                      future: _previousEventFuture,
-                      builder: (context, snapshot) {
-                        final previous = snapshot.data;
-                        if (previous == null) {
-                          return const SizedBox.shrink();
-                        }
-                        return Center(
-                          child: TextButton(
-                            onPressed: _isApplyingPrevious
-                                ? null
-                                : () => _applyPrevious(controller, previous),
-                            child: Text(
-                              _isApplyingPrevious
-                                  ? 'Applying yesterday…'
-                                  : 'Same as yesterday',
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: AppColors.textSecondary,
-                                  ),
+                      const SizedBox(height: AppSpacing.lg),
+                      DynamicEntryFields(seed: widget.seed),
+                      const SizedBox(height: AppSpacing.md),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: formState.isSaving ? null : _save,
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            backgroundColor: AppColors.sage,
+                            foregroundColor: AppColors.bgElevated,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: AppSpacing.md,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                        );
-                      },
-                    ),
-                    if (widget.seed.existingEvent != null) ...[
-                      const SizedBox(height: AppSpacing.sm),
-                      Center(
-                        child: TextButton(
-                          onPressed: _confirmDelete,
-                          child: Text(
-                            'Delete entry',
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: AppColors.error,
-                                ),
-                          ),
+                          child: Text(formState.isSaving ? 'Saving…' : 'Save'),
                         ),
                       ),
+                      const SizedBox(height: AppSpacing.sm),
+                      FutureBuilder<Event?>(
+                        future: _previousEventFuture,
+                        builder: (context, snapshot) {
+                          final previous = snapshot.data;
+                          if (previous == null) {
+                            return const SizedBox.shrink();
+                          }
+                          return Center(
+                            child: TextButton(
+                              onPressed: _isApplyingPrevious
+                                  ? null
+                                  : () => _applyPrevious(controller, previous),
+                              child: Text(
+                                _isApplyingPrevious
+                                    ? 'Applying yesterday…'
+                                    : 'Same as yesterday',
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(color: AppColors.textSecondary),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      if (widget.seed.existingEvent != null) ...[
+                        const SizedBox(height: AppSpacing.sm),
+                        Center(
+                          child: TextButton(
+                            onPressed: _confirmDelete,
+                            child: Text(
+                              'Delete entry',
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(color: AppColors.error),
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
-                  ],
-                ),
+                  ),
                 ),
               ),
             ),
@@ -348,6 +348,15 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
     homeFeedback.beginSave();
 
     try {
+      await SentryMonitor.breadcrumb(
+        'entry save started',
+        category: 'entry',
+        data: <String, dynamic>{
+          'editing': widget.seed.existingEvent != null,
+          'backfill': widget.seed.isBackfill,
+          'frequency': widget.seed.tracker.frequency,
+        },
+      );
       final formState = ref.read(entryFormProvider(widget.seed));
       final eventRepository = ref.read(eventRepositoryProvider);
       final appConfigRepository = ref.read(appConfigRepositoryProvider);
@@ -357,10 +366,14 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
       final draft = EventDraft(
         tracker: widget.seed.tracker,
         effectiveDate: formState.effectiveDate,
-        effectiveTime: mergeDateAndTime(formState.effectiveDate, formState.headerTime),
+        effectiveTime: mergeDateAndTime(
+          formState.effectiveDate,
+          formState.headerTime,
+        ),
         metrics: controller.buildMetrics(),
         clearedKeys: controller.buildClearedKeys(),
-        isBackfill: widget.seed.isBackfill ||
+        isBackfill:
+            widget.seed.isBackfill ||
             widget.seed.existingEvent?.isBackfill == true ||
             !isSameDay(formState.effectiveDate, normalizeDate(DateTime.now())),
         existingEvent: widget.seed.existingEvent,
@@ -373,6 +386,15 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
       }
       ref.read(pendingSaveEventProvider.notifier).state = savedEvent;
       unawaited(notificationService.syncSchedules());
+      await SentryMonitor.breadcrumb(
+        'entry save completed',
+        category: 'entry',
+        data: <String, dynamic>{
+          'editing': widget.seed.existingEvent != null,
+          'backfill': draft.isBackfill,
+          'frequency': widget.seed.tracker.frequency,
+        },
+      );
 
       if (!mounted) {
         homeFeedback.cancelSave();
@@ -386,8 +408,18 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
         ),
       );
       await _maybeShowSoundPrompt(appConfigRepository, eventRepository);
-    } catch (_) {
+    } catch (error, stackTrace) {
       homeFeedback.cancelSave();
+      await SentryMonitor.captureException(
+        error,
+        stackTrace,
+        area: 'entry.save',
+        data: <String, dynamic>{
+          'editing': widget.seed.existingEvent != null,
+          'backfill': widget.seed.isBackfill,
+          'frequency': widget.seed.tracker.frequency,
+        },
+      );
       rethrow;
     }
   }
@@ -398,9 +430,7 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
       barrierColor: AppColors.inkBlack.withValues(alpha: 0.15),
       builder: (ctx) => Dialog(
         backgroundColor: AppColors.bgElevated,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         elevation: 0,
         child: Container(
           padding: const EdgeInsets.fromLTRB(
@@ -424,10 +454,7 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
               const SizedBox(height: AppSpacing.sm),
               Text(
                 'This cannot be undone.',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppColors.textSecondary,
-                ),
+                style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
               ),
               const SizedBox(height: AppSpacing.lg),
               SizedBox(
@@ -466,7 +493,36 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
     );
     if (confirmed != true || !mounted) return;
     final eventRepository = ref.read(eventRepositoryProvider);
-    await eventRepository.deleteEvent(widget.seed.existingEvent!);
+    try {
+      await SentryMonitor.breadcrumb(
+        'entry delete started',
+        category: 'entry',
+        data: <String, dynamic>{
+          'frequency': widget.seed.tracker.frequency,
+          'backfill': widget.seed.existingEvent?.isBackfill == true,
+        },
+      );
+      await eventRepository.deleteEvent(widget.seed.existingEvent!);
+      await SentryMonitor.breadcrumb(
+        'entry delete completed',
+        category: 'entry',
+        data: <String, dynamic>{
+          'frequency': widget.seed.tracker.frequency,
+          'backfill': widget.seed.existingEvent?.isBackfill == true,
+        },
+      );
+    } catch (error, stackTrace) {
+      await SentryMonitor.captureException(
+        error,
+        stackTrace,
+        area: 'entry.delete',
+        data: <String, dynamic>{
+          'frequency': widget.seed.tracker.frequency,
+          'backfill': widget.seed.existingEvent?.isBackfill == true,
+        },
+      );
+      rethrow;
+    }
     if (!mounted) return;
     Navigator.of(context).pop(null);
   }
@@ -495,15 +551,15 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
         duration: const Duration(seconds: 6),
         content: Row(
           children: <Widget>[
-            const Expanded(
-              child: Text('Add subtle feedback to your entries?'),
-            ),
+            const Expanded(child: Text('Add subtle feedback to your entries?')),
             TextButton(
               onPressed: () async {
                 await appConfigRepository.setValue('sound_enabled', 'true');
                 await ref.read(notificationServiceProvider).syncSchedules();
                 if (widget.hostContext.mounted) {
-                  ScaffoldMessenger.of(widget.hostContext).hideCurrentSnackBar();
+                  ScaffoldMessenger.of(
+                    widget.hostContext,
+                  ).hideCurrentSnackBar();
                 }
               },
               child: const Text('Enable'),
@@ -511,7 +567,9 @@ class _EntrySheetState extends ConsumerState<_EntrySheet> {
             TextButton(
               onPressed: () {
                 if (widget.hostContext.mounted) {
-                  ScaffoldMessenger.of(widget.hostContext).hideCurrentSnackBar();
+                  ScaffoldMessenger.of(
+                    widget.hostContext,
+                  ).hideCurrentSnackBar();
                 }
               },
               child: const Text('Not now'),

@@ -13,6 +13,7 @@ import '../../providers/entry_form_provider.dart';
 import '../../providers/event_providers.dart';
 import '../../providers/tracker_providers.dart';
 import '../../repositories/event_repository.dart';
+import '../../services/sentry_monitor.dart';
 
 class BatchEntryScreen extends ConsumerWidget {
   const BatchEntryScreen({super.key});
@@ -39,8 +40,8 @@ class BatchEntryScreen extends ConsumerWidget {
                 child: Text(
                   'Everything for today is already logged.',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
+                    color: AppColors.textSecondary,
+                  ),
                 ),
               )
             : ListView(
@@ -54,29 +55,29 @@ class BatchEntryScreen extends ConsumerWidget {
                   Text(
                     '${pending.length} not yet logged',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   ...pending.map(
                     (tracker) => Padding(
                       padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                      child: _BatchCard(
-                        tracker: tracker,
-                        date: currentDate,
-                      ),
+                      child: _BatchCard(tracker: tracker, date: currentDate),
                     ),
                   ),
                   const SizedBox(height: AppSpacing.md),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () => _saveAll(context, ref, pending, currentDate),
+                      onPressed: () =>
+                          _saveAll(context, ref, pending, currentDate),
                       style: ElevatedButton.styleFrom(
                         elevation: 0,
                         backgroundColor: AppColors.sage,
                         foregroundColor: AppColors.bgElevated,
-                        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: AppSpacing.md,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -107,7 +108,9 @@ class BatchEntryScreen extends ConsumerWidget {
       final controller = ref.read(entryFormProvider(seed).notifier);
       if (!controller.validate()) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Finish ${tracker.name.toLowerCase()} first.')),
+          SnackBar(
+            content: Text('Finish ${tracker.name.toLowerCase()} first.'),
+          ),
         );
         return;
       }
@@ -116,7 +119,10 @@ class BatchEntryScreen extends ConsumerWidget {
         EventDraft(
           tracker: tracker,
           effectiveDate: state.effectiveDate,
-          effectiveTime: mergeDateAndTime(state.effectiveDate, state.headerTime),
+          effectiveTime: mergeDateAndTime(
+            state.effectiveDate,
+            state.headerTime,
+          ),
           metrics: controller.buildMetrics(),
           clearedKeys: controller.buildClearedKeys(),
           isBackfill: false,
@@ -126,6 +132,11 @@ class BatchEntryScreen extends ConsumerWidget {
 
     homeFeedback.beginSave();
     try {
+      await SentryMonitor.breadcrumb(
+        'batch save started',
+        category: 'entry',
+        data: <String, dynamic>{'draft_count': drafts.length},
+      );
       await eventRepository.saveBatch(drafts);
       await HapticFeedback.mediumImpact();
       if (soundEnabled) {
@@ -143,18 +154,26 @@ class BatchEntryScreen extends ConsumerWidget {
       } else {
         homeFeedback.cancelSave();
       }
-    } catch (_) {
+      await SentryMonitor.breadcrumb(
+        'batch save completed',
+        category: 'entry',
+        data: <String, dynamic>{'draft_count': drafts.length},
+      );
+    } catch (error, stackTrace) {
       homeFeedback.cancelSave();
+      await SentryMonitor.captureException(
+        error,
+        stackTrace,
+        area: 'entry.batch_save',
+        data: <String, dynamic>{'draft_count': drafts.length},
+      );
       rethrow;
     }
   }
 }
 
 class _BatchCard extends StatelessWidget {
-  const _BatchCard({
-    required this.tracker,
-    required this.date,
-  });
+  const _BatchCard({required this.tracker, required this.date});
 
   final Tracker tracker;
   final DateTime date;
@@ -177,10 +196,7 @@ class _BatchCard extends StatelessWidget {
             style: AppTextStyles.title(AppColors.inkBlack),
           ),
           const SizedBox(height: AppSpacing.sm),
-          DynamicEntryFields(
-            seed: seed,
-            showSectionHeaders: false,
-          ),
+          DynamicEntryFields(seed: seed, showSectionHeaders: false),
         ],
       ),
     );

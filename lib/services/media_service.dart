@@ -8,6 +8,8 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'sentry_monitor.dart';
+
 class MediaPickResult {
   const MediaPickResult({
     required this.relativePath,
@@ -30,52 +32,88 @@ class MediaService {
     required String trackerUid,
     required DateTime effectiveDate,
   }) async {
-    final permissionResult = await _ensurePermission(source);
-    if (permissionResult != null) {
-      return permissionResult;
-    }
-
-    final file = await _picker.pickImage(
-      source: source,
-      imageQuality: 85,
-      maxWidth: 1280,
-      maxHeight: 1280,
-      requestFullMetadata: false,
+    await SentryMonitor.breadcrumb(
+      'media pick started',
+      category: 'media',
+      data: <String, dynamic>{'source': source.name},
     );
-    if (file == null) {
-      return null;
+    try {
+      final permissionResult = await _ensurePermission(source);
+      if (permissionResult != null) {
+        await SentryMonitor.breadcrumb(
+          'media pick blocked by permission',
+          category: 'media',
+          data: <String, dynamic>{
+            'source': source.name,
+            'needs_settings': permissionResult.needsSettings,
+          },
+        );
+        return permissionResult;
+      }
+
+      final file = await _picker.pickImage(
+        source: source,
+        imageQuality: 85,
+        maxWidth: 1280,
+        maxHeight: 1280,
+        requestFullMetadata: false,
+      );
+      if (file == null) {
+        await SentryMonitor.breadcrumb(
+          'media pick cancelled',
+          category: 'media',
+          data: <String, dynamic>{'source': source.name},
+        );
+        return null;
+      }
+
+      final directory = await getApplicationDocumentsDirectory();
+      final mediaDirectory = Directory(path.join(directory.path, 'media'));
+      if (!mediaDirectory.existsSync()) {
+        mediaDirectory.createSync(recursive: true);
+      }
+
+      final filename =
+          '${trackerUid}_${DateFormat('yyyyMMdd').format(effectiveDate)}_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final targetPath = path.join(mediaDirectory.path, filename);
+
+      final compressed = await FlutterImageCompress.compressAndGetFile(
+        file.path,
+        targetPath,
+        quality: 85,
+        minWidth: 1280,
+        minHeight: 1280,
+        format: CompressFormat.jpeg,
+      );
+
+      final finalFile = compressed ?? XFile(file.path);
+      if (compressed == null) {
+        await File(file.path).copy(targetPath);
+      }
+
+      final relativePath = path.join('media', path.basename(finalFile.path));
+      if (path.basename(finalFile.path) != filename) {
+        await File(finalFile.path).copy(targetPath);
+      }
+
+      await SentryMonitor.breadcrumb(
+        'media pick completed',
+        category: 'media',
+        data: <String, dynamic>{
+          'source': source.name,
+          'compressed': compressed != null,
+        },
+      );
+      return MediaPickResult(relativePath: relativePath);
+    } catch (error, stackTrace) {
+      await SentryMonitor.captureException(
+        error,
+        stackTrace,
+        area: 'media.pick_and_store',
+        data: <String, dynamic>{'source': source.name},
+      );
+      rethrow;
     }
-
-    final directory = await getApplicationDocumentsDirectory();
-    final mediaDirectory = Directory(path.join(directory.path, 'media'));
-    if (!mediaDirectory.existsSync()) {
-      mediaDirectory.createSync(recursive: true);
-    }
-
-    final filename =
-        '${trackerUid}_${DateFormat('yyyyMMdd').format(effectiveDate)}_${DateTime.now().millisecondsSinceEpoch}.jpg';
-    final targetPath = path.join(mediaDirectory.path, filename);
-
-    final compressed = await FlutterImageCompress.compressAndGetFile(
-      file.path,
-      targetPath,
-      quality: 85,
-      minWidth: 1280,
-      minHeight: 1280,
-      format: CompressFormat.jpeg,
-    );
-
-    final finalFile = compressed ?? XFile(file.path);
-    if (compressed == null) {
-      await File(file.path).copy(targetPath);
-    }
-
-    final relativePath = path.join('media', path.basename(finalFile.path));
-    if (path.basename(finalFile.path) != filename) {
-      await File(finalFile.path).copy(targetPath);
-    }
-
-    return MediaPickResult(relativePath: relativePath);
   }
 
   Future<File?> resolveFile(String? relativePath) async {
