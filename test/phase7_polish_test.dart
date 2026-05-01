@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -11,16 +10,13 @@ import 'package:cato/models/tracker.dart';
 import 'package:cato/providers/entry_form_provider.dart';
 import 'package:cato/repositories/event_repository.dart';
 
+import 'helpers/isar_test_helper.dart';
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUpAll(() async {
-    await Isar.initializeIsarCore(
-      libraries: <Abi, String>{
-        Abi.macosArm64: _isarCoreLibraryPath(),
-        Abi.macosX64: _isarCoreLibraryPath(),
-      },
-    );
+    await initializeIsarForTests();
   });
 
   group('Phase 7 polish', () {
@@ -101,14 +97,6 @@ void main() {
       },
     );
   });
-}
-
-String _isarCoreLibraryPath() {
-  final home = Platform.environment['HOME'];
-  if (home == null || home.isEmpty) {
-    throw StateError('HOME is missing for Isar test initialization.');
-  }
-  return '$home/.pub-cache/hosted/pub.dev/isar_flutter_libs-3.1.0+1/macos/libisar.dylib';
 }
 
 Tracker _trackerWithFields() {
