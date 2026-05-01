@@ -45,55 +45,58 @@ void main() {
       expect(controller.buildClearedKeys(), <String>{'notes'});
     });
 
-    test('event repository preserves unknown metrics while clearing current ones',
-        () async {
-      final directory =
-          await Directory.systemTemp.createTemp('cato_phase2_data_layer_');
-      final isar = await Isar.open(
-        <CollectionSchema<dynamic>>[EventSchema],
-        directory: directory.path,
-        name: 'phase2_data_layer_test',
-        inspector: false,
-      );
-      addTearDown(() async {
-        await isar.close(deleteFromDisk: true);
-        if (directory.existsSync()) {
-          await directory.delete(recursive: true);
-        }
-      });
+    test(
+      'event repository preserves unknown metrics while clearing current ones',
+      () async {
+        final directory = await Directory.systemTemp.createTemp(
+          'cato_phase2_data_layer_',
+        );
+        final isar = await Isar.open(
+          <CollectionSchema<dynamic>>[EventSchema],
+          directory: directory.path,
+          name: 'phase2_data_layer_test',
+          inspector: false,
+        );
+        addTearDown(() async {
+          await isar.close(deleteFromDisk: true);
+          if (directory.existsSync()) {
+            await directory.delete(recursive: true);
+          }
+        });
 
-      final repository = EventRepository(isar);
-      final tracker = _trackerWithFields();
-      final originalEvent = _eventWithMetrics(<MetricValue>[
-        _intMetric('score', 7),
-        _stringMetric('notes', 'Before'),
-        _stringMetric('legacy_notes', 'Keep me'),
-      ]);
+        final repository = EventRepository(isar);
+        final tracker = _trackerWithFields();
+        final originalEvent = _eventWithMetrics(<MetricValue>[
+          _intMetric('score', 7),
+          _stringMetric('notes', 'Before'),
+          _stringMetric('legacy_notes', 'Keep me'),
+        ]);
 
-      await isar.writeTxn(() async {
-        await isar.events.put(originalEvent);
-      });
+        await isar.writeTxn(() async {
+          await isar.events.put(originalEvent);
+        });
 
-      final saved = await repository.upsertDraft(
-        EventDraft(
-          tracker: tracker,
-          effectiveDate: DateTime(2026, 4, 18),
-          effectiveTime: DateTime(2026, 4, 18, 20),
-          metrics: <MetricValue>[_intMetric('score', 8)],
-          clearedKeys: <String>{'notes'},
-          isBackfill: false,
-          existingEvent: originalEvent,
-        ),
-      );
+        final saved = await repository.upsertDraft(
+          EventDraft(
+            tracker: tracker,
+            effectiveDate: DateTime(2026, 4, 18),
+            effectiveTime: DateTime(2026, 4, 18, 20),
+            metrics: <MetricValue>[_intMetric('score', 8)],
+            clearedKeys: <String>{'notes'},
+            isBackfill: false,
+            existingEvent: originalEvent,
+          ),
+        );
 
-      final metricsByKey = <String, MetricValue>{
-        for (final metric in saved.metrics) metric.inputKey: metric,
-      };
+        final metricsByKey = <String, MetricValue>{
+          for (final metric in saved.metrics) metric.inputKey: metric,
+        };
 
-      expect(metricsByKey['score']?.intValue, 8);
-      expect(metricsByKey.containsKey('notes'), isFalse);
-      expect(metricsByKey['legacy_notes']?.stringValue, 'Keep me');
-    });
+        expect(metricsByKey['score']?.intValue, 8);
+        expect(metricsByKey.containsKey('notes'), isFalse);
+        expect(metricsByKey['legacy_notes']?.stringValue, 'Keep me');
+      },
+    );
   });
 }
 

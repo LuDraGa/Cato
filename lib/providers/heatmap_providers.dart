@@ -25,35 +25,39 @@ class HeatmapRequest {
   }
 
   @override
-  int get hashCode => Object.hash(tracker.uid, start.year, start.month, end.year, end.month);
+  int get hashCode =>
+      Object.hash(tracker.uid, start.year, start.month, end.year, end.month);
 }
 
 final reviewMonthCountProvider = StateProvider<int>((ref) => 3);
 
 final heatmapDataProvider =
     Provider.family<Map<DateTime, double?>, HeatmapRequest>((ref, request) {
-  final events = ref.watch(allEventsProvider).valueOrNull ?? const <Event>[];
-  final relevant = events.where((event) {
-    if (event.trackerUid != request.tracker.uid) {
-      return false;
-    }
-    final date = normalizeDate(event.effectiveDate);
-    return !date.isBefore(normalizeDate(request.start)) &&
-        !date.isAfter(normalizeDate(request.end));
-  }).toList();
+      final events =
+          ref.watch(allEventsProvider).valueOrNull ?? const <Event>[];
+      final relevant = events.where((event) {
+        if (event.trackerUid != request.tracker.uid) {
+          return false;
+        }
+        final date = normalizeDate(event.effectiveDate);
+        return !date.isBefore(normalizeDate(request.start)) &&
+            !date.isAfter(normalizeDate(request.end));
+      }).toList();
 
-  final byDate = <DateTime, List<Event>>{};
-  for (final event in relevant) {
-    byDate.putIfAbsent(normalizeDate(event.effectiveDate), () => <Event>[]).add(event);
-  }
+      final byDate = <DateTime, List<Event>>{};
+      for (final event in relevant) {
+        byDate
+            .putIfAbsent(normalizeDate(event.effectiveDate), () => <Event>[])
+            .add(event);
+      }
 
-  final result = <DateTime, double?>{};
-  for (final date in enumerateDays(request.start, request.end)) {
-    final dayEvents = byDate[normalizeDate(date)] ?? const <Event>[];
-    result[normalizeDate(date)] = _valueFor(request.tracker, dayEvents);
-  }
-  return result;
-});
+      final result = <DateTime, double?>{};
+      for (final date in enumerateDays(request.start, request.end)) {
+        final dayEvents = byDate[normalizeDate(date)] ?? const <Event>[];
+        result[normalizeDate(date)] = _valueFor(request.tracker, dayEvents);
+      }
+      return result;
+    });
 
 double? _valueFor(Tracker tracker, List<Event> events) {
   if (tracker.heatmapMode == 'excluded') {
@@ -69,10 +73,12 @@ double? _valueFor(Tracker tracker, List<Event> events) {
     return 0;
   }
   final values = events
-      .map((event) => event.metrics.firstWhere(
-            (metric) => metric.inputKey == tracker.scoreKey,
-            orElse: () => event.metrics.first,
-          ))
+      .map(
+        (event) => event.metrics.firstWhere(
+          (metric) => metric.inputKey == tracker.scoreKey,
+          orElse: () => event.metrics.first,
+        ),
+      )
       .map((metric) => metric.intValue)
       .whereType<int>()
       .toList();

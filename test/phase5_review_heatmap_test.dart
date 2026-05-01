@@ -16,40 +16,42 @@ import 'package:cato/screens/review/review_screen.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('heatmap data averages normalized scores for score_average trackers',
-      () async {
-    final tracker = _tracker(
-      uid: 'tracker-lunch',
-      domainUid: 'domain-nutrition',
-      name: 'Lunch',
-      heatmapMode: 'score_average',
-      scoreContribution: true,
-      scoreKey: 'score',
-    );
-    final request = HeatmapRequest(
-      tracker: tracker,
-      start: DateTime(2026, 4, 1),
-      end: DateTime(2026, 4, 3),
-    );
+  test(
+    'heatmap data averages normalized scores for score_average trackers',
+    () async {
+      final tracker = _tracker(
+        uid: 'tracker-lunch',
+        domainUid: 'domain-nutrition',
+        name: 'Lunch',
+        heatmapMode: 'score_average',
+        scoreContribution: true,
+        scoreKey: 'score',
+      );
+      final request = HeatmapRequest(
+        tracker: tracker,
+        start: DateTime(2026, 4, 1),
+        end: DateTime(2026, 4, 3),
+      );
 
-    final container = ProviderContainer(
-      overrides: <Override>[
-        allEventsProvider.overrideWith(
-          (ref) => Stream.value(<Event>[
-            _event('tracker-lunch', 'score', 7, date: DateTime(2026, 4, 2)),
-            _event('tracker-lunch', 'score', 9, date: DateTime(2026, 4, 2)),
-          ]),
-        ),
-      ],
-    );
-    addTearDown(container.dispose);
+      final container = ProviderContainer(
+        overrides: <Override>[
+          allEventsProvider.overrideWith(
+            (ref) => Stream.value(<Event>[
+              _event('tracker-lunch', 'score', 7, date: DateTime(2026, 4, 2)),
+              _event('tracker-lunch', 'score', 9, date: DateTime(2026, 4, 2)),
+            ]),
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
 
-    await container.read(allEventsProvider.future);
-    final data = container.read(heatmapDataProvider(request));
-    expect(data[DateTime(2026, 4, 1)], isNull);
-    expect(data[DateTime(2026, 4, 2)], closeTo(0.7777, 0.0001));
-    expect(data[DateTime(2026, 4, 3)], isNull);
-  });
+      await container.read(allEventsProvider.future);
+      final data = container.read(heatmapDataProvider(request));
+      expect(data[DateTime(2026, 4, 1)], isNull);
+      expect(data[DateTime(2026, 4, 2)], closeTo(0.7777, 0.0001));
+      expect(data[DateTime(2026, 4, 3)], isNull);
+    },
+  );
 
   test('heatmap data uses binary presence mode', () async {
     final tracker = _tracker(
@@ -84,81 +86,92 @@ void main() {
   });
 
   testWidgets(
-      'review screen hides excluded trackers, removes dead-end domains, and keeps review shallower by default',
-      (tester) async {
-    final breakfast = _tracker(
-      uid: 'tracker-breakfast',
-      domainUid: 'domain-nutrition',
-      name: 'Breakfast',
-      heatmapMode: 'score_average',
-      scoreContribution: true,
-      scoreKey: 'score',
-      sortOrder: 0,
-    );
-    final sleep = _tracker(
-      uid: 'tracker-sleep',
-      domainUid: 'domain-rest',
-      name: 'Sleep',
-      heatmapMode: 'score_average',
-      scoreContribution: true,
-      scoreKey: 'quality',
-      sortOrder: 1,
-    );
-    final viceLog = _tracker(
-      uid: 'tracker-vices',
-      domainUid: 'domain-vices',
-      name: 'Vice Log',
-      heatmapMode: 'excluded',
-      scoreContribution: false,
-      scoreKey: null,
-      sortOrder: 2,
-    );
+    'review screen hides excluded trackers, removes dead-end domains, and keeps review shallower by default',
+    (tester) async {
+      final breakfast = _tracker(
+        uid: 'tracker-breakfast',
+        domainUid: 'domain-nutrition',
+        name: 'Breakfast',
+        heatmapMode: 'score_average',
+        scoreContribution: true,
+        scoreKey: 'score',
+        sortOrder: 0,
+      );
+      final sleep = _tracker(
+        uid: 'tracker-sleep',
+        domainUid: 'domain-rest',
+        name: 'Sleep',
+        heatmapMode: 'score_average',
+        scoreContribution: true,
+        scoreKey: 'quality',
+        sortOrder: 1,
+      );
+      final viceLog = _tracker(
+        uid: 'tracker-vices',
+        domainUid: 'domain-vices',
+        name: 'Vice Log',
+        heatmapMode: 'excluded',
+        scoreContribution: false,
+        scoreKey: null,
+        sortOrder: 2,
+      );
 
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: <Override>[
-          currentDateProvider.overrideWith(
-            (ref) => _FixedDateController(DateTime(2026, 4, 18)),
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: <Override>[
+            currentDateProvider.overrideWith(
+              (ref) => _FixedDateController(DateTime(2026, 4, 18)),
+            ),
+            allDomainsProvider.overrideWith(
+              (ref) => Stream.value(<Domain>[
+                _domain('domain-nutrition', 'Nutrition', 0),
+                _domain('domain-rest', 'Rest', 1),
+                _domain('domain-vices', 'Vices', 2),
+              ]),
+            ),
+            allTrackersProvider.overrideWith(
+              (ref) => Stream.value(<Tracker>[breakfast, sleep, viceLog]),
+            ),
+            allEventsProvider.overrideWith(
+              (ref) => Stream.value(<Event>[
+                _event(
+                  'tracker-breakfast',
+                  'score',
+                  8,
+                  date: DateTime(2026, 4, 18),
+                ),
+                _event(
+                  'tracker-sleep',
+                  'quality',
+                  7,
+                  date: DateTime(2026, 4, 18),
+                ),
+              ]),
+            ),
+          ],
+          child: MaterialApp(
+            theme: buildAppTheme(),
+            home: const Scaffold(body: ReviewScreen()),
           ),
-          allDomainsProvider.overrideWith(
-            (ref) => Stream.value(<Domain>[
-              _domain('domain-nutrition', 'Nutrition', 0),
-              _domain('domain-rest', 'Rest', 1),
-              _domain('domain-vices', 'Vices', 2),
-            ]),
-          ),
-          allTrackersProvider.overrideWith(
-            (ref) => Stream.value(<Tracker>[breakfast, sleep, viceLog]),
-          ),
-          allEventsProvider.overrideWith(
-            (ref) => Stream.value(<Event>[
-              _event('tracker-breakfast', 'score', 8, date: DateTime(2026, 4, 18)),
-              _event('tracker-sleep', 'quality', 7, date: DateTime(2026, 4, 18)),
-            ]),
-          ),
-        ],
-        child: MaterialApp(
-          theme: buildAppTheme(),
-          home: const Scaffold(body: ReviewScreen()),
         ),
-      ),
-    );
-    await tester.pump();
+      );
+      await tester.pump();
 
-    // Verify excluded trackers (heatmapMode: 'excluded') are hidden from review
-    expect(find.text('Vice Log'), findsNothing);
-    expect(find.text('Vices'), findsNothing);
+      // Verify excluded trackers (heatmapMode: 'excluded') are hidden from review
+      expect(find.text('Vice Log'), findsNothing);
+      expect(find.text('Vices'), findsNothing);
 
-    // Verify eligible trackers are present in selector
-    expect(find.text('Breakfast'), findsOneWidget);
-    expect(find.text('Sleep'), findsOneWidget);
+      // Verify eligible trackers are present in selector
+      expect(find.text('Breakfast'), findsOneWidget);
+      expect(find.text('Sleep'), findsOneWidget);
 
-    // Verify month navigation is rendered (current month visible)
-    expect(find.text('April 2026'), findsWidgets);
+      // Verify month navigation is rendered (current month visible)
+      expect(find.text('April 2026'), findsWidgets);
 
-    // Verify past months are not eagerly loaded (lazy-loading via PageView)
-    expect(find.text('March 2026'), findsNothing);
-  });
+      // Verify past months are not eagerly loaded (lazy-loading via PageView)
+      expect(find.text('March 2026'), findsNothing);
+    },
+  );
 }
 
 Tracker _tracker({

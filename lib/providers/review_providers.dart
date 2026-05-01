@@ -13,15 +13,15 @@ import 'tracker_providers.dart';
 
 enum TimeScale { week, month, year }
 
-final reviewTimeScaleProvider =
-    StateProvider<TimeScale>((ref) => TimeScale.month);
+final reviewTimeScaleProvider = StateProvider<TimeScale>(
+  (ref) => TimeScale.month,
+);
 
 // ---------------------------------------------------------------------------
 // Selected tracker
 // ---------------------------------------------------------------------------
 
-final reviewSelectedTrackerUidProvider =
-    StateProvider<String?>((ref) => null);
+final reviewSelectedTrackerUidProvider = StateProvider<String?>((ref) => null);
 
 final reviewTrackersProvider = Provider<List<Tracker>>((ref) {
   final trackers =
@@ -45,8 +45,9 @@ final reviewEffectiveTrackerProvider = Provider<Tracker?>((ref) {
 // Comparison trackers (for trends)
 // ---------------------------------------------------------------------------
 
-final reviewComparisonUidsProvider =
-    StateProvider<Set<String>>((ref) => const <String>{});
+final reviewComparisonUidsProvider = StateProvider<Set<String>>(
+  (ref) => const <String>{},
+);
 
 // ---------------------------------------------------------------------------
 // Period summary
@@ -92,85 +93,87 @@ class PeriodSummaryRequest {
 
   @override
   int get hashCode => Object.hash(
-        trackerUid,
-        start.year,
-        start.month,
-        start.day,
-        end.year,
-        end.month,
-        end.day,
-      );
+    trackerUid,
+    start.year,
+    start.month,
+    start.day,
+    end.year,
+    end.month,
+    end.day,
+  );
 }
 
 final periodSummaryProvider =
     Provider.family<PeriodSummary, PeriodSummaryRequest>((ref, request) {
-  final events =
-      ref.watch(allEventsProvider).valueOrNull ?? const <Event>[];
-  final trackers =
-      ref.watch(allTrackersProvider).valueOrNull ?? const <Tracker>[];
+      final events =
+          ref.watch(allEventsProvider).valueOrNull ?? const <Event>[];
+      final trackers =
+          ref.watch(allTrackersProvider).valueOrNull ?? const <Tracker>[];
 
-  Tracker? tracker;
-  for (final t in trackers) {
-    if (t.uid == request.trackerUid) {
-      tracker = t;
-      break;
-    }
-  }
-
-  final relevant = events.where((e) {
-    if (e.trackerUid != request.trackerUid) return false;
-    final date = normalizeDate(e.effectiveDate);
-    return !date.isBefore(normalizeDate(request.start)) &&
-        !date.isAfter(normalizeDate(request.end));
-  }).toList();
-
-  final datesWithData =
-      relevant.map((e) => normalizeDate(e.effectiveDate)).toSet();
-
-  final today = normalizeDate(DateTime.now());
-  final effectiveEnd =
-      normalizeDate(request.end).isAfter(today) ? today : normalizeDate(request.end);
-  final totalDays =
-      effectiveEnd.difference(normalizeDate(request.start)).inDays + 1;
-
-  // Longest streak within the period
-  int longestStreak = 0;
-  int currentStreak = 0;
-  for (final date in enumerateDays(request.start, effectiveEnd)) {
-    if (datesWithData.contains(normalizeDate(date))) {
-      currentStreak++;
-      if (currentStreak > longestStreak) {
-        longestStreak = currentStreak;
-      }
-    } else {
-      currentStreak = 0;
-    }
-  }
-
-  double? avgScore;
-  if (tracker != null && tracker.scoreKey != null) {
-    final scores = <int>[];
-    for (final e in relevant) {
-      for (final m in e.metrics) {
-        if (m.inputKey == tracker.scoreKey && m.intValue != null) {
-          scores.add(m.intValue!);
+      Tracker? tracker;
+      for (final t in trackers) {
+        if (t.uid == request.trackerUid) {
+          tracker = t;
+          break;
         }
       }
-    }
-    if (scores.isNotEmpty) {
-      avgScore = scores.reduce((a, b) => a + b) / scores.length;
-    }
-  }
 
-  return PeriodSummary(
-    longestStreak: longestStreak,
-    averageScore: avgScore,
-    completedDays: datesWithData.length,
-    totalDays: totalDays > 0 ? totalDays : 0,
-    scoreMin: tracker?.scoreMin,
-    scoreMax: tracker?.scoreMax,
-  );
-});
+      final relevant = events.where((e) {
+        if (e.trackerUid != request.trackerUid) return false;
+        final date = normalizeDate(e.effectiveDate);
+        return !date.isBefore(normalizeDate(request.start)) &&
+            !date.isAfter(normalizeDate(request.end));
+      }).toList();
+
+      final datesWithData = relevant
+          .map((e) => normalizeDate(e.effectiveDate))
+          .toSet();
+
+      final today = normalizeDate(DateTime.now());
+      final effectiveEnd = normalizeDate(request.end).isAfter(today)
+          ? today
+          : normalizeDate(request.end);
+      final totalDays =
+          effectiveEnd.difference(normalizeDate(request.start)).inDays + 1;
+
+      // Longest streak within the period
+      int longestStreak = 0;
+      int currentStreak = 0;
+      for (final date in enumerateDays(request.start, effectiveEnd)) {
+        if (datesWithData.contains(normalizeDate(date))) {
+          currentStreak++;
+          if (currentStreak > longestStreak) {
+            longestStreak = currentStreak;
+          }
+        } else {
+          currentStreak = 0;
+        }
+      }
+
+      double? avgScore;
+      if (tracker != null && tracker.scoreKey != null) {
+        final scores = <int>[];
+        for (final e in relevant) {
+          for (final m in e.metrics) {
+            if (m.inputKey == tracker.scoreKey && m.intValue != null) {
+              scores.add(m.intValue!);
+            }
+          }
+        }
+        if (scores.isNotEmpty) {
+          avgScore = scores.reduce((a, b) => a + b) / scores.length;
+        }
+      }
+
+      return PeriodSummary(
+        longestStreak: longestStreak,
+        averageScore: avgScore,
+        completedDays: datesWithData.length,
+        totalDays: totalDays > 0 ? totalDays : 0,
+        scoreMin: tracker?.scoreMin,
+        scoreMax: tracker?.scoreMax,
+      );
+    });
 
 // ---------------------------------------------------------------------------
 // Trend data
@@ -198,8 +201,13 @@ class TrendRequest {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(trackerUids.length, start.year, start.month, end.year, end.month);
+  int get hashCode => Object.hash(
+    trackerUids.length,
+    start.year,
+    start.month,
+    end.year,
+    end.month,
+  );
 }
 
 class TrendLine {
@@ -221,10 +229,11 @@ class TrendPoint {
   final double? value;
 }
 
-final trendDataProvider =
-    Provider.family<List<TrendLine>, TrendRequest>((ref, request) {
-  final events =
-      ref.watch(allEventsProvider).valueOrNull ?? const <Event>[];
+final trendDataProvider = Provider.family<List<TrendLine>, TrendRequest>((
+  ref,
+  request,
+) {
+  final events = ref.watch(allEventsProvider).valueOrNull ?? const <Event>[];
   final trackers =
       ref.watch(allTrackersProvider).valueOrNull ?? const <Tracker>[];
 
@@ -273,18 +282,15 @@ final trendDataProvider =
           final denom = tracker.scoreMax - tracker.scoreMin;
           value = denom > 0 ? (avg - tracker.scoreMin) / denom : 0;
         }
-      } else if (dayEvents.isNotEmpty &&
-          tracker.heatmapMode == 'presence') {
+      } else if (dayEvents.isNotEmpty && tracker.heatmapMode == 'presence') {
         value = 1.0;
       }
       points.add(TrendPoint(date: d, value: value));
     }
 
-    lines.add(TrendLine(
-      trackerUid: uid,
-      trackerName: tracker.name,
-      points: points,
-    ));
+    lines.add(
+      TrendLine(trackerUid: uid, trackerName: tracker.name, points: points),
+    );
   }
 
   return lines;
@@ -308,11 +314,9 @@ class TrackerSummaryItem {
   final List<double?> last30Values;
 }
 
-final multiTrackerSummaryProvider =
-    Provider<List<TrackerSummaryItem>>((ref) {
+final multiTrackerSummaryProvider = Provider<List<TrackerSummaryItem>>((ref) {
   final reviewTrackers = ref.watch(reviewTrackersProvider);
-  final events =
-      ref.watch(allEventsProvider).valueOrNull ?? const <Event>[];
+  final events = ref.watch(allEventsProvider).valueOrNull ?? const <Event>[];
   final currentDate = ref.watch(currentDateProvider);
   final start = currentDate.subtract(const Duration(days: 29));
 
@@ -323,8 +327,7 @@ final multiTrackerSummaryProvider =
         continue;
       }
       final date = normalizeDate(e.effectiveDate);
-      if (date.isBefore(normalizeDate(start)) ||
-          date.isAfter(currentDate)) {
+      if (date.isBefore(normalizeDate(start)) || date.isAfter(currentDate)) {
         continue;
       }
       byDate.putIfAbsent(date, () => <Event>[]).add(e);

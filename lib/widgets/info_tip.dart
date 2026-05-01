@@ -13,11 +13,7 @@ import '../app/theme.dart';
 /// ])
 /// ```
 class InfoTip extends StatelessWidget {
-  const InfoTip({
-    super.key,
-    required this.message,
-    this.iconSize = 14,
-  });
+  const InfoTip({super.key, required this.message, this.iconSize = 14});
 
   final String message;
   final double iconSize;

@@ -52,10 +52,7 @@ class TrackerSelector extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text(
-                    tracker.icon,
-                    style: const TextStyle(fontSize: 14),
-                  ),
+                  Text(tracker.icon, style: const TextStyle(fontSize: 14)),
                   const SizedBox(width: 6),
                   Text(
                     tracker.name,

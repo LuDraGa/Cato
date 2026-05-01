@@ -41,16 +41,19 @@ class CurrentDateController extends StateNotifier<DateTime>
     _timer?.cancel();
     final now = DateTime.now();
     final nextMidnight = DateTime(now.year, now.month, now.day + 1);
-    _timer = Timer(nextMidnight.difference(now).inMilliseconds < 1
-        ? const Duration(days: 1)
-        : nextMidnight.difference(now), refresh);
+    _timer = Timer(
+      nextMidnight.difference(now).inMilliseconds < 1
+          ? const Duration(days: 1)
+          : nextMidnight.difference(now),
+      refresh,
+    );
   }
 }
 
 final currentDateProvider =
     StateNotifierProvider<CurrentDateController, DateTime>(
-  (ref) => CurrentDateController(),
-);
+      (ref) => CurrentDateController(),
+    );
 
 final allEventsProvider = StreamProvider<List<Event>>((ref) {
   return ref.watch(eventRepositoryProvider).watchAll();
@@ -62,13 +65,14 @@ final todayEventsProvider = StreamProvider<List<Event>>((ref) {
 });
 
 final trackerEventsForDateProvider =
-    FutureProvider.family<List<Event>, ({String trackerUid, DateTime date})>(
-  (ref, args) {
-    return ref
-        .watch(eventRepositoryProvider)
-        .getEventsForTrackerAndDate(args.trackerUid, args.date);
-  },
-);
+    FutureProvider.family<List<Event>, ({String trackerUid, DateTime date})>((
+      ref,
+      args,
+    ) {
+      return ref
+          .watch(eventRepositoryProvider)
+          .getEventsForTrackerAndDate(args.trackerUid, args.date);
+    });
 
 class TrackerCardState {
   const TrackerCardState({
@@ -86,29 +90,31 @@ class TrackerCardState {
   Event? get primaryEvent => events.isEmpty ? null : events.first;
 }
 
-final trackerCardStateProvider = Provider.family<TrackerCardState?, String>(
-  (ref, trackerUid) {
-    final trackers = ref.watch(allTrackersProvider).valueOrNull ?? const <Tracker>[];
-    final tracker = trackers.cast<Tracker?>().firstWhere(
-          (item) => item?.uid == trackerUid,
-          orElse: () => null,
-        );
-    if (tracker == null) {
-      return null;
-    }
-    final todayEvents = ref.watch(todayEventsProvider).valueOrNull ?? const <Event>[];
-    final events = todayEvents
-        .where((event) => event.trackerUid == trackerUid)
-        .toList()
-      ..sort((left, right) => right.updatedAt.compareTo(left.updatedAt));
-    return TrackerCardState(
-      tracker: tracker,
-      events: events,
-      isCompleted: events.isNotEmpty,
-      scoreLabel: _scoreLabelFor(tracker, events),
-    );
-  },
-);
+final trackerCardStateProvider = Provider.family<TrackerCardState?, String>((
+  ref,
+  trackerUid,
+) {
+  final trackers =
+      ref.watch(allTrackersProvider).valueOrNull ?? const <Tracker>[];
+  final tracker = trackers.cast<Tracker?>().firstWhere(
+    (item) => item?.uid == trackerUid,
+    orElse: () => null,
+  );
+  if (tracker == null) {
+    return null;
+  }
+  final todayEvents =
+      ref.watch(todayEventsProvider).valueOrNull ?? const <Event>[];
+  final events =
+      todayEvents.where((event) => event.trackerUid == trackerUid).toList()
+        ..sort((left, right) => right.updatedAt.compareTo(left.updatedAt));
+  return TrackerCardState(
+    tracker: tracker,
+    events: events,
+    isCompleted: events.isNotEmpty,
+    scoreLabel: _scoreLabelFor(tracker, events),
+  );
+});
 
 class HomeTrackerItem {
   const HomeTrackerItem({
@@ -139,8 +145,10 @@ class HomeSections {
 }
 
 final homeSectionsProvider = Provider<HomeSections>((ref) {
-  final trackers = ref.watch(allTrackersProvider).valueOrNull ?? const <Tracker>[];
-  final todayEvents = ref.watch(todayEventsProvider).valueOrNull ?? const <Event>[];
+  final trackers =
+      ref.watch(allTrackersProvider).valueOrNull ?? const <Tracker>[];
+  final todayEvents =
+      ref.watch(todayEventsProvider).valueOrNull ?? const <Event>[];
   final domains = ref.watch(domainsByUidProvider);
 
   final sortedTrackers = [...trackers]
@@ -204,10 +212,12 @@ String? _scoreLabelFor(Tracker tracker, List<Event> events) {
     return null;
   }
   final values = events
-      .map((event) => event.metrics.firstWhere(
-            (metric) => metric.inputKey == tracker.scoreKey,
-            orElse: () => event.metrics.first,
-          ))
+      .map(
+        (event) => event.metrics.firstWhere(
+          (metric) => metric.inputKey == tracker.scoreKey,
+          orElse: () => event.metrics.first,
+        ),
+      )
       .map((metric) => metric.intValue)
       .whereType<int>()
       .toList();
@@ -222,14 +232,18 @@ String? _scoreLabelFor(Tracker tracker, List<Event> events) {
 }
 
 String? _homeScoreLabelFor(Tracker tracker, List<Event> events) {
-  if (events.isEmpty || !tracker.scoreContribution || tracker.scoreKey == null) {
+  if (events.isEmpty ||
+      !tracker.scoreContribution ||
+      tracker.scoreKey == null) {
     return null;
   }
   final values = events
-      .map((event) => event.metrics.firstWhere(
-            (metric) => metric.inputKey == tracker.scoreKey,
-            orElse: () => event.metrics.first,
-          ))
+      .map(
+        (event) => event.metrics.firstWhere(
+          (metric) => metric.inputKey == tracker.scoreKey,
+          orElse: () => event.metrics.first,
+        ),
+      )
       .map((metric) => metric.intValue)
       .whereType<int>()
       .toList();

@@ -133,7 +133,9 @@ class _YearNavigator extends StatelessWidget {
           ),
           Text(
             '$year',
-            style: AppTextStyles.title(AppColors.inkBlack).copyWith(fontSize: 18),
+            style: AppTextStyles.title(
+              AppColors.inkBlack,
+            ).copyWith(fontSize: 18),
           ),
           GestureDetector(
             onTap: canGoForward ? onForward : null,
@@ -172,11 +174,7 @@ class _YearPage extends ConsumerWidget {
     );
     final summary = ref.watch(
       periodSummaryProvider(
-        PeriodSummaryRequest(
-          trackerUid: tracker.uid,
-          start: start,
-          end: end,
-        ),
+        PeriodSummaryRequest(trackerUid: tracker.uid, start: start, end: end),
       ),
     );
 
@@ -224,14 +222,16 @@ class _MonthLabels extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: labels
-          .map((l) => Text(
-                l,
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textTertiary,
-                ),
-              ))
+          .map(
+            (l) => Text(
+              l,
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
+                color: AppColors.textTertiary,
+              ),
+            ),
+          )
           .toList(),
     );
   }
@@ -275,17 +275,19 @@ class _YearGrid extends StatelessWidget {
           final row = cellIndex % 7;
           final value = data[date];
 
-          cells.add(_YearCell(
-            date: date,
-            rect: Rect.fromLTWH(
-              col * (cellSize + gap),
-              row * (cellSize + gap),
-              cellSize,
-              cellSize,
+          cells.add(
+            _YearCell(
+              date: date,
+              rect: Rect.fromLTWH(
+                col * (cellSize + gap),
+                row * (cellSize + gap),
+                cellSize,
+                cellSize,
+              ),
+              color: _colorFor(value),
+              filled: value != null,
             ),
-            color: _colorFor(value),
-            filled: value != null,
-          ));
+          );
         }
 
         return SizedBox(
@@ -304,9 +306,7 @@ class _YearGrid extends StatelessWidget {
                 }
               }
             },
-            child: CustomPaint(
-              painter: _YearGridPainter(cells: cells),
-            ),
+            child: CustomPaint(painter: _YearGridPainter(cells: cells)),
           ),
         );
       },
@@ -361,7 +361,9 @@ class _YearGridPainter extends CustomPainter {
         Paint()
           ..style = PaintingStyle.stroke
           ..strokeWidth = 0.5
-          ..color = AppColors.inkBlack.withValues(alpha: cell.filled ? 0.04 : 0.03)
+          ..color = AppColors.inkBlack.withValues(
+            alpha: cell.filled ? 0.04 : 0.03,
+          )
           ..isAntiAlias = true,
       );
     }

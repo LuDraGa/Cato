@@ -51,7 +51,10 @@ class EventRepository {
     return _isar.events.filter().effectiveDateEqualTo(normalized).findAll();
   }
 
-  Future<List<Event>> getEventsForTrackerAndDate(String trackerUid, DateTime date) {
+  Future<List<Event>> getEventsForTrackerAndDate(
+    String trackerUid,
+    DateTime date,
+  ) {
     final normalized = normalizeDate(date);
     return _isar.events
         .filter()
@@ -186,7 +189,8 @@ class EventRepository {
     required Set<String> clearedKeys,
   }) {
     final merged = <String, MetricValue>{
-      for (final metric in original) metric.inputKey: MetricValue.copyOf(metric),
+      for (final metric in original)
+        metric.inputKey: MetricValue.copyOf(metric),
     };
     for (final key in clearedKeys) {
       merged.remove(key);

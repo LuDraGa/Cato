@@ -156,10 +156,17 @@ class _RoulettePhysics extends ScrollPhysics {
   }
 
   // Slightly underdamped spring (ratio ~0.64) for visible overshoot on snap.
-  static const _spring = SpringDescription(mass: 1, stiffness: 120, damping: 14);
+  static const _spring = SpringDescription(
+    mass: 1,
+    stiffness: 120,
+    damping: 14,
+  );
 
   @override
-  Simulation? createBallisticSimulation(ScrollMetrics position, double velocity) {
+  Simulation? createBallisticSimulation(
+    ScrollMetrics position,
+    double velocity,
+  ) {
     const itemExtent = 36.0;
     final nearest = (position.pixels / itemExtent).round() * itemExtent;
 
@@ -188,8 +195,7 @@ class _CoastSnapSimulation extends Simulation {
     required SpringDescription spring,
   }) : _friction = FrictionSimulation(0.135, position, velocity) {
     const snapThreshold = 60.0;
-    _switchTime =
-        math.log(snapThreshold / velocity.abs()) / math.log(0.135);
+    _switchTime = math.log(snapThreshold / velocity.abs()) / math.log(0.135);
 
     final switchPos = _friction.x(_switchTime);
     final switchVel = _friction.dx(_switchTime);

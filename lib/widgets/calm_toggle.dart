@@ -3,11 +3,7 @@ import 'package:flutter/material.dart';
 import '../app/theme.dart';
 
 class CalmToggle extends StatelessWidget {
-  const CalmToggle({
-    super.key,
-    required this.value,
-    required this.onChanged,
-  });
+  const CalmToggle({super.key, required this.value, required this.onChanged});
 
   final bool value;
   final ValueChanged<bool> onChanged;
@@ -48,4 +44,3 @@ class CalmToggle extends StatelessWidget {
     );
   }
 }
-

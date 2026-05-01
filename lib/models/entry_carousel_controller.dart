@@ -7,8 +7,8 @@ class EntryCarouselController extends ChangeNotifier {
   EntryCarouselController({
     required List<Event> entries,
     required int initialIndex,
-  })  : _entries = entries,
-        _currentIndex = initialIndex;
+  }) : _entries = entries,
+       _currentIndex = initialIndex;
 
   final List<Event> _entries;
   int _currentIndex;

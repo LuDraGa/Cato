@@ -8,7 +8,9 @@ import 'typography/typography_registry.dart';
 
 class AppColors {
   static CatoThemeData _active = morningMist;
-  static CatoTypography _typography = typographyById(morningMist.defaultTypographyId);
+  static CatoTypography _typography = typographyById(
+    morningMist.defaultTypographyId,
+  );
 
   static void setTheme(CatoThemeData theme) => _active = theme;
   static CatoThemeData get active => _active;
@@ -69,18 +71,14 @@ class AppSpacing {
 }
 
 class AppDurations {
-  static Duration get micro => Duration(
-        milliseconds: (120 * AppColors.motionScale).round(),
-      );
-  static Duration get short => Duration(
-        milliseconds: (220 * AppColors.motionScale).round(),
-      );
-  static Duration get medium => Duration(
-        milliseconds: (340 * AppColors.motionScale).round(),
-      );
-  static Duration get long => Duration(
-        milliseconds: (560 * AppColors.motionScale).round(),
-      );
+  static Duration get micro =>
+      Duration(milliseconds: (120 * AppColors.motionScale).round());
+  static Duration get short =>
+      Duration(milliseconds: (220 * AppColors.motionScale).round());
+  static Duration get medium =>
+      Duration(milliseconds: (340 * AppColors.motionScale).round());
+  static Duration get long =>
+      Duration(milliseconds: (560 * AppColors.motionScale).round());
 }
 
 class AppTextStyles {
@@ -88,36 +86,36 @@ class AppTextStyles {
   static String get _sans => AppColors._typography.sansFont;
 
   static TextStyle display(Color color) => GoogleFonts.getFont(
-        _serif,
-        fontSize: 26,
-        fontWeight: FontWeight.w600,
-        color: color,
-        height: 1.1,
-      );
+    _serif,
+    fontSize: 26,
+    fontWeight: FontWeight.w600,
+    color: color,
+    height: 1.1,
+  );
 
   static TextStyle headline(Color color) => GoogleFonts.getFont(
-        _serif,
-        fontSize: 20,
-        fontWeight: FontWeight.w600,
-        color: color,
-        height: 1.15,
-      );
+    _serif,
+    fontSize: 20,
+    fontWeight: FontWeight.w600,
+    color: color,
+    height: 1.15,
+  );
 
   static TextStyle title(Color color) => GoogleFonts.getFont(
-        _serif,
-        fontSize: 17,
-        fontWeight: FontWeight.w500,
-        color: color,
-        height: 1.2,
-      );
+    _serif,
+    fontSize: 17,
+    fontWeight: FontWeight.w500,
+    color: color,
+    height: 1.2,
+  );
 
   static TextStyle metric(Color color) => GoogleFonts.getFont(
-        _sans,
-        fontSize: 28,
-        fontWeight: FontWeight.w600,
-        color: color,
-        height: 1.0,
-      );
+    _sans,
+    fontSize: 28,
+    fontWeight: FontWeight.w600,
+    color: color,
+    height: 1.0,
+  );
 }
 
 ThemeData buildAppTheme() {
@@ -130,16 +128,17 @@ ThemeData buildAppTheme() {
     scaffoldBackgroundColor: AppColors.bgPrimary,
     splashFactory: NoSplash.splashFactory,
     highlightColor: Colors.transparent,
-    colorScheme: (isDark ? const ColorScheme.dark() : const ColorScheme.light()).copyWith(
-      primary: AppColors.sage,
-      onPrimary: AppColors.bgElevated,
-      secondary: AppColors.sageLight,
-      onSecondary: AppColors.inkBlack,
-      error: AppColors.error,
-      onError: AppColors.bgElevated,
-      surface: AppColors.bgPrimary,
-      onSurface: AppColors.textPrimary,
-    ),
+    colorScheme: (isDark ? const ColorScheme.dark() : const ColorScheme.light())
+        .copyWith(
+          primary: AppColors.sage,
+          onPrimary: AppColors.bgElevated,
+          secondary: AppColors.sageLight,
+          onSecondary: AppColors.inkBlack,
+          error: AppColors.error,
+          onError: AppColors.bgElevated,
+          surface: AppColors.bgPrimary,
+          onSurface: AppColors.textPrimary,
+        ),
     textTheme: TextTheme(
       bodyLarge: GoogleFonts.getFont(
         sans,
@@ -215,7 +214,9 @@ ThemeData buildAppTheme() {
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: AppColors.inkBlack.withValues(alpha: 0.13)),
+        borderSide: BorderSide(
+          color: AppColors.inkBlack.withValues(alpha: 0.13),
+        ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
@@ -239,7 +240,9 @@ List<BoxShadow> surfaceShadow({bool elevated = false}) {
   final opacity = AppColors._active.shadowOpacity;
   return <BoxShadow>[
     BoxShadow(
-      color: AppColors.inkBlack.withValues(alpha: elevated ? opacity * 1.5 : opacity),
+      color: AppColors.inkBlack.withValues(
+        alpha: elevated ? opacity * 1.5 : opacity,
+      ),
       offset: Offset(0, elevated ? 2 : 1),
       blurRadius: elevated ? 8 : 4,
     ),

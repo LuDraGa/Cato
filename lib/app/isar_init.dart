@@ -8,13 +8,10 @@ import '../models/tracker.dart';
 
 Future<Isar> initIsar() async {
   final dir = await getApplicationDocumentsDirectory();
-  return Isar.open(
-    <CollectionSchema<dynamic>>[
-      DomainSchema,
-      TrackerSchema,
-      EventSchema,
-      AppConfigSchema,
-    ],
-    directory: dir.path,
-  );
+  return Isar.open(<CollectionSchema<dynamic>>[
+    DomainSchema,
+    TrackerSchema,
+    EventSchema,
+    AppConfigSchema,
+  ], directory: dir.path);
 }

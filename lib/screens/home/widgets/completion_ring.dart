@@ -99,12 +99,7 @@ class _CompletionRingState extends State<CompletionRing>
         return;
       }
       _controller.animateWith(
-        SpringSimulation(
-          _spring,
-          _controller.value,
-          target,
-          0,
-        ),
+        SpringSimulation(_spring, _controller.value, target, 0),
       );
     });
   }

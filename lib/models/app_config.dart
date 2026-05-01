@@ -12,4 +12,3 @@ class AppConfig {
   late String key;
   late String value;
 }
-

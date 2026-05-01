@@ -33,139 +33,136 @@ void main() {
     expect(controller.state.metricFor('time')?.stringValue, '13:30');
   });
 
-  test('home sections hide unlogged adhoc trackers and keep excluded trackers loggable',
-      () async {
-    final breakfast = _tracker(
-      uid: 'tracker-breakfast',
-      domainUid: 'domain-nutrition',
-      name: 'Breakfast',
-      frequency: 'daily',
-      promptTimes: <String>['08:30'],
-      countsForCompletion: true,
-      scoreContribution: true,
-      heatmapMode: 'score_average',
-      sortOrder: 0,
-    );
-    final snack = _tracker(
-      uid: 'tracker-snack',
-      domainUid: 'domain-nutrition',
-      name: 'Snack',
-      frequency: 'adhoc',
-      promptTimes: const <String>[],
-      countsForCompletion: false,
-      scoreContribution: false,
-      heatmapMode: 'presence',
-      sortOrder: 1,
-    );
-    final vices = _tracker(
-      uid: 'tracker-vices',
-      domainUid: 'domain-vices',
-      name: 'Vices',
-      frequency: 'multi_daily',
-      promptTimes: const <String>[],
-      countsForCompletion: false,
-      scoreContribution: false,
-      heatmapMode: 'excluded',
-      sortOrder: 0,
-    );
+  test(
+    'home sections hide unlogged adhoc trackers and keep excluded trackers loggable',
+    () async {
+      final breakfast = _tracker(
+        uid: 'tracker-breakfast',
+        domainUid: 'domain-nutrition',
+        name: 'Breakfast',
+        frequency: 'daily',
+        promptTimes: <String>['08:30'],
+        countsForCompletion: true,
+        scoreContribution: true,
+        heatmapMode: 'score_average',
+        sortOrder: 0,
+      );
+      final snack = _tracker(
+        uid: 'tracker-snack',
+        domainUid: 'domain-nutrition',
+        name: 'Snack',
+        frequency: 'adhoc',
+        promptTimes: const <String>[],
+        countsForCompletion: false,
+        scoreContribution: false,
+        heatmapMode: 'presence',
+        sortOrder: 1,
+      );
+      final vices = _tracker(
+        uid: 'tracker-vices',
+        domainUid: 'domain-vices',
+        name: 'Vices',
+        frequency: 'multi_daily',
+        promptTimes: const <String>[],
+        countsForCompletion: false,
+        scoreContribution: false,
+        heatmapMode: 'excluded',
+        sortOrder: 0,
+      );
 
-    final container = ProviderContainer(
-      overrides: <Override>[
-        allDomainsProvider.overrideWith(
-          (ref) => Stream.value(
-            <Domain>[
+      final container = ProviderContainer(
+        overrides: <Override>[
+          allDomainsProvider.overrideWith(
+            (ref) => Stream.value(<Domain>[
               _domain('domain-nutrition', 0),
               _domain('domain-vices', 1),
-            ],
+            ]),
           ),
-        ),
-        allTrackersProvider.overrideWith(
-          (ref) => Stream.value(<Tracker>[breakfast, snack, vices]),
-        ),
-        todayEventsProvider.overrideWith(
-          (ref) => Stream.value(
-            <Event>[
-              _event('tracker-breakfast', 'score', 8),
-            ],
+          allTrackersProvider.overrideWith(
+            (ref) => Stream.value(<Tracker>[breakfast, snack, vices]),
           ),
-        ),
-      ],
-    );
-    addTearDown(container.dispose);
+          todayEventsProvider.overrideWith(
+            (ref) =>
+                Stream.value(<Event>[_event('tracker-breakfast', 'score', 8)]),
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
 
-    await container.read(allDomainsProvider.future);
-    await container.read(allTrackersProvider.future);
-    await container.read(todayEventsProvider.future);
+      await container.read(allDomainsProvider.future);
+      await container.read(allTrackersProvider.future);
+      await container.read(todayEventsProvider.future);
 
-    final sections = container.read(homeSectionsProvider);
-    expect(
-      sections.pendingActionable.map((item) => item.tracker.uid),
-      isEmpty,
-    );
-    expect(
-      sections.pendingSupplemental.map((item) => item.tracker.uid),
-      <String>['tracker-vices'],
-    );
-    expect(
-      sections.logged.map((item) => item.tracker.uid),
-      <String>['tracker-breakfast'],
-    );
-  });
+      final sections = container.read(homeSectionsProvider);
+      expect(
+        sections.pendingActionable.map((item) => item.tracker.uid),
+        isEmpty,
+      );
+      expect(
+        sections.pendingSupplemental.map((item) => item.tracker.uid),
+        <String>['tracker-vices'],
+      );
+      expect(sections.logged.map((item) => item.tracker.uid), <String>[
+        'tracker-breakfast',
+      ]);
+    },
+  );
 
-  test('home sections show adhoc trackers only after they are logged', () async {
-    final breakfast = _tracker(
-      uid: 'tracker-breakfast',
-      domainUid: 'domain-nutrition',
-      name: 'Breakfast',
-      frequency: 'daily',
-      promptTimes: <String>['08:30'],
-      countsForCompletion: true,
-      scoreContribution: true,
-      heatmapMode: 'score_average',
-      sortOrder: 0,
-    );
-    final snack = _tracker(
-      uid: 'tracker-snack',
-      domainUid: 'domain-nutrition',
-      name: 'Snack',
-      frequency: 'adhoc',
-      promptTimes: const <String>[],
-      countsForCompletion: false,
-      scoreContribution: false,
-      heatmapMode: 'presence',
-      sortOrder: 1,
-    );
+  test(
+    'home sections show adhoc trackers only after they are logged',
+    () async {
+      final breakfast = _tracker(
+        uid: 'tracker-breakfast',
+        domainUid: 'domain-nutrition',
+        name: 'Breakfast',
+        frequency: 'daily',
+        promptTimes: <String>['08:30'],
+        countsForCompletion: true,
+        scoreContribution: true,
+        heatmapMode: 'score_average',
+        sortOrder: 0,
+      );
+      final snack = _tracker(
+        uid: 'tracker-snack',
+        domainUid: 'domain-nutrition',
+        name: 'Snack',
+        frequency: 'adhoc',
+        promptTimes: const <String>[],
+        countsForCompletion: false,
+        scoreContribution: false,
+        heatmapMode: 'presence',
+        sortOrder: 1,
+      );
 
-    final container = ProviderContainer(
-      overrides: <Override>[
-        allDomainsProvider.overrideWith(
-          (ref) => Stream.value(<Domain>[_domain('domain-nutrition', 0)]),
-        ),
-        allTrackersProvider.overrideWith(
-          (ref) => Stream.value(<Tracker>[breakfast, snack]),
-        ),
-        todayEventsProvider.overrideWith(
-          (ref) => Stream.value(
-            <Event>[
+      final container = ProviderContainer(
+        overrides: <Override>[
+          allDomainsProvider.overrideWith(
+            (ref) => Stream.value(<Domain>[_domain('domain-nutrition', 0)]),
+          ),
+          allTrackersProvider.overrideWith(
+            (ref) => Stream.value(<Tracker>[breakfast, snack]),
+          ),
+          todayEventsProvider.overrideWith(
+            (ref) => Stream.value(<Event>[
               _event('tracker-breakfast', 'score', 8),
               _event('tracker-snack', 'score', 6),
-            ],
+            ]),
           ),
-        ),
-      ],
-    );
-    addTearDown(container.dispose);
+        ],
+      );
+      addTearDown(container.dispose);
 
-    await container.read(allDomainsProvider.future);
-    await container.read(allTrackersProvider.future);
-    await container.read(todayEventsProvider.future);
+      await container.read(allDomainsProvider.future);
+      await container.read(allTrackersProvider.future);
+      await container.read(todayEventsProvider.future);
 
-    final sections = container.read(homeSectionsProvider);
-    expect(
-      sections.logged.map((item) => item.tracker.uid),
-      <String>['tracker-breakfast', 'tracker-snack'],
-    );
-  });
+      final sections = container.read(homeSectionsProvider);
+      expect(sections.logged.map((item) => item.tracker.uid), <String>[
+        'tracker-breakfast',
+        'tracker-snack',
+      ]);
+    },
+  );
 }
 
 Tracker _tracker({

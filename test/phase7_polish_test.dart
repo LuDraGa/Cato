@@ -24,77 +24,82 @@ void main() {
   });
 
   group('Phase 7 polish', () {
-    test('same as yesterday fills current-schema fields in staggered order',
-        () async {
-      final controller = EntryFormController(
-        EntryFormSeed(
-          tracker: _trackerWithFields(),
+    test(
+      'same as yesterday fills current-schema fields in staggered order',
+      () async {
+        final controller = EntryFormController(
+          EntryFormSeed(
+            tracker: _trackerWithFields(),
+            effectiveDate: DateTime(2026, 4, 18),
+          ),
+        );
+        final previous = _event(
+          uid: 'previous',
+          effectiveDate: DateTime(2026, 4, 17),
+          metrics: <MetricValue>[
+            _intMetric('score', 8),
+            _stringMetric('notes', 'Steady day'),
+          ],
+        );
+
+        final future = controller.copyFromPreviousStaggered(
+          previous,
+          stepDelay: const Duration(milliseconds: 2),
+        );
+
+        expect(controller.state.metricFor('score')?.intValue, 8);
+        expect(controller.state.metricFor('notes'), isNull);
+
+        await Future<void>.delayed(const Duration(milliseconds: 3));
+        expect(controller.state.metricFor('notes')?.stringValue, 'Steady day');
+
+        await future;
+      },
+    );
+
+    test(
+      'most recent lookup can skip the event currently being edited',
+      () async {
+        final directory = await Directory.systemTemp.createTemp(
+          'cato_phase7_polish_',
+        );
+        final isar = await Isar.open(
+          <CollectionSchema<dynamic>>[EventSchema],
+          directory: directory.path,
+          name: 'phase7_polish_test',
+          inspector: false,
+        );
+        addTearDown(() async {
+          await isar.close(deleteFromDisk: true);
+          if (directory.existsSync()) {
+            await directory.delete(recursive: true);
+          }
+        });
+
+        final repository = EventRepository(isar);
+        final latest = _event(
+          uid: 'event-latest',
           effectiveDate: DateTime(2026, 4, 18),
-        ),
-      );
-      final previous = _event(
-        uid: 'previous',
-        effectiveDate: DateTime(2026, 4, 17),
-        metrics: <MetricValue>[
-          _intMetric('score', 8),
-          _stringMetric('notes', 'Steady day'),
-        ],
-      );
+          metrics: <MetricValue>[_intMetric('score', 9)],
+        );
+        final previous = _event(
+          uid: 'event-previous',
+          effectiveDate: DateTime(2026, 4, 17),
+          metrics: <MetricValue>[_intMetric('score', 7)],
+        );
 
-      final future = controller.copyFromPreviousStaggered(
-        previous,
-        stepDelay: const Duration(milliseconds: 2),
-      );
+        await isar.writeTxn(() async {
+          await isar.events.putAll(<Event>[latest, previous]);
+        });
 
-      expect(controller.state.metricFor('score')?.intValue, 8);
-      expect(controller.state.metricFor('notes'), isNull);
+        final result = await repository.getMostRecentEvent(
+          'tracker-mood',
+          excludingEventUid: 'event-latest',
+        );
 
-      await Future<void>.delayed(const Duration(milliseconds: 3));
-      expect(controller.state.metricFor('notes')?.stringValue, 'Steady day');
-
-      await future;
-    });
-
-    test('most recent lookup can skip the event currently being edited',
-        () async {
-      final directory =
-          await Directory.systemTemp.createTemp('cato_phase7_polish_');
-      final isar = await Isar.open(
-        <CollectionSchema<dynamic>>[EventSchema],
-        directory: directory.path,
-        name: 'phase7_polish_test',
-        inspector: false,
-      );
-      addTearDown(() async {
-        await isar.close(deleteFromDisk: true);
-        if (directory.existsSync()) {
-          await directory.delete(recursive: true);
-        }
-      });
-
-      final repository = EventRepository(isar);
-      final latest = _event(
-        uid: 'event-latest',
-        effectiveDate: DateTime(2026, 4, 18),
-        metrics: <MetricValue>[_intMetric('score', 9)],
-      );
-      final previous = _event(
-        uid: 'event-previous',
-        effectiveDate: DateTime(2026, 4, 17),
-        metrics: <MetricValue>[_intMetric('score', 7)],
-      );
-
-      await isar.writeTxn(() async {
-        await isar.events.putAll(<Event>[latest, previous]);
-      });
-
-      final result = await repository.getMostRecentEvent(
-        'tracker-mood',
-        excludingEventUid: 'event-latest',
-      );
-
-      expect(result?.uid, 'event-previous');
-    });
+        expect(result?.uid, 'event-previous');
+      },
+    );
   });
 }
 

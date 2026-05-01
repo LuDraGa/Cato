@@ -12,68 +12,74 @@ import 'package:cato/providers/tracker_providers.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('daily score normalizes mood energy against scoreMin and scoreMax', () async {
-    final mood = _tracker(
-      uid: 'tracker-mood',
-      scoreKey: 'energy',
-      scoreMin: 1,
-      scoreMax: 5,
-      countsForCompletion: true,
-      scoreContribution: true,
-    );
+  test(
+    'daily score normalizes mood energy against scoreMin and scoreMax',
+    () async {
+      final mood = _tracker(
+        uid: 'tracker-mood',
+        scoreKey: 'energy',
+        scoreMin: 1,
+        scoreMax: 5,
+        countsForCompletion: true,
+        scoreContribution: true,
+      );
 
-    final container = ProviderContainer(
-      overrides: <Override>[
-        allTrackersProvider.overrideWith((ref) => Stream.value(<Tracker>[mood])),
-        todayEventsProvider.overrideWith(
-          (ref) => Stream.value(<Event>[
-            _event('tracker-mood', 'energy', 3),
-          ]),
-        ),
-      ],
-    );
+      final container = ProviderContainer(
+        overrides: <Override>[
+          allTrackersProvider.overrideWith(
+            (ref) => Stream.value(<Tracker>[mood]),
+          ),
+          todayEventsProvider.overrideWith(
+            (ref) => Stream.value(<Event>[_event('tracker-mood', 'energy', 3)]),
+          ),
+        ],
+      );
 
-    await container.read(allTrackersProvider.future);
-    await container.read(todayEventsProvider.future);
-    expect(container.read(dailyScoreProvider), 50);
-  });
+      await container.read(allTrackersProvider.future);
+      await container.read(todayEventsProvider.future);
+      expect(container.read(dailyScoreProvider), 50);
+    },
+  );
 
-  test('daily score averages same-day entries before applying denominator', () async {
-    final breakfast = _tracker(
-      uid: 'tracker-breakfast',
-      scoreKey: 'score',
-      scoreMin: 1,
-      scoreMax: 10,
-      countsForCompletion: true,
-      scoreContribution: true,
-    );
-    final lunch = _tracker(
-      uid: 'tracker-lunch',
-      scoreKey: 'score',
-      scoreMin: 1,
-      scoreMax: 10,
-      countsForCompletion: true,
-      scoreContribution: true,
-    );
+  test(
+    'daily score averages same-day entries before applying denominator',
+    () async {
+      final breakfast = _tracker(
+        uid: 'tracker-breakfast',
+        scoreKey: 'score',
+        scoreMin: 1,
+        scoreMax: 10,
+        countsForCompletion: true,
+        scoreContribution: true,
+      );
+      final lunch = _tracker(
+        uid: 'tracker-lunch',
+        scoreKey: 'score',
+        scoreMin: 1,
+        scoreMax: 10,
+        countsForCompletion: true,
+        scoreContribution: true,
+      );
 
-    final container = ProviderContainer(
-      overrides: <Override>[
-        allTrackersProvider.overrideWith(
-          (ref) => Stream.value(<Tracker>[breakfast, lunch]),
-        ),
-        todayEventsProvider.overrideWith(
-          (ref) => Stream.value(<Event>[
-            _event('tracker-breakfast', 'score', 7),
-            _event('tracker-breakfast', 'score', 9),
-          ]),
-        ),
-      ],
-    );
+      final container = ProviderContainer(
+        overrides: <Override>[
+          allTrackersProvider.overrideWith(
+            (ref) => Stream.value(<Tracker>[breakfast, lunch]),
+          ),
+          todayEventsProvider.overrideWith(
+            (ref) => Stream.value(<Event>[
+              _event('tracker-breakfast', 'score', 7),
+              _event('tracker-breakfast', 'score', 9),
+            ]),
+          ),
+        ],
+      );
 
-    await container.read(allTrackersProvider.future);
-    await container.read(todayEventsProvider.future);
-    expect(container.read(dailyScoreProvider), 39);
-  });
+      await container.read(allTrackersProvider.future);
+      await container.read(todayEventsProvider.future);
+      expect(container.read(dailyScoreProvider), 39);
+    },
+  );
 
   test('daily score uses all eligible trackers as denominator', () async {
     final breakfast = _tracker(
@@ -133,16 +139,16 @@ void main() {
 
     final container = ProviderContainer(
       overrides: <Override>[
-        allTrackersProvider.overrideWith((ref) => Stream.value(
-              <Tracker>[
-                breakfast,
-                lunch,
-                dinner,
-                workout,
-                sleep,
-                mood,
-              ],
-            )),
+        allTrackersProvider.overrideWith(
+          (ref) => Stream.value(<Tracker>[
+            breakfast,
+            lunch,
+            dinner,
+            workout,
+            sleep,
+            mood,
+          ]),
+        ),
         todayEventsProvider.overrideWith((ref) => Stream.value(events)),
       ],
     );
@@ -164,7 +170,9 @@ void main() {
 
     final container = ProviderContainer(
       overrides: <Override>[
-        allTrackersProvider.overrideWith((ref) => Stream.value(<Tracker>[snack])),
+        allTrackersProvider.overrideWith(
+          (ref) => Stream.value(<Tracker>[snack]),
+        ),
         todayEventsProvider.overrideWith(
           (ref) => Stream.value(<Event>[_event('tracker-snack', 'score', 6)]),
         ),
@@ -176,95 +184,101 @@ void main() {
     expect(container.read(dailyScoreProvider), isNull);
   });
 
-  test('tracker streak counts consecutive logged days for one tracker', () async {
-    final currentDate = DateTime(2026, 4, 18);
-    final container = ProviderContainer(
-      overrides: <Override>[
-        currentDateProvider.overrideWith(
-          (ref) => _FixedDateController(currentDate),
-        ),
-        allEventsProvider.overrideWith(
-          (ref) => Stream.value(<Event>[
-            _event('tracker-breakfast', 'score', 7, date: currentDate),
-            _event(
-              'tracker-breakfast',
-              'score',
-              8,
-              date: currentDate.subtract(const Duration(days: 1)),
-            ),
-            _event(
-              'tracker-breakfast',
-              'score',
-              6,
-              date: currentDate.subtract(const Duration(days: 2)),
-            ),
-          ]),
-        ),
-      ],
-    );
+  test(
+    'tracker streak counts consecutive logged days for one tracker',
+    () async {
+      final currentDate = DateTime(2026, 4, 18);
+      final container = ProviderContainer(
+        overrides: <Override>[
+          currentDateProvider.overrideWith(
+            (ref) => _FixedDateController(currentDate),
+          ),
+          allEventsProvider.overrideWith(
+            (ref) => Stream.value(<Event>[
+              _event('tracker-breakfast', 'score', 7, date: currentDate),
+              _event(
+                'tracker-breakfast',
+                'score',
+                8,
+                date: currentDate.subtract(const Duration(days: 1)),
+              ),
+              _event(
+                'tracker-breakfast',
+                'score',
+                6,
+                date: currentDate.subtract(const Duration(days: 2)),
+              ),
+            ]),
+          ),
+        ],
+      );
 
-    await container.read(allEventsProvider.future);
-    expect(container.read(streakProvider('tracker-breakfast')), 3);
-  });
+      await container.read(allEventsProvider.future);
+      expect(container.read(streakProvider('tracker-breakfast')), 3);
+    },
+  );
 
-  test('global streak only counts days where every eligible tracker was logged', () async {
-    final currentDate = DateTime(2026, 4, 18);
-    final breakfast = _tracker(
-      uid: 'tracker-breakfast',
-      scoreKey: 'score',
-      scoreMin: 1,
-      scoreMax: 10,
-      countsForCompletion: true,
-      scoreContribution: true,
-    );
-    final sleep = _tracker(
-      uid: 'tracker-sleep',
-      scoreKey: 'quality',
-      scoreMin: 1,
-      scoreMax: 10,
-      countsForCompletion: true,
-      scoreContribution: true,
-    );
+  test(
+    'global streak only counts days where every eligible tracker was logged',
+    () async {
+      final currentDate = DateTime(2026, 4, 18);
+      final breakfast = _tracker(
+        uid: 'tracker-breakfast',
+        scoreKey: 'score',
+        scoreMin: 1,
+        scoreMax: 10,
+        countsForCompletion: true,
+        scoreContribution: true,
+      );
+      final sleep = _tracker(
+        uid: 'tracker-sleep',
+        scoreKey: 'quality',
+        scoreMin: 1,
+        scoreMax: 10,
+        countsForCompletion: true,
+        scoreContribution: true,
+      );
 
-    final container = ProviderContainer(
-      overrides: <Override>[
-        currentDateProvider.overrideWith(
-          (ref) => _FixedDateController(currentDate),
-        ),
-        allTrackersProvider.overrideWith(
-          (ref) => Stream.value(<Tracker>[breakfast, sleep]),
-        ),
-        allEventsProvider.overrideWith(
-          (ref) => Stream.value(<Event>[
-            _event('tracker-breakfast', 'score', 7, date: currentDate),
-            _event('tracker-sleep', 'quality', 8, date: currentDate),
-            _event(
-              'tracker-breakfast',
-              'score',
-              6,
-              date: currentDate.subtract(const Duration(days: 1)),
-            ),
-            _event(
-              'tracker-sleep',
-              'quality',
-              9,
-              date: currentDate.subtract(const Duration(days: 1)),
-            ),
-            _event(
-              'tracker-breakfast',
-              'score',
-              8,
-              date: currentDate.subtract(const Duration(days: 2)),
-            ),
-          ]),
-        ),
-      ],
-    );
+      final container = ProviderContainer(
+        overrides: <Override>[
+          currentDateProvider.overrideWith(
+            (ref) => _FixedDateController(currentDate),
+          ),
+          allTrackersProvider.overrideWith(
+            (ref) => Stream.value(<Tracker>[breakfast, sleep]),
+          ),
+          allEventsProvider.overrideWith(
+            (ref) => Stream.value(<Event>[
+              _event('tracker-breakfast', 'score', 7, date: currentDate),
+              _event('tracker-sleep', 'quality', 8, date: currentDate),
+              _event(
+                'tracker-breakfast',
+                'score',
+                6,
+                date: currentDate.subtract(const Duration(days: 1)),
+              ),
+              _event(
+                'tracker-sleep',
+                'quality',
+                9,
+                date: currentDate.subtract(const Duration(days: 1)),
+              ),
+              _event(
+                'tracker-breakfast',
+                'score',
+                8,
+                date: currentDate.subtract(const Duration(days: 2)),
+              ),
+            ]),
+          ),
+        ],
+      );
 
-    await container.read(allTrackersProvider.future);
-    await container.read(allEventsProvider.future);
-    expect(container.read(globalStreakProvider), 2);
-  });
+      await container.read(allTrackersProvider.future);
+      await container.read(allEventsProvider.future);
+      expect(container.read(globalStreakProvider), 2);
+    },
+  );
 
   test('completion excludes snack and vices', () async {
     final breakfast = _tracker(
@@ -298,13 +312,11 @@ void main() {
           (ref) => Stream.value(<Tracker>[breakfast, snack, vices]),
         ),
         todayEventsProvider.overrideWith(
-          (ref) => Stream.value(
-            <Event>[
-              _event('tracker-breakfast', 'score', 8),
-              _event('tracker-snack', 'score', 6),
-              _event('tracker-vices', 'count', 1),
-            ],
-          ),
+          (ref) => Stream.value(<Event>[
+            _event('tracker-breakfast', 'score', 8),
+            _event('tracker-snack', 'score', 6),
+            _event('tracker-vices', 'count', 1),
+          ]),
         ),
       ],
     );
@@ -346,26 +358,11 @@ Tracker _tracker({
     ..createdAt = DateTime(2026);
 }
 
-Event _event(
-  String trackerUid,
-  String key,
-  int value, {
-  DateTime? date,
-}) {
-  return _eventAtDate(
-    trackerUid,
-    key,
-    value,
-    date ?? DateTime(2026, 4, 18),
-  );
+Event _event(String trackerUid, String key, int value, {DateTime? date}) {
+  return _eventAtDate(trackerUid, key, value, date ?? DateTime(2026, 4, 18));
 }
 
-Event _eventAtDate(
-  String trackerUid,
-  String key,
-  int value,
-  DateTime date,
-) {
+Event _eventAtDate(String trackerUid, String key, int value, DateTime date) {
   final dayStamp =
       '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   return Event()

@@ -38,9 +38,9 @@ class CountStepper extends StatelessWidget {
               ),
               child: Text(
                 '$value',
-                style: AppTextStyles.metric(AppColors.inkBlack).copyWith(
-                  fontSize: 20,
-                ),
+                style: AppTextStyles.metric(
+                  AppColors.inkBlack,
+                ).copyWith(fontSize: 20),
               ),
             ),
           ),
@@ -75,9 +75,9 @@ class CountStepper extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(
-                  int.tryParse(controller.text)?.clamp(min, max),
-                );
+                Navigator.of(
+                  context,
+                ).pop(int.tryParse(controller.text)?.clamp(min, max));
               },
               child: const Text('Save'),
             ),
@@ -122,4 +122,3 @@ class _StepperButton extends StatelessWidget {
     );
   }
 }
-

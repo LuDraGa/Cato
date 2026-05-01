@@ -8,7 +8,9 @@ class TrackerRepository {
   final Isar _isar;
 
   Stream<List<Tracker>> watchAll() {
-    return _isar.trackers.where().sortBySortOrder().watch(fireImmediately: true);
+    return _isar.trackers.where().sortBySortOrder().watch(
+      fireImmediately: true,
+    );
   }
 
   Stream<List<Tracker>> watchActive() {
@@ -20,7 +22,11 @@ class TrackerRepository {
   }
 
   Future<List<Tracker>> getAllActive() {
-    return _isar.trackers.filter().isActiveEqualTo(true).sortBySortOrder().findAll();
+    return _isar.trackers
+        .filter()
+        .isActiveEqualTo(true)
+        .sortBySortOrder()
+        .findAll();
   }
 
   Future<Tracker?> getByUid(String uid) {
@@ -34,4 +40,3 @@ class TrackerRepository {
     });
   }
 }
-

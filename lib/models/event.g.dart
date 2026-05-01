@@ -53,16 +53,12 @@ const EventSchema = CollectionSchema(
       name: r'trackerVersion',
       type: IsarType.long,
     ),
-    r'uid': PropertySchema(
-      id: 7,
-      name: r'uid',
-      type: IsarType.string,
-    ),
+    r'uid': PropertySchema(id: 7, name: r'uid', type: IsarType.string),
     r'updatedAt': PropertySchema(
       id: 8,
       name: r'updatedAt',
       type: IsarType.dateTime,
-    )
+    ),
   },
   estimateSize: _eventEstimateSize,
   serialize: _eventSerialize,
@@ -80,7 +76,7 @@ const EventSchema = CollectionSchema(
           name: r'uid',
           type: IndexType.hash,
           caseSensitive: true,
-        )
+        ),
       ],
     ),
     r'trackerUid_effectiveDate': IndexSchema(
@@ -98,7 +94,7 @@ const EventSchema = CollectionSchema(
           name: r'effectiveDate',
           type: IndexType.value,
           caseSensitive: false,
-        )
+        ),
       ],
     ),
     r'effectiveDate': IndexSchema(
@@ -111,9 +107,9 @@ const EventSchema = CollectionSchema(
           name: r'effectiveDate',
           type: IndexType.value,
           caseSensitive: false,
-        )
+        ),
       ],
-    )
+    ),
   },
   links: {},
   embeddedSchemas: {r'MetricValue': MetricValueSchema},
@@ -176,7 +172,8 @@ Event _eventDeserialize(
   object.effectiveTime = reader.readDateTimeOrNull(offsets[2]);
   object.isBackfill = reader.readBool(offsets[3]);
   object.isarId = id;
-  object.metrics = reader.readObjectList<MetricValue>(
+  object.metrics =
+      reader.readObjectList<MetricValue>(
         offsets[4],
         MetricValueSchema.deserialize,
         allOffsets,
@@ -207,12 +204,13 @@ P _eventDeserializeProp<P>(
       return (reader.readBool(offset)) as P;
     case 4:
       return (reader.readObjectList<MetricValue>(
-            offset,
-            MetricValueSchema.deserialize,
-            allOffsets,
-            MetricValue(),
-          ) ??
-          []) as P;
+                offset,
+                MetricValueSchema.deserialize,
+                allOffsets,
+                MetricValue(),
+              ) ??
+              [])
+          as P;
     case 5:
       return (reader.readString(offset)) as P;
     case 6:
@@ -311,10 +309,9 @@ extension EventQueryWhereSort on QueryBuilder<Event, Event, QWhere> {
 extension EventQueryWhere on QueryBuilder<Event, Event, QWhereClause> {
   QueryBuilder<Event, Event, QAfterWhereClause> isarIdEqualTo(Id isarId) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: isarId,
-        upper: isarId,
-      ));
+      return query.addWhereClause(
+        IdWhereClause.between(lower: isarId, upper: isarId),
+      );
     });
   }
 
@@ -340,8 +337,10 @@ extension EventQueryWhere on QueryBuilder<Event, Event, QWhereClause> {
     });
   }
 
-  QueryBuilder<Event, Event, QAfterWhereClause> isarIdGreaterThan(Id isarId,
-      {bool include = false}) {
+  QueryBuilder<Event, Event, QAfterWhereClause> isarIdGreaterThan(
+    Id isarId, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: isarId, includeLower: include),
@@ -349,8 +348,10 @@ extension EventQueryWhere on QueryBuilder<Event, Event, QWhereClause> {
     });
   }
 
-  QueryBuilder<Event, Event, QAfterWhereClause> isarIdLessThan(Id isarId,
-      {bool include = false}) {
+  QueryBuilder<Event, Event, QAfterWhereClause> isarIdLessThan(
+    Id isarId, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: isarId, includeUpper: include),
@@ -365,21 +366,22 @@ extension EventQueryWhere on QueryBuilder<Event, Event, QWhereClause> {
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: lowerIsarId,
-        includeLower: includeLower,
-        upper: upperIsarId,
-        includeUpper: includeUpper,
-      ));
+      return query.addWhereClause(
+        IdWhereClause.between(
+          lower: lowerIsarId,
+          includeLower: includeLower,
+          upper: upperIsarId,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<Event, Event, QAfterWhereClause> uidEqualTo(String uid) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'uid',
-        value: [uid],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'uid', value: [uid]),
+      );
     });
   }
 
@@ -387,161 +389,197 @@ extension EventQueryWhere on QueryBuilder<Event, Event, QWhereClause> {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'uid',
-              lower: [],
-              upper: [uid],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'uid',
-              lower: [uid],
-              includeLower: false,
-              upper: [],
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'uid',
+                lower: [],
+                upper: [uid],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'uid',
+                lower: [uid],
+                includeLower: false,
+                upper: [],
+              ),
+            );
       } else {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'uid',
-              lower: [uid],
-              includeLower: false,
-              upper: [],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'uid',
-              lower: [],
-              upper: [uid],
-              includeUpper: false,
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'uid',
+                lower: [uid],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'uid',
+                lower: [],
+                upper: [uid],
+                includeUpper: false,
+              ),
+            );
       }
     });
   }
 
   QueryBuilder<Event, Event, QAfterWhereClause>
-      trackerUidEqualToAnyEffectiveDate(String trackerUid) {
+  trackerUidEqualToAnyEffectiveDate(String trackerUid) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'trackerUid_effectiveDate',
-        value: [trackerUid],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(
+          indexName: r'trackerUid_effectiveDate',
+          value: [trackerUid],
+        ),
+      );
     });
   }
 
   QueryBuilder<Event, Event, QAfterWhereClause>
-      trackerUidNotEqualToAnyEffectiveDate(String trackerUid) {
+  trackerUidNotEqualToAnyEffectiveDate(String trackerUid) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'trackerUid_effectiveDate',
-              lower: [],
-              upper: [trackerUid],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'trackerUid_effectiveDate',
-              lower: [trackerUid],
-              includeLower: false,
-              upper: [],
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'trackerUid_effectiveDate',
+                lower: [],
+                upper: [trackerUid],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'trackerUid_effectiveDate',
+                lower: [trackerUid],
+                includeLower: false,
+                upper: [],
+              ),
+            );
       } else {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'trackerUid_effectiveDate',
-              lower: [trackerUid],
-              includeLower: false,
-              upper: [],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'trackerUid_effectiveDate',
-              lower: [],
-              upper: [trackerUid],
-              includeUpper: false,
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'trackerUid_effectiveDate',
+                lower: [trackerUid],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'trackerUid_effectiveDate',
+                lower: [],
+                upper: [trackerUid],
+                includeUpper: false,
+              ),
+            );
       }
     });
   }
 
   QueryBuilder<Event, Event, QAfterWhereClause> trackerUidEffectiveDateEqualTo(
-      String trackerUid, DateTime effectiveDate) {
+    String trackerUid,
+    DateTime effectiveDate,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'trackerUid_effectiveDate',
-        value: [trackerUid, effectiveDate],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(
+          indexName: r'trackerUid_effectiveDate',
+          value: [trackerUid, effectiveDate],
+        ),
+      );
     });
   }
 
   QueryBuilder<Event, Event, QAfterWhereClause>
-      trackerUidEqualToEffectiveDateNotEqualTo(
-          String trackerUid, DateTime effectiveDate) {
+  trackerUidEqualToEffectiveDateNotEqualTo(
+    String trackerUid,
+    DateTime effectiveDate,
+  ) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'trackerUid_effectiveDate',
-              lower: [trackerUid],
-              upper: [trackerUid, effectiveDate],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'trackerUid_effectiveDate',
-              lower: [trackerUid, effectiveDate],
-              includeLower: false,
-              upper: [trackerUid],
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'trackerUid_effectiveDate',
+                lower: [trackerUid],
+                upper: [trackerUid, effectiveDate],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'trackerUid_effectiveDate',
+                lower: [trackerUid, effectiveDate],
+                includeLower: false,
+                upper: [trackerUid],
+              ),
+            );
       } else {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'trackerUid_effectiveDate',
-              lower: [trackerUid, effectiveDate],
-              includeLower: false,
-              upper: [trackerUid],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'trackerUid_effectiveDate',
-              lower: [trackerUid],
-              upper: [trackerUid, effectiveDate],
-              includeUpper: false,
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'trackerUid_effectiveDate',
+                lower: [trackerUid, effectiveDate],
+                includeLower: false,
+                upper: [trackerUid],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'trackerUid_effectiveDate',
+                lower: [trackerUid],
+                upper: [trackerUid, effectiveDate],
+                includeUpper: false,
+              ),
+            );
       }
     });
   }
 
   QueryBuilder<Event, Event, QAfterWhereClause>
-      trackerUidEqualToEffectiveDateGreaterThan(
+  trackerUidEqualToEffectiveDateGreaterThan(
     String trackerUid,
     DateTime effectiveDate, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'trackerUid_effectiveDate',
-        lower: [trackerUid, effectiveDate],
-        includeLower: include,
-        upper: [trackerUid],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'trackerUid_effectiveDate',
+          lower: [trackerUid, effectiveDate],
+          includeLower: include,
+          upper: [trackerUid],
+        ),
+      );
     });
   }
 
   QueryBuilder<Event, Event, QAfterWhereClause>
-      trackerUidEqualToEffectiveDateLessThan(
+  trackerUidEqualToEffectiveDateLessThan(
     String trackerUid,
     DateTime effectiveDate, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'trackerUid_effectiveDate',
-        lower: [trackerUid],
-        upper: [trackerUid, effectiveDate],
-        includeUpper: include,
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'trackerUid_effectiveDate',
+          lower: [trackerUid],
+          upper: [trackerUid, effectiveDate],
+          includeUpper: include,
+        ),
+      );
     });
   }
 
   QueryBuilder<Event, Event, QAfterWhereClause>
-      trackerUidEqualToEffectiveDateBetween(
+  trackerUidEqualToEffectiveDateBetween(
     String trackerUid,
     DateTime lowerEffectiveDate,
     DateTime upperEffectiveDate, {
@@ -549,57 +587,71 @@ extension EventQueryWhere on QueryBuilder<Event, Event, QWhereClause> {
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'trackerUid_effectiveDate',
-        lower: [trackerUid, lowerEffectiveDate],
-        includeLower: includeLower,
-        upper: [trackerUid, upperEffectiveDate],
-        includeUpper: includeUpper,
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'trackerUid_effectiveDate',
+          lower: [trackerUid, lowerEffectiveDate],
+          includeLower: includeLower,
+          upper: [trackerUid, upperEffectiveDate],
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<Event, Event, QAfterWhereClause> effectiveDateEqualTo(
-      DateTime effectiveDate) {
+    DateTime effectiveDate,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'effectiveDate',
-        value: [effectiveDate],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(
+          indexName: r'effectiveDate',
+          value: [effectiveDate],
+        ),
+      );
     });
   }
 
   QueryBuilder<Event, Event, QAfterWhereClause> effectiveDateNotEqualTo(
-      DateTime effectiveDate) {
+    DateTime effectiveDate,
+  ) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'effectiveDate',
-              lower: [],
-              upper: [effectiveDate],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'effectiveDate',
-              lower: [effectiveDate],
-              includeLower: false,
-              upper: [],
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'effectiveDate',
+                lower: [],
+                upper: [effectiveDate],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'effectiveDate',
+                lower: [effectiveDate],
+                includeLower: false,
+                upper: [],
+              ),
+            );
       } else {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'effectiveDate',
-              lower: [effectiveDate],
-              includeLower: false,
-              upper: [],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'effectiveDate',
-              lower: [],
-              upper: [effectiveDate],
-              includeUpper: false,
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'effectiveDate',
+                lower: [effectiveDate],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'effectiveDate',
+                lower: [],
+                upper: [effectiveDate],
+                includeUpper: false,
+              ),
+            );
       }
     });
   }
@@ -609,12 +661,14 @@ extension EventQueryWhere on QueryBuilder<Event, Event, QWhereClause> {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'effectiveDate',
-        lower: [effectiveDate],
-        includeLower: include,
-        upper: [],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'effectiveDate',
+          lower: [effectiveDate],
+          includeLower: include,
+          upper: [],
+        ),
+      );
     });
   }
 
@@ -623,12 +677,14 @@ extension EventQueryWhere on QueryBuilder<Event, Event, QWhereClause> {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'effectiveDate',
-        lower: [],
-        upper: [effectiveDate],
-        includeUpper: include,
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'effectiveDate',
+          lower: [],
+          upper: [effectiveDate],
+          includeUpper: include,
+        ),
+      );
     });
   }
 
@@ -639,25 +695,27 @@ extension EventQueryWhere on QueryBuilder<Event, Event, QWhereClause> {
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'effectiveDate',
-        lower: [lowerEffectiveDate],
-        includeLower: includeLower,
-        upper: [upperEffectiveDate],
-        includeUpper: includeUpper,
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'effectiveDate',
+          lower: [lowerEffectiveDate],
+          includeLower: includeLower,
+          upper: [upperEffectiveDate],
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 }
 
 extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
   QueryBuilder<Event, Event, QAfterFilterCondition> createdAtEqualTo(
-      DateTime value) {
+    DateTime value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'createdAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'createdAt', value: value),
+      );
     });
   }
 
@@ -666,11 +724,13 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'createdAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'createdAt',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -679,11 +739,13 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'createdAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'createdAt',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -694,23 +756,25 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'createdAt',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'createdAt',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<Event, Event, QAfterFilterCondition> effectiveDateEqualTo(
-      DateTime value) {
+    DateTime value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'effectiveDate',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'effectiveDate', value: value),
+      );
     });
   }
 
@@ -719,11 +783,13 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'effectiveDate',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'effectiveDate',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -732,11 +798,13 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'effectiveDate',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'effectiveDate',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -747,39 +815,41 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'effectiveDate',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'effectiveDate',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<Event, Event, QAfterFilterCondition> effectiveTimeIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'effectiveTime',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'effectiveTime'),
+      );
     });
   }
 
   QueryBuilder<Event, Event, QAfterFilterCondition> effectiveTimeIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'effectiveTime',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'effectiveTime'),
+      );
     });
   }
 
   QueryBuilder<Event, Event, QAfterFilterCondition> effectiveTimeEqualTo(
-      DateTime? value) {
+    DateTime? value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'effectiveTime',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'effectiveTime', value: value),
+      );
     });
   }
 
@@ -788,11 +858,13 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'effectiveTime',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'effectiveTime',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -801,11 +873,13 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'effectiveTime',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'effectiveTime',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -816,32 +890,33 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'effectiveTime',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'effectiveTime',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<Event, Event, QAfterFilterCondition> isBackfillEqualTo(
-      bool value) {
+    bool value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'isBackfill',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'isBackfill', value: value),
+      );
     });
   }
 
   QueryBuilder<Event, Event, QAfterFilterCondition> isarIdEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'isarId',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'isarId', value: value),
+      );
     });
   }
 
@@ -850,11 +925,13 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'isarId',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'isarId',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -863,11 +940,13 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'isarId',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'isarId',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -878,50 +957,35 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'isarId',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'isarId',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<Event, Event, QAfterFilterCondition> metricsLengthEqualTo(
-      int length) {
+    int length,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'metrics',
-        length,
-        true,
-        length,
-        true,
-      );
+      return query.listLength(r'metrics', length, true, length, true);
     });
   }
 
   QueryBuilder<Event, Event, QAfterFilterCondition> metricsIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'metrics',
-        0,
-        true,
-        0,
-        true,
-      );
+      return query.listLength(r'metrics', 0, true, 0, true);
     });
   }
 
   QueryBuilder<Event, Event, QAfterFilterCondition> metricsIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'metrics',
-        0,
-        false,
-        999999,
-        true,
-      );
+      return query.listLength(r'metrics', 0, false, 999999, true);
     });
   }
 
@@ -930,13 +994,7 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'metrics',
-        0,
-        true,
-        length,
-        include,
-      );
+      return query.listLength(r'metrics', 0, true, length, include);
     });
   }
 
@@ -945,13 +1003,7 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'metrics',
-        length,
-        include,
-        999999,
-        true,
-      );
+      return query.listLength(r'metrics', length, include, 999999, true);
     });
   }
 
@@ -977,11 +1029,13 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'trackerUid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'trackerUid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -991,12 +1045,14 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'trackerUid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'trackerUid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1006,12 +1062,14 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'trackerUid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'trackerUid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1023,14 +1081,16 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'trackerUid',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'trackerUid',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1039,11 +1099,13 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'trackerUid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'trackerUid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1052,63 +1114,69 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'trackerUid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'trackerUid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Event, Event, QAfterFilterCondition> trackerUidContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'trackerUid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'trackerUid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Event, Event, QAfterFilterCondition> trackerUidMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'trackerUid',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'trackerUid',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Event, Event, QAfterFilterCondition> trackerUidIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'trackerUid',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'trackerUid', value: ''),
+      );
     });
   }
 
   QueryBuilder<Event, Event, QAfterFilterCondition> trackerUidIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'trackerUid',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'trackerUid', value: ''),
+      );
     });
   }
 
   QueryBuilder<Event, Event, QAfterFilterCondition> trackerVersionEqualTo(
-      int value) {
+    int value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'trackerVersion',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'trackerVersion', value: value),
+      );
     });
   }
 
@@ -1117,11 +1185,13 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'trackerVersion',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'trackerVersion',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -1130,11 +1200,13 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'trackerVersion',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'trackerVersion',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -1145,13 +1217,15 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'trackerVersion',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'trackerVersion',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
@@ -1160,11 +1234,13 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'uid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'uid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1174,12 +1250,14 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'uid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'uid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1189,12 +1267,14 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'uid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'uid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1206,14 +1286,16 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'uid',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'uid',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1222,11 +1304,13 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'uid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'uid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1235,61 +1319,69 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'uid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'uid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<Event, Event, QAfterFilterCondition> uidContains(String value,
-      {bool caseSensitive = true}) {
+  QueryBuilder<Event, Event, QAfterFilterCondition> uidContains(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'uid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'uid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
-  QueryBuilder<Event, Event, QAfterFilterCondition> uidMatches(String pattern,
-      {bool caseSensitive = true}) {
+  QueryBuilder<Event, Event, QAfterFilterCondition> uidMatches(
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'uid',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'uid',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Event, Event, QAfterFilterCondition> uidIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'uid',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'uid', value: ''),
+      );
     });
   }
 
   QueryBuilder<Event, Event, QAfterFilterCondition> uidIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'uid',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'uid', value: ''),
+      );
     });
   }
 
   QueryBuilder<Event, Event, QAfterFilterCondition> updatedAtEqualTo(
-      DateTime value) {
+    DateTime value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'updatedAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'updatedAt', value: value),
+      );
     });
   }
 
@@ -1298,11 +1390,13 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'updatedAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'updatedAt',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -1311,11 +1405,13 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'updatedAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'updatedAt',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -1326,20 +1422,23 @@ extension EventQueryFilter on QueryBuilder<Event, Event, QFilterCondition> {
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'updatedAt',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'updatedAt',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 }
 
 extension EventQueryObject on QueryBuilder<Event, Event, QFilterCondition> {
   QueryBuilder<Event, Event, QAfterFilterCondition> metricsElement(
-      FilterQuery<MetricValue> q) {
+    FilterQuery<MetricValue> q,
+  ) {
     return QueryBuilder.apply(this, (query) {
       return query.object(q, r'metrics');
     });
@@ -1581,8 +1680,9 @@ extension EventQueryWhereDistinct on QueryBuilder<Event, Event, QDistinct> {
     });
   }
 
-  QueryBuilder<Event, Event, QDistinct> distinctByTrackerUid(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Event, Event, QDistinct> distinctByTrackerUid({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'trackerUid', caseSensitive: caseSensitive);
     });
@@ -1594,8 +1694,9 @@ extension EventQueryWhereDistinct on QueryBuilder<Event, Event, QDistinct> {
     });
   }
 
-  QueryBuilder<Event, Event, QDistinct> distinctByUid(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Event, Event, QDistinct> distinctByUid({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'uid', caseSensitive: caseSensitive);
     });

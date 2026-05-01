@@ -29,15 +29,13 @@ class MultiTrackerSummary extends ConsumerWidget {
             children: <Widget>[
               Text(
                 'All Trackers',
-                style: AppTextStyles.title(AppColors.inkBlack)
-                    .copyWith(fontSize: 18),
+                style: AppTextStyles.title(
+                  AppColors.inkBlack,
+                ).copyWith(fontSize: 18),
               ),
               const SizedBox(width: AppSpacing.sm),
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 3,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: AppColors.fitness.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(6),
@@ -97,9 +95,7 @@ class _TrackerRow extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.bgSurface,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: AppColors.inkBlack.withValues(alpha: 0.04),
-          ),
+          border: Border.all(color: AppColors.inkBlack.withValues(alpha: 0.04)),
         ),
         child: Row(
           children: <Widget>[
@@ -139,9 +135,7 @@ class _TrackerRow extends StatelessWidget {
               width: 80,
               height: 28,
               child: CustomPaint(
-                painter: _MiniSparklinePainter(
-                  values: item.last30Values,
-                ),
+                painter: _MiniSparklinePainter(values: item.last30Values),
               ),
             ),
             // Trend arrow
@@ -161,9 +155,12 @@ class _TrendArrow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final recent = values.length > 7 ? values.sublist(values.length - 7) : values;
-    final older =
-        values.length > 14 ? values.sublist(values.length - 14, values.length - 7) : values;
+    final recent = values.length > 7
+        ? values.sublist(values.length - 7)
+        : values;
+    final older = values.length > 14
+        ? values.sublist(values.length - 14, values.length - 7)
+        : values;
 
     final recentAvg = _avg(recent);
     final olderAvg = _avg(older);
@@ -180,10 +177,17 @@ class _TrendArrow extends StatelessWidget {
     if (diff > 0.05) {
       return Icon(Icons.trending_up_rounded, size: 16, color: AppColors.sage);
     } else if (diff < -0.05) {
-      return Icon(Icons.trending_down_rounded, size: 16, color: AppColors.vices);
+      return Icon(
+        Icons.trending_down_rounded,
+        size: 16,
+        color: AppColors.vices,
+      );
     }
-    return Icon(Icons.trending_flat_rounded,
-        size: 16, color: AppColors.textTertiary);
+    return Icon(
+      Icons.trending_flat_rounded,
+      size: 16,
+      color: AppColors.textTertiary,
+    );
   }
 
   double? _avg(List<double?> vals) {

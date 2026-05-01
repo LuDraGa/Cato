@@ -52,26 +52,21 @@ final exportServiceProvider = Provider<ExportService>(
   (ref) => ExportService(ref.watch(isarProvider)),
 );
 
-final pendingAppActionProvider =
-    StateProvider<PendingAppAction?>((ref) => null);
+final pendingAppActionProvider = StateProvider<PendingAppAction?>(
+  (ref) => null,
+);
 
 final initialAppActionProvider = Provider<PendingAppAction?>((ref) => null);
 
 final pendingSaveEventProvider = StateProvider<Event?>((ref) => null);
 
 class HomeFeedbackState {
-  const HomeFeedbackState({
-    required this.pending,
-    required this.epoch,
-  });
+  const HomeFeedbackState({required this.pending, required this.epoch});
 
   final bool pending;
   final int epoch;
 
-  HomeFeedbackState copyWith({
-    bool? pending,
-    int? epoch,
-  }) {
+  HomeFeedbackState copyWith({bool? pending, int? epoch}) {
     return HomeFeedbackState(
       pending: pending ?? this.pending,
       epoch: epoch ?? this.epoch,
@@ -81,22 +76,14 @@ class HomeFeedbackState {
 
 class HomeFeedbackController extends StateNotifier<HomeFeedbackState> {
   HomeFeedbackController()
-      : super(
-          const HomeFeedbackState(
-            pending: false,
-            epoch: 0,
-          ),
-        );
+    : super(const HomeFeedbackState(pending: false, epoch: 0));
 
   void beginSave() {
     state = state.copyWith(pending: true);
   }
 
   void completeSave() {
-    state = HomeFeedbackState(
-      pending: false,
-      epoch: state.epoch + 1,
-    );
+    state = HomeFeedbackState(pending: false, epoch: state.epoch + 1);
   }
 
   void cancelSave() {
@@ -106,36 +93,42 @@ class HomeFeedbackController extends StateNotifier<HomeFeedbackState> {
 
 final homeFeedbackProvider =
     StateNotifierProvider<HomeFeedbackController, HomeFeedbackState>(
-  (ref) => HomeFeedbackController(),
-);
+      (ref) => HomeFeedbackController(),
+    );
 
 final middayTimeProvider = StreamProvider<String>((ref) {
   final repository = ref.watch(appConfigRepositoryProvider);
   return repository.watchAll().map((items) {
-    return items.firstWhere(
-      (item) => item.key == 'midday_time',
-      orElse: () => throw StateError('midday_time missing'),
-    ).value;
+    return items
+        .firstWhere(
+          (item) => item.key == 'midday_time',
+          orElse: () => throw StateError('midday_time missing'),
+        )
+        .value;
   });
 });
 
 final dayEndTimeProvider = StreamProvider<String>((ref) {
   final repository = ref.watch(appConfigRepositoryProvider);
   return repository.watchAll().map((items) {
-    return items.firstWhere(
-      (item) => item.key == 'day_end_time',
-      orElse: () => throw StateError('day_end_time missing'),
-    ).value;
+    return items
+        .firstWhere(
+          (item) => item.key == 'day_end_time',
+          orElse: () => throw StateError('day_end_time missing'),
+        )
+        .value;
   });
 });
 
 final notificationsEnabledProvider = StreamProvider<bool>((ref) {
   final repository = ref.watch(appConfigRepositoryProvider);
   return repository.watchAll().map((items) {
-    final value = items.firstWhere(
-      (item) => item.key == 'notifications_enabled',
-      orElse: () => throw StateError('notifications_enabled missing'),
-    ).value;
+    final value = items
+        .firstWhere(
+          (item) => item.key == 'notifications_enabled',
+          orElse: () => throw StateError('notifications_enabled missing'),
+        )
+        .value;
     return value.toLowerCase() == 'true';
   });
 });
@@ -143,10 +136,12 @@ final notificationsEnabledProvider = StreamProvider<bool>((ref) {
 final soundEnabledProvider = StreamProvider<bool>((ref) {
   final repository = ref.watch(appConfigRepositoryProvider);
   return repository.watchAll().map((items) {
-    final value = items.firstWhere(
-      (item) => item.key == 'sound_enabled',
-      orElse: () => throw StateError('sound_enabled missing'),
-    ).value;
+    final value = items
+        .firstWhere(
+          (item) => item.key == 'sound_enabled',
+          orElse: () => throw StateError('sound_enabled missing'),
+        )
+        .value;
     return value.toLowerCase() == 'true';
   });
 });

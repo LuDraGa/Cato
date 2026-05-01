@@ -13,19 +13,18 @@ final allTrackersProvider = StreamProvider<List<Tracker>>((ref) {
 });
 
 final completionEligibleTrackersProvider = Provider<List<Tracker>>((ref) {
-  final trackers = ref.watch(allTrackersProvider).valueOrNull ?? const <Tracker>[];
+  final trackers =
+      ref.watch(allTrackersProvider).valueOrNull ?? const <Tracker>[];
   return trackers.where((tracker) => tracker.countsForCompletion).toList();
 });
 
 final scoreEligibleTrackersProvider = Provider<List<Tracker>>((ref) {
-  final trackers = ref.watch(allTrackersProvider).valueOrNull ?? const <Tracker>[];
+  final trackers =
+      ref.watch(allTrackersProvider).valueOrNull ?? const <Tracker>[];
   return trackers.where((tracker) => tracker.scoreContribution).toList();
 });
 
 final domainsByUidProvider = Provider<Map<String, Domain>>((ref) {
   final domains = ref.watch(allDomainsProvider).valueOrNull ?? const <Domain>[];
-  return <String, Domain>{
-    for (final domain in domains) domain.uid: domain,
-  };
+  return <String, Domain>{for (final domain in domains) domain.uid: domain};
 });
-

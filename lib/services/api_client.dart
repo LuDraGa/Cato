@@ -7,10 +7,7 @@ Dio createDioClient() {
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
       sendTimeout: const Duration(seconds: 10),
-      headers: const <String, String>{
-        'Accept': 'application/json',
-      },
+      headers: const <String, String>{'Accept': 'application/json'},
     ),
   );
 }
-

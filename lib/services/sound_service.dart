@@ -22,7 +22,10 @@ class SoundService {
   /// Play a specific interaction sound from a sound pack.
   /// Falls back to the default save_tap.wav for placeholder assets.
   /// Fire-and-forget safe — non-critical if it fails.
-  Future<void> playPackSound(String packId, SoundInteraction interaction) async {
+  Future<void> playPackSound(
+    String packId,
+    SoundInteraction interaction,
+  ) async {
     final pack = soundPackById(packId);
     final asset = switch (interaction) {
       SoundInteraction.save => pack.save,

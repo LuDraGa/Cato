@@ -7,8 +7,9 @@ import '../screens/review/review_screen.dart';
 import '../screens/settings/settings_screen.dart';
 import '../widgets/app_shell.dart';
 
-final GlobalKey<NavigatorState> rootNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'root');
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'root',
+);
 
 GoRouter createRouter() {
   return GoRouter(
@@ -58,4 +59,3 @@ GoRouter createRouter() {
     ],
   );
 }
-

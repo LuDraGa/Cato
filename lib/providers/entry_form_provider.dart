@@ -30,13 +30,13 @@ class EntryFormSeed {
 
   @override
   int get hashCode => Object.hash(
-        tracker.uid,
-        effectiveDate.year,
-        effectiveDate.month,
-        effectiveDate.day,
-        existingEvent?.uid,
-        isBackfill,
-      );
+    tracker.uid,
+    effectiveDate.year,
+    effectiveDate.month,
+    effectiveDate.day,
+    existingEvent?.uid,
+    isBackfill,
+  );
 }
 
 class EntryFormState {
@@ -75,13 +75,13 @@ class EntryFormState {
 
 class EntryFormController extends StateNotifier<EntryFormState> {
   EntryFormController(this.seed)
-      : super(
-          EntryFormState(
-            effectiveDate: normalizeDate(seed.effectiveDate),
-            headerTime: _initialHeaderTime(seed),
-            values: _initialValues(seed),
-          ),
-        );
+    : super(
+        EntryFormState(
+          effectiveDate: normalizeDate(seed.effectiveDate),
+          headerTime: _initialHeaderTime(seed),
+          values: _initialValues(seed),
+        ),
+      );
 
   final EntryFormSeed seed;
 
@@ -100,45 +100,27 @@ class EntryFormController extends StateNotifier<EntryFormState> {
   }
 
   void setInt(String key, int? value) {
-    _setMetric(
-      key,
-      (metric) => metric..intValue = value,
-    );
+    _setMetric(key, (metric) => metric..intValue = value);
   }
 
   void setDouble(String key, double? value) {
-    _setMetric(
-      key,
-      (metric) => metric..doubleValue = value,
-    );
+    _setMetric(key, (metric) => metric..doubleValue = value);
   }
 
   void setString(String key, String? value) {
-    _setMetric(
-      key,
-      (metric) => metric..stringValue = value,
-    );
+    _setMetric(key, (metric) => metric..stringValue = value);
   }
 
   void setBool(String key, bool? value) {
-    _setMetric(
-      key,
-      (metric) => metric..boolValue = value,
-    );
+    _setMetric(key, (metric) => metric..boolValue = value);
   }
 
   void setList(String key, List<String> values) {
-    _setMetric(
-      key,
-      (metric) => metric..listValue = values,
-    );
+    _setMetric(key, (metric) => metric..listValue = values);
   }
 
   void setMedia(String key, String? path) {
-    _setMetric(
-      key,
-      (metric) => metric..mediaPath = path,
-    );
+    _setMetric(key, (metric) => metric..mediaPath = path);
   }
 
   void copyFromPrevious(Event event) {
@@ -162,16 +144,15 @@ class EntryFormController extends StateNotifier<EntryFormState> {
         return;
       }
       final nextValues = Map<String, MetricValue>.from(state.values);
-      final previousMetric = event.metrics
-          .cast<MetricValue?>()
-          .firstWhere(
-            (item) => item?.inputKey == field.key,
-            orElse: () => null,
-          );
+      final previousMetric = event.metrics.cast<MetricValue?>().firstWhere(
+        (item) => item?.inputKey == field.key,
+        orElse: () => null,
+      );
 
       TimeOfDay nextHeaderTime = state.headerTime;
       if (field.key == 'time' && field.type == 'time') {
-        final previousTime = previousMetric?.stringValue ??
+        final previousTime =
+            previousMetric?.stringValue ??
             (event.effectiveTime == null
                 ? null
                 : hhMm(TimeOfDay.fromDateTime(event.effectiveTime!)));
@@ -189,10 +170,7 @@ class EntryFormController extends StateNotifier<EntryFormState> {
         nextValues.remove(field.key);
       }
 
-      state = state.copyWith(
-        values: nextValues,
-        headerTime: nextHeaderTime,
-      );
+      state = state.copyWith(values: nextValues, headerTime: nextHeaderTime);
 
       if (field != seed.tracker.sortedInputSchema.last) {
         await Future<void>.delayed(stepDelay);
@@ -233,9 +211,7 @@ class EntryFormController extends StateNotifier<EntryFormState> {
   void _setMetric(String key, MetricValue Function(MetricValue) update) {
     final nextValues = Map<String, MetricValue>.from(state.values);
     final current = MetricValue.copyOf(
-      nextValues[key] ??
-          (MetricValue()
-            ..inputKey = key),
+      nextValues[key] ?? (MetricValue()..inputKey = key),
     );
     nextValues[key] = update(current);
     state = state.copyWith(values: nextValues);
@@ -244,8 +220,8 @@ class EntryFormController extends StateNotifier<EntryFormState> {
 
 final entryFormProvider = StateNotifierProvider.autoDispose
     .family<EntryFormController, EntryFormState, EntryFormSeed>(
-  (ref, seed) => EntryFormController(seed),
-);
+      (ref, seed) => EntryFormController(seed),
+    );
 
 Map<String, MetricValue> _initialValues(EntryFormSeed seed) {
   final values = <String, MetricValue>{
@@ -263,10 +239,7 @@ Map<String, MetricValue> _initialValues(EntryFormSeed seed) {
 TimeOfDay _initialHeaderTime(EntryFormSeed seed) {
   final metricTime = seed.existingEvent?.metrics
       .cast<MetricValue?>()
-      .firstWhere(
-        (item) => item?.inputKey == 'time',
-        orElse: () => null,
-      )
+      .firstWhere((item) => item?.inputKey == 'time', orElse: () => null)
       ?.stringValue;
   if (metricTime != null && metricTime.isNotEmpty) {
     return parseHhMm(metricTime);

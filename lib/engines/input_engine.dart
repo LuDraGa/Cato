@@ -68,7 +68,9 @@ class DynamicEntryFields extends ConsumerWidget {
               showValidation: state.showValidation,
             ),
           ),
-        if (showSectionHeaders && (required.isNotEmpty || useSleepToggle) && optional.isNotEmpty)
+        if (showSectionHeaders &&
+            (required.isNotEmpty || useSleepToggle) &&
+            optional.isNotEmpty)
           const SizedBox(height: AppSpacing.lg),
         if (showSectionHeaders && optional.isNotEmpty)
           const _SectionLabel(label: 'Optional'),
@@ -108,10 +110,7 @@ class _EntryField extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            field.label,
-            style: Theme.of(context).textTheme.labelMedium,
-          ),
+          Text(field.label, style: Theme.of(context).textTheme.labelMedium),
           const SizedBox(height: AppSpacing.sm),
           _buildField(context, ref, state, controller, metric),
           if (showValidation && (metric?.hasValue != true))
@@ -119,9 +118,9 @@ class _EntryField extends ConsumerWidget {
               padding: const EdgeInsets.only(top: AppSpacing.xs),
               child: Text(
                 'This field matters for today’s entry.',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppColors.warning,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: AppColors.warning),
               ),
             ),
         ],
@@ -158,9 +157,9 @@ class _EntryField extends ConsumerWidget {
               child: Text(
                 '$value',
                 textAlign: TextAlign.right,
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: AppColors.inkBlack,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.labelLarge?.copyWith(color: AppColors.inkBlack),
               ),
             ),
           ],
@@ -176,7 +175,8 @@ class _EntryField extends ConsumerWidget {
       case 'duration':
         return DurationPicker(
           minutes: (metric?.doubleValue as double?)?.round() ?? 0,
-          onChanged: (minutes) => controller.setDouble(field.key, minutes.toDouble()),
+          onChanged: (minutes) =>
+              controller.setDouble(field.key, minutes.toDouble()),
         );
       case 'text':
         final config = field.config;
@@ -195,7 +195,9 @@ class _EntryField extends ConsumerWidget {
           ),
         );
       case 'single_select':
-        final options = List<String>.from(field.config['options'] as List? ?? const []);
+        final options = List<String>.from(
+          field.config['options'] as List? ?? const [],
+        );
         final selected = metric?.stringValue == null
             ? <String>{}
             : <String>{metric.stringValue as String};
@@ -209,8 +211,11 @@ class _EntryField extends ConsumerWidget {
           ),
         );
       case 'multi_select':
-        final options = List<String>.from(field.config['options'] as List? ?? const []);
-        final selected = (metric?.listValue as List<String>?)?.toSet() ?? <String>{};
+        final options = List<String>.from(
+          field.config['options'] as List? ?? const [],
+        );
+        final selected =
+            (metric?.listValue as List<String>?)?.toSet() ?? <String>{};
         return ChipSelector(
           options: options,
           selectedValues: selected,
@@ -272,9 +277,19 @@ class _EntryField extends ConsumerWidget {
                   style: AppTextStyles.title(AppColors.inkBlack),
                 ),
                 const SizedBox(height: AppSpacing.md),
-                _mediaOption(context, Icons.photo_camera_outlined, 'Camera', ImageSource.camera),
+                _mediaOption(
+                  context,
+                  Icons.photo_camera_outlined,
+                  'Camera',
+                  ImageSource.camera,
+                ),
                 const SizedBox(height: AppSpacing.sm),
-                _mediaOption(context, Icons.photo_library_outlined, 'Gallery', ImageSource.gallery),
+                _mediaOption(
+                  context,
+                  Icons.photo_library_outlined,
+                  'Gallery',
+                  ImageSource.gallery,
+                ),
               ],
             ),
           ),
@@ -301,9 +316,9 @@ class _EntryField extends ConsumerWidget {
       await openAppSettings();
     }
     if (context.mounted && result.message != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(result.message!)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(result.message!)));
     }
   }
 
@@ -348,9 +363,9 @@ class _SectionLabel extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: AppSpacing.md),
       child: Text(
         label,
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppColors.textSecondary,
-            ),
+        style: Theme.of(
+          context,
+        ).textTheme.bodySmall?.copyWith(color: AppColors.textSecondary),
       ),
     );
   }
@@ -378,7 +393,8 @@ class _SleepDurationToggleState extends ConsumerState<_SleepDurationToggle> {
     super.initState();
     // Default to times mode if the existing event has sleep/wake times set.
     final existing = widget.seed.existingEvent;
-    _useTimesMode = existing != null &&
+    _useTimesMode =
+        existing != null &&
         existing.metrics.any((m) => m.inputKey == 'sleep_time' && m.hasValue) &&
         existing.metrics.any((m) => m.inputKey == 'wake_time' && m.hasValue);
   }
@@ -413,7 +429,8 @@ class _SleepDurationToggleState extends ConsumerState<_SleepDurationToggle> {
     final state = ref.watch(entryFormProvider(widget.seed));
     final controller = ref.read(entryFormProvider(widget.seed).notifier);
     final durationMissing =
-        widget.showValidation && (state.metricFor('duration')?.hasValue != true);
+        widget.showValidation &&
+        (state.metricFor('duration')?.hasValue != true);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -425,7 +442,9 @@ class _SleepDurationToggleState extends ConsumerState<_SleepDurationToggle> {
               style: Theme.of(context).textTheme.labelMedium,
             ),
             const Spacer(),
-            const InfoTip(message: 'Switch between duration and sleep/wake times'),
+            const InfoTip(
+              message: 'Switch between duration and sleep/wake times',
+            ),
             const SizedBox(width: AppSpacing.xs),
             _ModeToggle(
               useTimesMode: _useTimesMode,
@@ -436,9 +455,7 @@ class _SleepDurationToggleState extends ConsumerState<_SleepDurationToggle> {
         const SizedBox(height: AppSpacing.sm),
         if (!_useTimesMode)
           DurationPicker(
-            minutes:
-                state.metricFor('duration')?.doubleValue?.round() ??
-                    0,
+            minutes: state.metricFor('duration')?.doubleValue?.round() ?? 0,
             onChanged: (minutes) =>
                 controller.setDouble('duration', minutes.toDouble()),
           )
@@ -464,9 +481,9 @@ class _SleepDurationToggleState extends ConsumerState<_SleepDurationToggle> {
               _useTimesMode
                   ? 'Set both times to continue.'
                   : 'This field matters for today\u2019s entry.',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.warning,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: AppColors.warning),
             ),
           ),
       ],
@@ -500,10 +517,7 @@ class _SleepDurationToggleState extends ConsumerState<_SleepDurationToggle> {
 }
 
 class _ModeToggle extends StatelessWidget {
-  const _ModeToggle({
-    required this.useTimesMode,
-    required this.onChanged,
-  });
+  const _ModeToggle({required this.useTimesMode, required this.onChanged});
 
   final bool useTimesMode;
   final ValueChanged<bool> onChanged;
@@ -577,8 +591,9 @@ class _SyncedTextField extends StatefulWidget {
 }
 
 class _SyncedTextFieldState extends State<_SyncedTextField> {
-  late final TextEditingController _controller =
-      TextEditingController(text: widget.value ?? '');
+  late final TextEditingController _controller = TextEditingController(
+    text: widget.value ?? '',
+  );
 
   @override
   void didUpdateWidget(covariant _SyncedTextField oldWidget) {

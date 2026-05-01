@@ -55,8 +55,7 @@ class _WeekReviewState extends ConsumerState<WeekReview> {
   /// Returns the Monday of the week for the given page offset.
   DateTime _weekStartForPage(int page, DateTime now) {
     final today = normalizeDate(now);
-    final currentMonday =
-        today.subtract(Duration(days: (today.weekday - 1)));
+    final currentMonday = today.subtract(Duration(days: (today.weekday - 1)));
     final offset = page - _centerPage;
     return currentMonday.add(Duration(days: offset * 7));
   }
@@ -96,10 +95,7 @@ class _WeekReviewState extends ConsumerState<WeekReview> {
             itemBuilder: (context, page) {
               if (page > _centerPage) return const SizedBox.shrink();
               final start = _weekStartForPage(page, currentDate);
-              return _WeekPage(
-                tracker: widget.tracker,
-                weekStart: start,
-              );
+              return _WeekPage(tracker: widget.tracker, weekStart: start);
             },
           ),
         ),
@@ -144,7 +140,9 @@ class _WeekNavigator extends StatelessWidget {
           ),
           Text(
             _formatRange(weekStart, weekEnd),
-            style: AppTextStyles.title(AppColors.inkBlack).copyWith(fontSize: 18),
+            style: AppTextStyles.title(
+              AppColors.inkBlack,
+            ).copyWith(fontSize: 18),
           ),
           GestureDetector(
             onTap: canGoForward ? onForward : null,
@@ -167,8 +165,18 @@ class _WeekNavigator extends StatelessWidget {
 
   String _formatRange(DateTime start, DateTime end) {
     const months = <String>[
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     if (start.month == end.month) {
       return '${start.day}\u2013${end.day} ${months[start.month - 1]}';
@@ -178,10 +186,7 @@ class _WeekNavigator extends StatelessWidget {
 }
 
 class _WeekPage extends ConsumerWidget {
-  const _WeekPage({
-    required this.tracker,
-    required this.weekStart,
-  });
+  const _WeekPage({required this.tracker, required this.weekStart});
 
   final Tracker tracker;
   final DateTime weekStart;
@@ -237,10 +242,10 @@ class _WeekPage extends ConsumerWidget {
                             HapticFeedback.selectionClick();
                             final events = await ref
                                 .read(eventRepositoryProvider)
-                                .getEventsForTrackerAndDate(
-                                    tracker.uid, date);
+                                .getEventsForTrackerAndDate(tracker.uid, date);
                             if (!context.mounted) return;
-                            if (tracker.frequency == 'multi_daily' && events.isNotEmpty) {
+                            if (tracker.frequency == 'multi_daily' &&
+                                events.isNotEmpty) {
                               await _showDayEntrySummary(
                                 context: context,
                                 tracker: tracker,
@@ -253,8 +258,9 @@ class _WeekPage extends ConsumerWidget {
                                 context: context,
                                 tracker: tracker,
                                 effectiveDate: date,
-                                existingEvent:
-                                    events.isEmpty ? null : events.first,
+                                existingEvent: events.isEmpty
+                                    ? null
+                                    : events.first,
                                 isBackfill: events.isEmpty,
                               );
                             }
@@ -279,7 +285,12 @@ class _WeekPage extends ConsumerWidget {
     required WidgetRef ref,
   }) async {
     var currentEntryIndex = 0;
-    final sortedEvents = [...events]..sort((a, b) => (a.effectiveTime ?? a.effectiveDate).compareTo(b.effectiveTime ?? b.effectiveDate));
+    final sortedEvents = [...events]
+      ..sort(
+        (a, b) => (a.effectiveTime ?? a.effectiveDate).compareTo(
+          b.effectiveTime ?? b.effectiveDate,
+        ),
+      );
 
     return showModalBottomSheet<void>(
       context: context,
@@ -390,11 +401,14 @@ class _DayCard extends StatelessWidget {
           color: isFuture
               ? AppColors.bgSurface.withValues(alpha: 0.5)
               : hasData
-                  ? color
-                  : AppColors.bgSurface,
+              ? color
+              : AppColors.bgSurface,
           borderRadius: BorderRadius.circular(10),
           border: isToday
-              ? Border.all(color: AppColors.inkBlack.withValues(alpha: 0.15), width: 1.5)
+              ? Border.all(
+                  color: AppColors.inkBlack.withValues(alpha: 0.15),
+                  width: 1.5,
+                )
               : Border.all(color: AppColors.inkBlack.withValues(alpha: 0.04)),
         ),
         child: Column(
@@ -420,8 +434,8 @@ class _DayCard extends StatelessWidget {
                 color: isFuture
                     ? AppColors.textTertiary.withValues(alpha: 0.3)
                     : hasData && value! >= 0.55
-                        ? AppColors.bgElevated.withValues(alpha: 0.9)
-                        : AppColors.inkBlack,
+                    ? AppColors.bgElevated.withValues(alpha: 0.9)
+                    : AppColors.inkBlack,
               ),
             ),
             if (hasData && tracker.scoreKey != null) ...[

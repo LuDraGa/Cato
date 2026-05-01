@@ -4,7 +4,9 @@ class DefaultFirebaseOptions {
   static FirebaseOptions? get currentPlatform {
     const apiKey = String.fromEnvironment('FIREBASE_API_KEY');
     const appId = String.fromEnvironment('FIREBASE_APP_ID');
-    const messagingSenderId = String.fromEnvironment('FIREBASE_MESSAGING_SENDER_ID');
+    const messagingSenderId = String.fromEnvironment(
+      'FIREBASE_MESSAGING_SENDER_ID',
+    );
     const projectId = String.fromEnvironment('FIREBASE_PROJECT_ID');
     const storageBucket = String.fromEnvironment('FIREBASE_STORAGE_BUCKET');
 

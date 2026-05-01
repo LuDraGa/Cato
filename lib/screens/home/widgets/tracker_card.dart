@@ -33,7 +33,9 @@ class TrackerCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: deEmphasized ? AppColors.bgSurface : AppColors.bgElevated,
           borderRadius: BorderRadius.circular(14),
-          boxShadow: deEmphasized ? const <BoxShadow>[] : surfaceShadow(elevated: true),
+          boxShadow: deEmphasized
+              ? const <BoxShadow>[]
+              : surfaceShadow(elevated: true),
         ),
         child: Row(
           children: <Widget>[
@@ -45,10 +47,7 @@ class TrackerCard extends StatelessWidget {
                 color: domainColor.withValues(alpha: 0.14),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Text(
-                tracker.icon,
-                style: const TextStyle(fontSize: 16),
-              ),
+              child: Text(tracker.icon, style: const TextStyle(fontSize: 16)),
             ),
             const SizedBox(width: AppSpacing.sm),
             Expanded(
@@ -58,17 +57,19 @@ class TrackerCard extends StatelessWidget {
                   Text(
                     tracker.name,
                     style: AppTextStyles.title(
-                      deEmphasized ? AppColors.textSecondary : AppColors.inkBlack,
+                      deEmphasized
+                          ? AppColors.textSecondary
+                          : AppColors.inkBlack,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: deEmphasized
-                              ? AppColors.textTertiary
-                              : AppColors.textSecondary,
-                        ),
+                      color: deEmphasized
+                          ? AppColors.textTertiary
+                          : AppColors.textSecondary,
+                    ),
                   ),
                 ],
               ),
@@ -110,10 +111,7 @@ class LoggedTrackerItem extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Text(
-              icon,
-              style: const TextStyle(fontSize: 12),
-            ),
+            Text(icon, style: const TextStyle(fontSize: 12)),
             const SizedBox(width: AppSpacing.xs),
             Expanded(
               child: Text(
@@ -121,10 +119,10 @@ class LoggedTrackerItem extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: tertiary
-                          ? AppColors.textTertiary
-                          : AppColors.textSecondary,
-                    ),
+                  color: tertiary
+                      ? AppColors.textTertiary
+                      : AppColors.textSecondary,
+                ),
               ),
             ),
           ],

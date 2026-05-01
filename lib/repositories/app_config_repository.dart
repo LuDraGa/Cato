@@ -26,8 +26,12 @@ class AppConfigRepository {
 
   Future<void> setValue(String key, String value) async {
     await _isar.writeTxn(() async {
-      final existing = await _isar.appConfigs.filter().keyEqualTo(key).findFirst();
-      final item = existing ?? AppConfig()..key = key;
+      final existing = await _isar.appConfigs
+          .filter()
+          .keyEqualTo(key)
+          .findFirst();
+      final item = existing ?? AppConfig()
+        ..key = key;
       item.value = value;
       await _isar.appConfigs.put(item);
     });
@@ -39,4 +43,3 @@ class AppConfigRepository {
     });
   }
 }
-

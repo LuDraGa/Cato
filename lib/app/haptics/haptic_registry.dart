@@ -26,7 +26,10 @@ const _glassBeadTick = PatternBinding([
   PatternStep(pattern: HapticPattern.glassBeadTick),
 ]);
 const _glassBeadTickAccent = PatternBinding([
-  PatternStep(pattern: HapticPattern.glassBeadTick, intensity: Intensity.accent),
+  PatternStep(
+    pattern: HapticPattern.glassBeadTick,
+    intensity: Intensity.accent,
+  ),
 ]);
 const _softPaperPress = PatternBinding([
   PatternStep(pattern: HapticPattern.softPaperPress),
@@ -47,11 +50,12 @@ const _twoStageConfirm = PatternBinding([
   PatternStep(pattern: HapticPattern.twoStageConfirm),
 ]);
 const _twoStageConfirmSoft = PatternBinding([
-  PatternStep(pattern: HapticPattern.twoStageConfirm, intensity: Intensity.soft),
+  PatternStep(
+    pattern: HapticPattern.twoStageConfirm,
+    intensity: Intensity.soft,
+  ),
 ]);
-const _waxSeal = PatternBinding([
-  PatternStep(pattern: HapticPattern.waxSeal),
-]);
+const _waxSeal = PatternBinding([PatternStep(pattern: HapticPattern.waxSeal)]);
 const _waxSealSoft = PatternBinding([
   PatternStep(pattern: HapticPattern.waxSeal, intensity: Intensity.soft),
 ]);

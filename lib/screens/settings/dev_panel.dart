@@ -26,7 +26,10 @@ class DevPanelScreen extends ConsumerWidget {
           return ListView(
             padding: const EdgeInsets.all(16),
             children: <Widget>[
-              Text('Collections', style: Theme.of(context).textTheme.titleLarge),
+              Text(
+                'Collections',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
               const SizedBox(height: 8),
               Card(
                 child: Padding(
@@ -45,20 +48,24 @@ class DevPanelScreen extends ConsumerWidget {
               const SizedBox(height: 24),
               FilledButton(
                 onPressed: () => _showCollection(context, 'Domains', () async {
-                  final items = await ref.read(domainRepositoryProvider).getAll();
-                  return const JsonEncoder.withIndent('  ').convert(
-                    items.map((item) => item.toJson()).toList(),
-                  );
+                  final items = await ref
+                      .read(domainRepositoryProvider)
+                      .getAll();
+                  return const JsonEncoder.withIndent(
+                    '  ',
+                  ).convert(items.map((item) => item.toJson()).toList());
                 }),
                 child: const Text('Browse domains'),
               ),
               const SizedBox(height: 8),
               FilledButton(
                 onPressed: () => _showCollection(context, 'Trackers', () async {
-                  final items = await ref.read(trackerRepositoryProvider).getAllActive();
-                  return const JsonEncoder.withIndent('  ').convert(
-                    items.map((item) => item.toJson()).toList(),
-                  );
+                  final items = await ref
+                      .read(trackerRepositoryProvider)
+                      .getAllActive();
+                  return const JsonEncoder.withIndent(
+                    '  ',
+                  ).convert(items.map((item) => item.toJson()).toList());
                 }),
                 child: const Text('Browse trackers'),
               ),
@@ -142,7 +149,9 @@ class DevPanelScreen extends ConsumerWidget {
   }
 
   Future<void> _showRawConfigs(BuildContext context) async {
-    final trackers = await rootBundle.loadString('assets/tracker_configs/trackers.json');
+    final trackers = await rootBundle.loadString(
+      'assets/tracker_configs/trackers.json',
+    );
     if (!context.mounted) {
       return;
     }
@@ -154,7 +163,9 @@ class DevPanelScreen extends ConsumerWidget {
     final drafts = <EventDraft>[];
     final random = Random(42);
     for (var offset = 0; offset < 30; offset++) {
-      final date = normalizeDate(DateTime.now().subtract(Duration(days: offset)));
+      final date = normalizeDate(
+        DateTime.now().subtract(Duration(days: offset)),
+      );
       for (final tracker in trackers) {
         if (tracker.uid == 'tracker-snack' && offset % 3 != 0) {
           continue;
@@ -173,7 +184,9 @@ class DevPanelScreen extends ConsumerWidget {
             case 'text':
               metric.stringValue = '${tracker.name} note';
             case 'single_select':
-              final options = List<String>.from(field.config['options'] as List? ?? const []);
+              final options = List<String>.from(
+                field.config['options'] as List? ?? const [],
+              );
               if (options.isNotEmpty) {
                 metric.stringValue = options[random.nextInt(options.length)];
               }
@@ -201,9 +214,9 @@ class DevPanelScreen extends ConsumerWidget {
     }
     await ref.read(eventRepositoryProvider).saveBatch(drafts);
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Seeded 30 days of data')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Seeded 30 days of data')));
     }
   }
 }

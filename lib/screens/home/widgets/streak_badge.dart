@@ -67,9 +67,9 @@ class _StreakBadgeState extends State<StreakBadge> {
       child: Text(
         'Day $_visible',
         key: ValueKey(_visible),
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: AppColors.textSecondary,
-            ),
+        style: Theme.of(
+          context,
+        ).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
       ),
     );
   }

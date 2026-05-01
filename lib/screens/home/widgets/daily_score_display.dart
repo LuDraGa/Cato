@@ -30,10 +30,7 @@ class _DailyScoreDisplayState extends State<DailyScoreDisplay>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: AppDurations.long,
-    );
+    _controller = AnimationController(vsync: this, duration: AppDurations.long);
     _controller.addListener(() => setState(() {}));
     _targetScore = widget.score;
     _visibleScore = widget.score;
@@ -69,10 +66,7 @@ class _DailyScoreDisplayState extends State<DailyScoreDisplay>
   @override
   Widget build(BuildContext context) {
     if (_targetScore == null) {
-      return Text(
-        '—',
-        style: AppTextStyles.metric(AppColors.inkBlack),
-      );
+      return Text('—', style: AppTextStyles.metric(AppColors.inkBlack));
     }
     final value = _controller.isAnimating
         ? _scoreAnimation?.value ?? _targetScore!

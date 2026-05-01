@@ -34,7 +34,9 @@ class _AppShellState extends ConsumerState<AppShell>
       if (initial != null) {
         ref.read(pendingAppActionProvider.notifier).state = initial;
       }
-      _subscription = ref.read(notificationServiceProvider).actions.listen((action) {
+      _subscription = ref.read(notificationServiceProvider).actions.listen((
+        action,
+      ) {
         ref.read(pendingAppActionProvider.notifier).state = action;
       });
     });
@@ -56,41 +58,44 @@ class _AppShellState extends ConsumerState<AppShell>
 
   @override
   Widget build(BuildContext context) {
-    ref.listen<PendingAppAction?>(
-      pendingAppActionProvider,
-      (previous, next) async {
-        if (next == null) {
-          return;
+    ref.listen<PendingAppAction?>(pendingAppActionProvider, (
+      previous,
+      next,
+    ) async {
+      if (next == null) {
+        return;
+      }
+      if (next.type == AppActionType.openHome) {
+        widget.navigationShell.goBranch(0);
+      } else if (next.type == AppActionType.openBatch) {
+        if (context.mounted) {
+          await context.push('/batch');
         }
-        if (next.type == AppActionType.openHome) {
-          widget.navigationShell.goBranch(0);
-        } else if (next.type == AppActionType.openBatch) {
-          if (context.mounted) {
-            await context.push('/batch');
-          }
-        } else if (next.type == AppActionType.openEntrySheet) {
-          final trackerUid = next.trackerUid;
-          Tracker? tracker;
-          if (trackerUid != null) {
-            final trackers = ref.read(allTrackersProvider).valueOrNull ?? const <Tracker>[];
-            tracker = trackers.cast<Tracker?>().firstWhere(
-                  (item) => item?.uid == trackerUid,
-                  orElse: () => null,
-                );
-            tracker ??= await ref.read(trackerRepositoryProvider).getByUid(trackerUid);
-          }
-          if (tracker != null && context.mounted) {
-            await showTrackerEntrySheet(
-              context: context,
-              tracker: tracker,
-              effectiveDate: next.effectiveDate,
-              isBackfill: false,
-            );
-          }
+      } else if (next.type == AppActionType.openEntrySheet) {
+        final trackerUid = next.trackerUid;
+        Tracker? tracker;
+        if (trackerUid != null) {
+          final trackers =
+              ref.read(allTrackersProvider).valueOrNull ?? const <Tracker>[];
+          tracker = trackers.cast<Tracker?>().firstWhere(
+            (item) => item?.uid == trackerUid,
+            orElse: () => null,
+          );
+          tracker ??= await ref
+              .read(trackerRepositoryProvider)
+              .getByUid(trackerUid);
         }
-        ref.read(pendingAppActionProvider.notifier).state = null;
-      },
-    );
+        if (tracker != null && context.mounted) {
+          await showTrackerEntrySheet(
+            context: context,
+            tracker: tracker,
+            effectiveDate: next.effectiveDate,
+            isBackfill: false,
+          );
+        }
+      }
+      ref.read(pendingAppActionProvider.notifier).state = null;
+    });
 
     // Force rebuild when any aesthetic dimension changes
     ref.watch(aestheticRevisionProvider);
@@ -164,9 +169,8 @@ class _NavItem extends StatelessWidget {
             label,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color:
-                      selected ? AppColors.inkBlack : AppColors.textSecondary,
-                ),
+              color: selected ? AppColors.inkBlack : AppColors.textSecondary,
+            ),
           ),
         ),
       ),

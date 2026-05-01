@@ -44,14 +44,10 @@ class _ScoreSliderState extends State<ScoreSlider> {
       builder: (context, constraints) {
         return GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTapDown: (details) => _updateFromDx(
-            details.localPosition.dx,
-            constraints.maxWidth,
-          ),
-          onHorizontalDragUpdate: (details) => _updateFromDx(
-            details.localPosition.dx,
-            constraints.maxWidth,
-          ),
+          onTapDown: (details) =>
+              _updateFromDx(details.localPosition.dx, constraints.maxWidth),
+          onHorizontalDragUpdate: (details) =>
+              _updateFromDx(details.localPosition.dx, constraints.maxWidth),
           child: SizedBox(
             height: 32,
             child: CustomPaint(

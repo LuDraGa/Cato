@@ -56,9 +56,8 @@ class ChipSelector extends StatelessWidget {
             child: Text(
               option,
               style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color:
-                        selected ? AppColors.inkBlack : AppColors.textPrimary,
-                  ),
+                color: selected ? AppColors.inkBlack : AppColors.textPrimary,
+              ),
             ),
           ),
         );
@@ -66,4 +65,3 @@ class ChipSelector extends StatelessWidget {
     );
   }
 }
-

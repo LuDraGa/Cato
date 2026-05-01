@@ -91,10 +91,7 @@ class _MonthReviewState extends ConsumerState<MonthReview> {
             itemBuilder: (context, page) {
               if (page > _centerPage) return const SizedBox.shrink();
               final pageMonth = _monthForPage(page, currentDate);
-              return _MonthPage(
-                tracker: widget.tracker,
-                month: pageMonth,
-              );
+              return _MonthPage(tracker: widget.tracker, month: pageMonth);
             },
           ),
         ),
@@ -137,7 +134,9 @@ class _MonthNavigator extends StatelessWidget {
           ),
           Text(
             '${_monthName(month.month)} ${month.year}',
-            style: AppTextStyles.title(AppColors.inkBlack).copyWith(fontSize: 18),
+            style: AppTextStyles.title(
+              AppColors.inkBlack,
+            ).copyWith(fontSize: 18),
           ),
           GestureDetector(
             onTap: canGoForward ? onForward : null,
@@ -160,18 +159,25 @@ class _MonthNavigator extends StatelessWidget {
 
   static String _monthName(int month) {
     const months = <String>[
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December',
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
     return months[month - 1];
   }
 }
 
 class _MonthPage extends ConsumerWidget {
-  const _MonthPage({
-    required this.tracker,
-    required this.month,
-  });
+  const _MonthPage({required this.tracker, required this.month});
 
   final Tracker tracker;
   final DateTime month;
@@ -187,11 +193,7 @@ class _MonthPage extends ConsumerWidget {
     );
     final summary = ref.watch(
       periodSummaryProvider(
-        PeriodSummaryRequest(
-          trackerUid: tracker.uid,
-          start: start,
-          end: end,
-        ),
+        PeriodSummaryRequest(trackerUid: tracker.uid, start: start, end: end),
       ),
     );
 
@@ -242,7 +244,12 @@ class _MonthPage extends ConsumerWidget {
     required WidgetRef ref,
   }) async {
     var currentEntryIndex = 0;
-    final sortedEvents = [...events]..sort((a, b) => (a.effectiveTime ?? a.effectiveDate).compareTo(b.effectiveTime ?? b.effectiveDate));
+    final sortedEvents = [...events]
+      ..sort(
+        (a, b) => (a.effectiveTime ?? a.effectiveDate).compareTo(
+          b.effectiveTime ?? b.effectiveDate,
+        ),
+      );
 
     return showModalBottomSheet<void>(
       context: context,

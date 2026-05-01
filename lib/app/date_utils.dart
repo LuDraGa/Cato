@@ -16,10 +16,7 @@ String hhMm(TimeOfDay value) {
 
 TimeOfDay parseHhMm(String value) {
   final parts = value.split(':');
-  return TimeOfDay(
-    hour: int.parse(parts[0]),
-    minute: int.parse(parts[1]),
-  );
+  return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
 }
 
 DateTime firstDayOfMonth(DateTime value) {
@@ -44,4 +41,3 @@ bool isSameDay(DateTime left, DateTime right) {
       left.month == right.month &&
       left.day == right.day;
 }
-

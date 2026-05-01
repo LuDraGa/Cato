@@ -20,29 +20,18 @@ class SummaryStats extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.bgSurface,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: AppColors.inkBlack.withValues(alpha: 0.04),
-        ),
+        border: Border.all(color: AppColors.inkBlack.withValues(alpha: 0.04)),
       ),
       child: Row(
         children: <Widget>[
-          _StatCell(
-            label: 'Best Streak',
-            value: '${summary.longestStreak}d',
-          ),
+          _StatCell(label: 'Best Streak', value: '${summary.longestStreak}d'),
           if (summary.averageScore != null) ...[
             _divider(),
-            _StatCell(
-              label: 'Avg',
-              value: _formatScore(summary),
-            ),
+            _StatCell(label: 'Avg', value: _formatScore(summary)),
           ],
           if (timeScale == TimeScale.year) ...[
             _divider(),
-            _StatCell(
-              label: 'Total',
-              value: '${summary.completedDays}d',
-            ),
+            _StatCell(label: 'Total', value: '${summary.completedDays}d'),
           ],
         ],
       ),
@@ -51,8 +40,9 @@ class SummaryStats extends StatelessWidget {
 
   String _formatScore(PeriodSummary summary) {
     final score = summary.averageScore!;
-    final formatted =
-        score == score.roundToDouble() ? '${score.round()}' : score.toStringAsFixed(1);
+    final formatted = score == score.roundToDouble()
+        ? '${score.round()}'
+        : score.toStringAsFixed(1);
     if (summary.scoreMax != null && summary.scoreMax! > 0) {
       return '$formatted/${summary.scoreMax}';
     }

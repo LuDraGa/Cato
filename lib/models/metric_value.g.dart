@@ -23,21 +23,13 @@ const MetricValueSchema = Schema(
       name: r'doubleValue',
       type: IsarType.double,
     ),
-    r'hasValue': PropertySchema(
-      id: 2,
-      name: r'hasValue',
-      type: IsarType.bool,
-    ),
+    r'hasValue': PropertySchema(id: 2, name: r'hasValue', type: IsarType.bool),
     r'inputKey': PropertySchema(
       id: 3,
       name: r'inputKey',
       type: IsarType.string,
     ),
-    r'intValue': PropertySchema(
-      id: 4,
-      name: r'intValue',
-      type: IsarType.long,
-    ),
+    r'intValue': PropertySchema(id: 4, name: r'intValue', type: IsarType.long),
     r'listValue': PropertySchema(
       id: 5,
       name: r'listValue',
@@ -52,7 +44,7 @@ const MetricValueSchema = Schema(
       id: 7,
       name: r'stringValue',
       type: IsarType.string,
-    )
+    ),
   },
   estimateSize: _metricValueEstimateSize,
   serialize: _metricValueSerialize,
@@ -158,99 +150,101 @@ P _metricValueDeserializeProp<P>(
 extension MetricValueQueryFilter
     on QueryBuilder<MetricValue, MetricValue, QFilterCondition> {
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      boolValueIsNull() {
+  boolValueIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'boolValue',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'boolValue'),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      boolValueIsNotNull() {
+  boolValueIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'boolValue',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'boolValue'),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      boolValueEqualTo(bool? value) {
+  boolValueEqualTo(bool? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'boolValue',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'boolValue', value: value),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      doubleValueIsNull() {
+  doubleValueIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'doubleValue',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'doubleValue'),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      doubleValueIsNotNull() {
+  doubleValueIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'doubleValue',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'doubleValue'),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      doubleValueEqualTo(
-    double? value, {
-    double epsilon = Query.epsilon,
-  }) {
+  doubleValueEqualTo(double? value, {double epsilon = Query.epsilon}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'doubleValue',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'doubleValue',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      doubleValueGreaterThan(
+  doubleValueGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'doubleValue',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'doubleValue',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      doubleValueLessThan(
+  doubleValueLessThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'doubleValue',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'doubleValue',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      doubleValueBetween(
+  doubleValueBetween(
     double? lower,
     double? upper, {
     bool includeLower = true,
@@ -258,24 +252,26 @@ extension MetricValueQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'doubleValue',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'doubleValue',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition> hasValueEqualTo(
-      bool value) {
+    bool value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'hasValue',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'hasValue', value: value),
+      );
     });
   }
 
@@ -284,43 +280,49 @@ extension MetricValueQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'inputKey',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'inputKey',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      inputKeyGreaterThan(
+  inputKeyGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'inputKey',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'inputKey',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      inputKeyLessThan(
+  inputKeyLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'inputKey',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'inputKey',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -332,141 +334,142 @@ extension MetricValueQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'inputKey',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'inputKey',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      inputKeyStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  inputKeyStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'inputKey',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'inputKey',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      inputKeyEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  inputKeyEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'inputKey',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'inputKey',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      inputKeyContains(String value, {bool caseSensitive = true}) {
+  inputKeyContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'inputKey',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'inputKey',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition> inputKeyMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'inputKey',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'inputKey',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      inputKeyIsEmpty() {
+  inputKeyIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'inputKey',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'inputKey', value: ''),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      inputKeyIsNotEmpty() {
+  inputKeyIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'inputKey',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'inputKey', value: ''),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      intValueIsNull() {
+  intValueIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'intValue',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'intValue'),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      intValueIsNotNull() {
+  intValueIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'intValue',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'intValue'),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition> intValueEqualTo(
-      int? value) {
+    int? value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'intValue',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'intValue', value: value),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      intValueGreaterThan(
-    int? value, {
-    bool include = false,
-  }) {
+  intValueGreaterThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'intValue',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'intValue',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      intValueLessThan(
-    int? value, {
-    bool include = false,
-  }) {
+  intValueLessThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'intValue',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'intValue',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -477,82 +480,87 @@ extension MetricValueQueryFilter
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'intValue',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'intValue',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      listValueIsNull() {
+  listValueIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'listValue',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'listValue'),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      listValueIsNotNull() {
+  listValueIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'listValue',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'listValue'),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      listValueElementEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  listValueElementEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'listValue',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'listValue',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      listValueElementGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'listValue',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      listValueElementLessThan(
+  listValueElementGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'listValue',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'listValue',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      listValueElementBetween(
+  listValueElementLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'listValue',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
+  listValueElementBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -560,160 +568,126 @@ extension MetricValueQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'listValue',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      listValueElementStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'listValue',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      listValueElementEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'listValue',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      listValueElementContains(String value, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'listValue',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      listValueElementMatches(String pattern, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'listValue',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      listValueElementIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'listValue',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      listValueElementIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'listValue',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      listValueLengthEqualTo(int length) {
-    return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'listValue',
-        length,
-        true,
-        length,
-        true,
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'listValue',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
       );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      listValueIsEmpty() {
+  listValueElementStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'listValue',
-        0,
-        true,
-        0,
-        true,
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'listValue',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
       );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      listValueIsNotEmpty() {
+  listValueElementEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'listValue',
-        0,
-        false,
-        999999,
-        true,
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'listValue',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
       );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      listValueLengthLessThan(
-    int length, {
-    bool include = false,
-  }) {
+  listValueElementContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'listValue',
-        0,
-        true,
-        length,
-        include,
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'listValue',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
       );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      listValueLengthGreaterThan(
-    int length, {
-    bool include = false,
-  }) {
+  listValueElementMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.listLength(
-        r'listValue',
-        length,
-        include,
-        999999,
-        true,
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'listValue',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
       );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      listValueLengthBetween(
+  listValueElementIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'listValue', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
+  listValueElementIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'listValue', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
+  listValueLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'listValue', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
+  listValueIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'listValue', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
+  listValueIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'listValue', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
+  listValueLengthLessThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'listValue', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
+  listValueLengthGreaterThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'listValue', length, include, 999999, true);
+    });
+  }
+
+  QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
+  listValueLengthBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -731,71 +705,74 @@ extension MetricValueQueryFilter
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      mediaPathIsNull() {
+  mediaPathIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'mediaPath',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'mediaPath'),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      mediaPathIsNotNull() {
+  mediaPathIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'mediaPath',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'mediaPath'),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      mediaPathEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  mediaPathEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'mediaPath',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'mediaPath',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      mediaPathGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'mediaPath',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      mediaPathLessThan(
+  mediaPathGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'mediaPath',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'mediaPath',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      mediaPathBetween(
+  mediaPathLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'mediaPath',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
+  mediaPathBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -803,153 +780,158 @@ extension MetricValueQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'mediaPath',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'mediaPath',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      mediaPathStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  mediaPathStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'mediaPath',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'mediaPath',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      mediaPathEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  mediaPathEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'mediaPath',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'mediaPath',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      mediaPathContains(String value, {bool caseSensitive = true}) {
+  mediaPathContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'mediaPath',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'mediaPath',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      mediaPathMatches(String pattern, {bool caseSensitive = true}) {
+  mediaPathMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'mediaPath',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'mediaPath',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      mediaPathIsEmpty() {
+  mediaPathIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'mediaPath',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'mediaPath', value: ''),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      mediaPathIsNotEmpty() {
+  mediaPathIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'mediaPath',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'mediaPath', value: ''),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      stringValueIsNull() {
+  stringValueIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'stringValue',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'stringValue'),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      stringValueIsNotNull() {
+  stringValueIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'stringValue',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'stringValue'),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      stringValueEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  stringValueEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'stringValue',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'stringValue',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      stringValueGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'stringValue',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      stringValueLessThan(
+  stringValueGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'stringValue',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'stringValue',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      stringValueBetween(
+  stringValueLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'stringValue',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
+  stringValueBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -957,84 +939,86 @@ extension MetricValueQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'stringValue',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'stringValue',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      stringValueStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  stringValueStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'stringValue',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'stringValue',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      stringValueEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  stringValueEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'stringValue',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'stringValue',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      stringValueContains(String value, {bool caseSensitive = true}) {
+  stringValueContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'stringValue',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'stringValue',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      stringValueMatches(String pattern, {bool caseSensitive = true}) {
+  stringValueMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'stringValue',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'stringValue',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      stringValueIsEmpty() {
+  stringValueIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'stringValue',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'stringValue', value: ''),
+      );
     });
   }
 
   QueryBuilder<MetricValue, MetricValue, QAfterFilterCondition>
-      stringValueIsNotEmpty() {
+  stringValueIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'stringValue',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'stringValue', value: ''),
+      );
     });
   }
 }

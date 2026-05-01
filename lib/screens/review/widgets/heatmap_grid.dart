@@ -89,9 +89,7 @@ class HeatmapGrid extends StatelessWidget {
             ),
           ),
           Positioned.fill(
-            child: IgnorePointer(
-              child: CustomPaint(painter: _NoisePainter()),
-            ),
+            child: IgnorePointer(child: CustomPaint(painter: _NoisePainter())),
           ),
         ],
       ),
@@ -100,10 +98,7 @@ class HeatmapGrid extends StatelessWidget {
 }
 
 class _HeatmapPainter extends CustomPainter {
-  const _HeatmapPainter({
-    required this.cells,
-    required this.gridSize,
-  });
+  const _HeatmapPainter({required this.cells, required this.gridSize});
 
   final List<_HeatmapCell> cells;
   final Size gridSize;
@@ -126,9 +121,7 @@ class _HeatmapPainter extends CustomPainter {
       canvas.drawRRect(
         RRect.fromRectAndRadius(
           strokeRect,
-          Radius.circular(
-            math.max(0, cell.radius - (cell.filled ? 0.6 : 0)),
-          ),
+          Radius.circular(math.max(0, cell.radius - (cell.filled ? 0.6 : 0))),
         ),
         Paint()
           ..style = PaintingStyle.stroke
@@ -214,35 +207,37 @@ class _HeatmapLayout {
     required int daysInMonth,
     required int leading,
     required int rows,
-  })  : _month = month,
-        _daysInMonth = daysInMonth,
-        _leading = leading,
-        _rows = rows,
-        cellSize = (width - (_gap * 6)) / 7,
-        gridWidth = width,
-        gridHeight = rows * ((width - (_gap * 6)) / 7) + ((rows - 1) * _gap),
-        cells = List<_HeatmapCell>.generate(daysInMonth, (index) {
-          final dayNumber = index + 1;
-          final cellIndex = leading + index;
-          final row = cellIndex ~/ 7;
-          final column = cellIndex % 7;
-          final rect = Rect.fromLTWH(
-            column * (((width - (_gap * 6)) / 7) + _gap),
-            row * (((width - (_gap * 6)) / 7) + _gap),
-            (width - (_gap * 6)) / 7,
-            (width - (_gap * 6)) / 7,
-          );
-          final date = normalizeDate(DateTime(month.year, month.month, dayNumber));
-          final value = data[date];
-          return _HeatmapCell(
-            date: date,
-            rect: rect,
-            radius: 5.5 + ((dayNumber * 37) % 11) / 10,
-            color: _colorFor(tracker, value),
-            filled: value != null,
-            value: value,
-          );
-        });
+  }) : _month = month,
+       _daysInMonth = daysInMonth,
+       _leading = leading,
+       _rows = rows,
+       cellSize = (width - (_gap * 6)) / 7,
+       gridWidth = width,
+       gridHeight = rows * ((width - (_gap * 6)) / 7) + ((rows - 1) * _gap),
+       cells = List<_HeatmapCell>.generate(daysInMonth, (index) {
+         final dayNumber = index + 1;
+         final cellIndex = leading + index;
+         final row = cellIndex ~/ 7;
+         final column = cellIndex % 7;
+         final rect = Rect.fromLTWH(
+           column * (((width - (_gap * 6)) / 7) + _gap),
+           row * (((width - (_gap * 6)) / 7) + _gap),
+           (width - (_gap * 6)) / 7,
+           (width - (_gap * 6)) / 7,
+         );
+         final date = normalizeDate(
+           DateTime(month.year, month.month, dayNumber),
+         );
+         final value = data[date];
+         return _HeatmapCell(
+           date: date,
+           rect: rect,
+           radius: 5.5 + ((dayNumber * 37) % 11) / 10,
+           color: _colorFor(tracker, value),
+           filled: value != null,
+           value: value,
+         );
+       });
 
   static const double _gap = 8;
 
@@ -352,9 +347,9 @@ class _DayLabel extends StatelessWidget {
       child: Text(
         label,
         textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppColors.textSecondary,
-            ),
+        style: Theme.of(
+          context,
+        ).textTheme.bodySmall?.copyWith(color: AppColors.textSecondary),
       ),
     );
   }

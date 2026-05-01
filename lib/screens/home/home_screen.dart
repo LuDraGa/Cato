@@ -74,7 +74,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       }
     });
 
-    final homeSections = feedbackState.pending ? _visibleSections : latestHomeSections;
+    final homeSections = feedbackState.pending
+        ? _visibleSections
+        : latestHomeSections;
 
     return SafeArea(
       child: LayoutBuilder(
@@ -98,10 +100,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       DateFormat('EEEE, MMMM d').format(today),
                       style: AppTextStyles.headline(AppColors.inkBlack),
                     ),
-                    StreakBadge(
-                      streak: streak,
-                      feedbackState: feedbackState,
-                    ),
+                    StreakBadge(streak: streak, feedbackState: feedbackState),
                   ],
                 ),
                 const SizedBox(height: AppSpacing.lg),
@@ -121,7 +120,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           completion.completed == 0
                               ? 'Today · not yet logged'
                               : '${completion.completed} of ${completion.total} logged',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
                                 color: completion.completed == 0
                                     ? AppColors.textTertiary
                                     : AppColors.textSecondary,
@@ -138,7 +138,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     child: TrackerCard(
                       tracker: item.tracker,
                       subtitle: 'Tap to log',
-                      domainColor: _domainColor(domains[item.tracker.domainUid]?.color),
+                      domainColor: _domainColor(
+                        domains[item.tracker.domainUid]?.color,
+                      ),
                       onTap: () => showTrackerEntrySheet(
                         context: context,
                         tracker: item.tracker,
@@ -155,8 +157,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       child: Text(
                         'Log the rest →',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: AppColors.textSecondary,
-                            ),
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                     ),
                   ),
@@ -166,7 +168,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     child: TrackerCard(
                       tracker: item.tracker,
                       subtitle: 'Optional, kept separate',
-                      domainColor: _domainColor(domains[item.tracker.domainUid]?.color),
+                      domainColor: _domainColor(
+                        domains[item.tracker.domainUid]?.color,
+                      ),
                       deEmphasized: item.deEmphasized,
                       onTap: () => showTrackerEntrySheet(
                         context: context,
@@ -182,8 +186,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     child: Text(
                       'Logged',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppColors.textTertiary,
-                          ),
+                        color: AppColors.textTertiary,
+                      ),
                     ),
                   ),
                 if (homeSections.logged.isNotEmpty)

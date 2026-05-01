@@ -7,10 +7,7 @@ import 'event_providers.dart';
 import 'tracker_providers.dart';
 
 class CompletionStats {
-  const CompletionStats({
-    required this.completed,
-    required this.total,
-  });
+  const CompletionStats({required this.completed, required this.total});
 
   final int completed;
   final int total;
@@ -22,7 +19,9 @@ final completionProvider = Provider<CompletionStats>((ref) {
   final trackers = ref.watch(completionEligibleTrackersProvider);
   final events = ref.watch(todayEventsProvider).valueOrNull ?? const <Event>[];
   final completed = trackers
-      .where((tracker) => events.any((event) => event.trackerUid == tracker.uid))
+      .where(
+        (tracker) => events.any((event) => event.trackerUid == tracker.uid),
+      )
       .length;
   return CompletionStats(completed: completed, total: trackers.length);
 });
@@ -121,4 +120,3 @@ double _normalizeScore(int value, Tracker tracker) {
   }
   return (value - tracker.scoreMin) / denominator;
 }
-

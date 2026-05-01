@@ -25,14 +25,24 @@ class DayEntrySummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sortedEvents = [...events]..sort((a, b) => (a.effectiveTime ?? a.effectiveDate).compareTo(b.effectiveTime ?? b.effectiveDate));
+    final sortedEvents = [...events]
+      ..sort(
+        (a, b) => (a.effectiveTime ?? a.effectiveDate).compareTo(
+          b.effectiveTime ?? b.effectiveDate,
+        ),
+      );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.sm),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            AppSpacing.md,
+            AppSpacing.lg,
+            AppSpacing.sm,
+          ),
           child: Text(
             '${tracker.icon} ${tracker.name} · ${MaterialLocalizations.of(context).formatMediumDate(date)}',
             style: AppTextStyles.title(AppColors.inkBlack),
@@ -55,7 +65,12 @@ class DayEntrySummary extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.lg),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            AppSpacing.md,
+            AppSpacing.lg,
+            AppSpacing.lg,
+          ),
           child: SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -65,7 +80,9 @@ class DayEntrySummary extends StatelessWidget {
                 backgroundColor: AppColors.sage,
                 foregroundColor: AppColors.bgElevated,
                 padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               child: const Text('Add New Entry'),
             ),
@@ -107,9 +124,9 @@ class _EntryListItem extends StatelessWidget {
             Text(
               timeStr,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.w600,
-                  ),
+                color: AppColors.textSecondary,
+                fontWeight: FontWeight.w600,
+              ),
             ),
             const SizedBox(width: AppSpacing.md),
             Expanded(

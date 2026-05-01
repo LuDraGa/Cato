@@ -30,17 +30,18 @@ class TrendChart extends ConsumerWidget {
       ...comparisonUids.where((uid) => uid != primaryTracker.uid),
     ];
 
-    final trendData = ref.watch(trendDataProvider(TrendRequest(
-      trackerUids: allUids,
-      start: periodStart,
-      end: periodEnd,
-    )));
+    final trendData = ref.watch(
+      trendDataProvider(
+        TrendRequest(trackerUids: allUids, start: periodStart, end: periodEnd),
+      ),
+    );
 
     if (trendData.isEmpty) return const SizedBox.shrink();
 
     // Comparison tracker toggle chips
-    final otherTrackers =
-        allTrackers.where((t) => t.uid != primaryTracker.uid).toList();
+    final otherTrackers = allTrackers
+        .where((t) => t.uid != primaryTracker.uid)
+        .toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,7 +50,9 @@ class TrendChart extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
           child: Text(
             'Trends',
-            style: AppTextStyles.title(AppColors.inkBlack).copyWith(fontSize: 16),
+            style: AppTextStyles.title(
+              AppColors.inkBlack,
+            ).copyWith(fontSize: 16),
           ),
         ),
         if (otherTrackers.isNotEmpty) ...[
@@ -70,8 +73,9 @@ class TrendChart extends ConsumerWidget {
                 final color = _lineColorForIndex(colorIndex);
                 return GestureDetector(
                   onTap: () {
-                    final current =
-                        Set<String>.from(ref.read(reviewComparisonUidsProvider));
+                    final current = Set<String>.from(
+                      ref.read(reviewComparisonUidsProvider),
+                    );
                     if (selected) {
                       current.remove(t.uid);
                     } else if (current.length < 3) {
@@ -94,7 +98,8 @@ class TrendChart extends ConsumerWidget {
                       border: selected
                           ? Border.all(color: color.withValues(alpha: 0.4))
                           : Border.all(
-                              color: AppColors.inkBlack.withValues(alpha: 0.04)),
+                              color: AppColors.inkBlack.withValues(alpha: 0.04),
+                            ),
                     ),
                     child: Text(
                       '${t.icon} ${t.name}',
@@ -253,10 +258,7 @@ class _TrendPainter extends CustomPainter {
             ..shader = ui.Gradient.linear(
               const Offset(0, 0),
               Offset(0, size.height),
-              [
-                color.withValues(alpha: 0.12),
-                color.withValues(alpha: 0.0),
-              ],
+              [color.withValues(alpha: 0.12), color.withValues(alpha: 0.0)],
             ),
         );
       }

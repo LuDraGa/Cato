@@ -175,9 +175,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         alignment: Alignment.centerLeft,
                         child: Text(
                           'Adds quiet tactile feedback to interactions',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: AppColors.textTertiary,
-                              ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(color: AppColors.textTertiary),
                         ),
                       ),
                     ),
@@ -192,8 +191,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 child: _SettingsRow(
                   label: 'Export data (JSON)',
                   onTap: () async {
-                    final file =
-                        await ref.read(exportServiceProvider).exportJson();
+                    final file = await ref
+                        .read(exportServiceProvider)
+                        .exportJson();
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Exported to ${file.path}')),
@@ -240,10 +240,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     required TimeOfDay initial,
     required ValueChanged<TimeOfDay> onSaved,
   }) async {
-    final picked = await showTimePicker(
-      context: context,
-      initialTime: initial,
-    );
+    final picked = await showTimePicker(context: context, initialTime: initial);
     if (picked != null) {
       onSaved(picked);
     }
@@ -258,10 +255,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   Future<void> _openPrivacyPolicy() async {
     final uri = Uri.parse(privacyPolicyUrl);
-    final launched = await launchUrl(
-      uri,
-      mode: LaunchMode.externalApplication,
-    );
+    final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!launched && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Could not open privacy policy')),
@@ -382,8 +376,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Future<void> _handleAboutTap() async {
     final now = DateTime.now();
     final lastTapAt = _lastAboutTapAt;
-    final continuesSequence = lastTapAt != null &&
-        now.difference(lastTapAt) <= _devPanelMaxTapGap;
+    final continuesSequence =
+        lastTapAt != null && now.difference(lastTapAt) <= _devPanelMaxTapGap;
     final nextTapCount = continuesSequence ? _aboutTaps + 1 : 1;
 
     _lastAboutTapAt = now;
@@ -459,10 +453,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 // ── Shared widgets ──────────────────────────────────────────────────────────
 
 class _Section extends StatelessWidget {
-  const _Section({
-    required this.title,
-    required this.child,
-  });
+  const _Section({required this.title, required this.child});
 
   final String title;
   final Widget child;
@@ -472,10 +463,7 @@ class _Section extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          title,
-          style: AppTextStyles.headline(AppColors.inkBlack),
-        ),
+        Text(title, style: AppTextStyles.headline(AppColors.inkBlack)),
         const SizedBox(height: AppSpacing.sm),
         Container(
           decoration: BoxDecoration(
@@ -515,10 +503,7 @@ class _SettingsRow extends StatelessWidget {
         child: Row(
           children: <Widget>[
             Expanded(
-              child: Text(
-                label,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
+              child: Text(label, style: Theme.of(context).textTheme.bodyLarge),
             ),
             if (trailingWidget != null)
               trailingWidget!
@@ -529,8 +514,8 @@ class _SettingsRow extends StatelessWidget {
                   Text(
                     trailing!,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                   const SizedBox(width: 4),
                   Icon(
@@ -599,11 +584,9 @@ class _DevPanelVersionRow extends StatelessWidget {
                         : 'Cato v$version',
                     key: ValueKey<int>(activeTaps),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color:
-                              active ? AppColors.sage : AppColors.textSecondary,
-                          fontWeight:
-                              active ? FontWeight.w600 : FontWeight.w400,
-                        ),
+                      color: active ? AppColors.sage : AppColors.textSecondary,
+                      fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+                    ),
                   ),
                 ),
               ],
@@ -643,9 +626,9 @@ class _PreviewDots extends StatelessWidget {
       children: [
         Text(
           label,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: AppColors.textSecondary,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodySmall?.copyWith(color: AppColors.textSecondary),
         ),
         const SizedBox(width: 6),
         ...colors.map(
@@ -676,10 +659,7 @@ class _PreviewDots extends StatelessWidget {
 // ── Theme picker sheet (grouped by archetype) ───────────────────────────────
 
 class _ThemePickerSheet extends StatelessWidget {
-  const _ThemePickerSheet({
-    required this.currentId,
-    required this.onSelected,
-  });
+  const _ThemePickerSheet({required this.currentId, required this.onSelected});
 
   final String currentId;
   final ValueChanged<String> onSelected;
@@ -770,17 +750,11 @@ class _ArchetypeGroup extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(
-                name,
-                style: AppTextStyles.title(AppColors.inkBlack),
-              ),
+              Text(name, style: AppTextStyles.title(AppColors.inkBlack)),
               const SizedBox(width: AppSpacing.sm),
               Text(
                 description,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: AppColors.textTertiary,
-                ),
+                style: TextStyle(fontSize: 12, color: AppColors.textTertiary),
               ),
             ],
           ),
@@ -790,8 +764,7 @@ class _ArchetypeGroup extends StatelessWidget {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: themes.length,
-              separatorBuilder: (_, __) =>
-                  const SizedBox(width: AppSpacing.sm),
+              separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.sm),
               itemBuilder: (context, index) {
                 final theme = themes[index];
                 final selected = theme.id == currentId;
@@ -898,9 +871,7 @@ class _ThemeChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         shape: BoxShape.circle,
-        border: Border.all(
-          color: theme.textTertiary.withValues(alpha: 0.15),
-        ),
+        border: Border.all(color: theme.textTertiary.withValues(alpha: 0.15)),
       ),
     );
   }
@@ -1095,9 +1066,16 @@ class _SoundPackPickerSheetState extends State<_SoundPackPickerSheet> {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.bgElevated,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppColors.cornerRadius)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppColors.cornerRadius),
+        ),
       ),
-      padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.lg),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.md,
+        AppSpacing.lg,
+        AppSpacing.lg,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1143,14 +1121,18 @@ class _SoundPackPickerSheetState extends State<_SoundPackPickerSheet> {
             child: ListView.separated(
               shrinkWrap: true,
               itemCount: availableSoundPacks.length,
-              separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.xs),
+              separatorBuilder: (_, __) =>
+                  const SizedBox(height: AppSpacing.xs),
               itemBuilder: (context, index) {
                 final pack = availableSoundPacks[index];
                 final selected = pack.id == _previewId;
                 return GestureDetector(
                   onTap: () {
                     // Pre-fire: sound BEFORE setState for perceptual sync
-                    widget.soundService.playPackSound(pack.id, SoundInteraction.save);
+                    widget.soundService.playPackSound(
+                      pack.id,
+                      SoundInteraction.save,
+                    );
                     setState(() => _previewId = pack.id);
                   },
                   behavior: HitTestBehavior.opaque,
@@ -1174,7 +1156,9 @@ class _SoundPackPickerSheetState extends State<_SoundPackPickerSheet> {
                   child: GestureDetector(
                     onTap: widget.onReset,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: AppSpacing.sm,
+                      ),
                       decoration: BoxDecoration(
                         border: Border.all(color: AppColors.bgSurface),
                         borderRadius: BorderRadius.circular(8),
@@ -1182,7 +1166,10 @@ class _SoundPackPickerSheetState extends State<_SoundPackPickerSheet> {
                       child: Center(
                         child: Text(
                           'Reset to theme default',
-                          style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: AppColors.textSecondary,
+                          ),
                         ),
                       ),
                     ),
@@ -1193,7 +1180,9 @@ class _SoundPackPickerSheetState extends State<_SoundPackPickerSheet> {
                 child: GestureDetector(
                   onTap: () => widget.onSelected(_previewId),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.sm,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.inkBlack,
                       borderRadius: BorderRadius.circular(8),
@@ -1201,7 +1190,11 @@ class _SoundPackPickerSheetState extends State<_SoundPackPickerSheet> {
                     child: Center(
                       child: Text(
                         'Apply',
-                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.bgElevated),
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.bgElevated,
+                        ),
                       ),
                     ),
                   ),
@@ -1265,9 +1258,16 @@ class _HapticPickerSheetState extends State<_HapticPickerSheet> {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.bgElevated,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppColors.cornerRadius)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppColors.cornerRadius),
+        ),
       ),
-      padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.lg),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.md,
+        AppSpacing.lg,
+        AppSpacing.lg,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1313,7 +1313,8 @@ class _HapticPickerSheetState extends State<_HapticPickerSheet> {
             child: ListView.separated(
               shrinkWrap: true,
               itemCount: availableHapticProfiles.length,
-              separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.xs),
+              separatorBuilder: (_, __) =>
+                  const SizedBox(height: AppSpacing.xs),
               itemBuilder: (context, index) {
                 final profile = availableHapticProfiles[index];
                 final selected = profile.id == _previewId;
@@ -1344,7 +1345,9 @@ class _HapticPickerSheetState extends State<_HapticPickerSheet> {
                   child: GestureDetector(
                     onTap: widget.onReset,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: AppSpacing.sm,
+                      ),
                       decoration: BoxDecoration(
                         border: Border.all(color: AppColors.bgSurface),
                         borderRadius: BorderRadius.circular(8),
@@ -1352,7 +1355,10 @@ class _HapticPickerSheetState extends State<_HapticPickerSheet> {
                       child: Center(
                         child: Text(
                           'Reset to theme default',
-                          style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: AppColors.textSecondary,
+                          ),
                         ),
                       ),
                     ),
@@ -1363,7 +1369,9 @@ class _HapticPickerSheetState extends State<_HapticPickerSheet> {
                 child: GestureDetector(
                   onTap: () => widget.onSelected(_previewId),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.sm,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.inkBlack,
                       borderRadius: BorderRadius.circular(8),
@@ -1371,7 +1379,11 @@ class _HapticPickerSheetState extends State<_HapticPickerSheet> {
                     child: Center(
                       child: Text(
                         'Apply',
-                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.bgElevated),
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.bgElevated,
+                        ),
                       ),
                     ),
                   ),
@@ -1414,7 +1426,10 @@ class _DemoRow<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs, horizontal: AppSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+        vertical: AppSpacing.xs,
+        horizontal: AppSpacing.sm,
+      ),
       decoration: BoxDecoration(
         color: AppColors.bgSurface,
         borderRadius: BorderRadius.circular(8),
@@ -1428,7 +1443,10 @@ class _DemoRow<T> extends StatelessWidget {
             behavior: HitTestBehavior.opaque,
             child: AnimatedContainer(
               duration: AppDurations.short,
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 6),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.sm,
+                vertical: 6,
+              ),
               decoration: BoxDecoration(
                 color: active ? AppColors.inkBlack : Colors.transparent,
                 borderRadius: BorderRadius.circular(6),
@@ -1438,7 +1456,9 @@ class _DemoRow<T> extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w500,
-                  color: active ? AppColors.bgElevated : AppColors.textSecondary,
+                  color: active
+                      ? AppColors.bgElevated
+                      : AppColors.textSecondary,
                 ),
               ),
             ),
@@ -1468,12 +1488,17 @@ class _PickerTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedContainer(
       duration: AppDurations.short,
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
+      ),
       decoration: BoxDecoration(
         color: selected ? AppColors.bgSurface : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: selected ? AppColors.inkBlack.withValues(alpha: 0.15) : Colors.transparent,
+          color: selected
+              ? AppColors.inkBlack.withValues(alpha: 0.15)
+              : Colors.transparent,
         ),
       ),
       child: Row(

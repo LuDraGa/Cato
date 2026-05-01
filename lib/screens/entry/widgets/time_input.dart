@@ -34,17 +34,17 @@ class TimeInput extends StatelessWidget {
               child: Text(
                 formatted,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: time == null
-                          ? AppColors.textTertiary
-                          : AppColors.textPrimary,
-                    ),
+                  color: time == null
+                      ? AppColors.textTertiary
+                      : AppColors.textPrimary,
+                ),
               ),
             ),
             Text(
               label,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: AppColors.textSecondary),
             ),
           ],
         ),
@@ -52,4 +52,3 @@ class TimeInput extends StatelessWidget {
     );
   }
 }
-

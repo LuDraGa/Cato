@@ -15,11 +15,15 @@ class Tracker {
       ..name = json['name'] as String
       ..icon = json['icon'] as String
       ..frequency = json['frequency'] as String
-      ..promptTimes = List<String>.from(json['promptTimes'] as List? ?? const [])
+      ..promptTimes = List<String>.from(
+        json['promptTimes'] as List? ?? const [],
+      )
       ..inputSchema = (json['inputSchema'] as List? ?? const [])
-          .map((item) => InputFieldSchema.fromJson(
-                Map<String, dynamic>.from(item as Map),
-              ))
+          .map(
+            (item) => InputFieldSchema.fromJson(
+              Map<String, dynamic>.from(item as Map),
+            ),
+          )
           .toList()
       ..allowedVisualizations = List<String>.from(
         json['allowedVisualizations'] as List? ?? const [],
@@ -88,4 +92,3 @@ class Tracker {
     };
   }
 }
-

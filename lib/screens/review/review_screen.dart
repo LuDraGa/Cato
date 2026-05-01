@@ -53,7 +53,8 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
                   onTap: () {
                     HapticFeedback.selectionClick();
                     setState(
-                        () => _showMultiTrackerDemo = !_showMultiTrackerDemo);
+                      () => _showMultiTrackerDemo = !_showMultiTrackerDemo,
+                    );
                   },
                   behavior: HitTestBehavior.opaque,
                   child: AnimatedContainer(
@@ -104,7 +105,8 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
             Expanded(
               child: MultiTrackerSummary(
                 onSelectTracker: (uid) {
-                  ref.read(reviewSelectedTrackerUidProvider.notifier).state = uid;
+                  ref.read(reviewSelectedTrackerUidProvider.notifier).state =
+                      uid;
                   setState(() => _showMultiTrackerDemo = false);
                 },
               ),
@@ -175,21 +177,20 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
       case TimeScale.week:
         return WeekReview(key: ValueKey('week_$trackerUid'), tracker: tracker);
       case TimeScale.month:
-        return MonthReview(key: ValueKey('month_$trackerUid'), tracker: tracker);
+        return MonthReview(
+          key: ValueKey('month_$trackerUid'),
+          tracker: tracker,
+        );
       case TimeScale.year:
         return YearReview(key: ValueKey('year_$trackerUid'), tracker: tracker);
     }
   }
-
 }
 
 // ── Time-scale tab bar ──────────────────────────────────────────────────────
 
 class _TimeScaleTabs extends StatelessWidget {
-  const _TimeScaleTabs({
-    required this.selected,
-    required this.onChanged,
-  });
+  const _TimeScaleTabs({required this.selected, required this.onChanged});
 
   final TimeScale selected;
   final ValueChanged<TimeScale> onChanged;
@@ -230,7 +231,9 @@ class _TimeScaleTabs extends StatelessWidget {
                     _label(scale),
                     style: TextStyle(
                       fontSize: 13,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w400,
                       color: isSelected
                           ? AppColors.inkBlack
                           : AppColors.textSecondary,
