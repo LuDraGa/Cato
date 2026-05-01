@@ -1,9 +1,9 @@
 # Privacy Policy
 
-**Effective date:** TODO: add publication date  
+**Effective date:** 2nd May, 2026  
 **App:** Cato  
-**Developer:** TODO: add developer or publisher name  
-**Privacy contact:** TODO: add contact email
+**Developer:** WaldoBear  
+**Privacy contact:** abhirooprasad@gmail.com
 
 ## Overview
 
@@ -63,5 +63,4 @@ This policy may be updated when Cato's data practices change. The updated policy
 
 ## Contact
 
-For privacy questions, contact: TODO: add contact email.
-
+For privacy questions, contact: abhirooprasad@gmail.com.
