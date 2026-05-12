@@ -1,0 +1,8 @@
+# Play Console publication status for the Android app.
+# Source of truth for tools/rebrand.sh — once `published: true`,
+# rebrand is locked (package name is permanent on Play after upload).
+#
+# To override (e.g. fresh listing on a new track), edit manually and
+# leave a git note explaining why.
+published: false
+last_checked: 2026-05-12
