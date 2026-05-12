@@ -2,7 +2,7 @@ import 'package:flutter/services.dart';
 
 /// Native haptic channel — bypasses Flutter's HapticFeedback bridge.
 /// Calls go directly to our Kotlin HapticEngine via MethodChannel.
-const _channel = MethodChannel('com.cato.cato/haptics');
+const _channel = MethodChannel('com.cato.habit/haptics');
 
 // ── Public pattern API ──────────────────────────────────────────────────────
 

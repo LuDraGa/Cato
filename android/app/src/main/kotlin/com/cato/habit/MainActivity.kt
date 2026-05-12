@@ -1,4 +1,4 @@
-package com.cato.cato
+package com.cato.habit
 
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine

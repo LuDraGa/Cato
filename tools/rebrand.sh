@@ -60,7 +60,7 @@ if [[ -n "$(git -C "$ROOT" status --porcelain)" ]]; then
 fi
 
 # 3. Read current package.
-CURRENT_PACKAGE="$(grep -E '^\s*applicationId\s*=' "$GRADLE" | sed -E 's/.*"([^"]+)".*/\1/')"
+CURRENT_PACKAGE="$(grep -E '^[[:space:]]*applicationId[[:space:]]*=' "$GRADLE" | sed -E 's/.*"([^"]+)".*/\1/')"
 if [[ -z "$CURRENT_PACKAGE" ]]; then
     echo "ERROR: could not read applicationId from $GRADLE"
     exit 1
@@ -80,7 +80,7 @@ if [[ ! -f "$STATUS_FILE" ]]; then
     echo "ERROR: $STATUS_FILE missing."
     exit 1
 fi
-PUBLISHED="$(grep -E '^\s*published\s*:' "$STATUS_FILE" | awk '{print $2}')"
+PUBLISHED="$(grep -E '^[[:space:]]*published[[:space:]]*:' "$STATUS_FILE" | awk -F: '{gsub(/[[:space:]]/, "", $2); print $2}')"
 
 if [[ "$PUBLISHED" == "true" ]]; then
     echo "ERROR: play_status.yaml says published: true. Package name is locked."
@@ -96,8 +96,8 @@ if [[ "$ASSUME_YES" -ne 1 ]]; then
     read -r -p "Has Cato been published to the Play Store yet? (y/N) " published_answer
     case "$published_answer" in
         [yY]|[yY][eE][sS])
-            sed -i.bak -E 's/^(\s*published\s*:\s*).*/\1true/' "$STATUS_FILE"
-            sed -i.bak -E "s/^(\s*last_checked\s*:\s*).*/\1$(date +%Y-%m-%d)/" "$STATUS_FILE"
+            sed -i.bak -E 's/^([[:space:]]*published[[:space:]]*:[[:space:]]*).*/\1true/' "$STATUS_FILE"
+            sed -i.bak -E "s/^([[:space:]]*last_checked[[:space:]]*:[[:space:]]*).*/\1$(date +%Y-%m-%d)/" "$STATUS_FILE"
             rm -f "$STATUS_FILE.bak"
             echo "Recorded published: true in $STATUS_FILE. Rebrand aborted (package now locked)."
             exit 0
@@ -108,12 +108,12 @@ if [[ "$ASSUME_YES" -ne 1 ]]; then
 fi
 
 # 5. Bump last_checked.
-sed -i.bak -E "s/^(\s*last_checked\s*:\s*).*/\1$(date +%Y-%m-%d)/" "$STATUS_FILE"
+sed -i.bak -E "s/^([[:space:]]*last_checked[[:space:]]*:[[:space:]]*).*/\1$(date +%Y-%m-%d)/" "$STATUS_FILE"
 rm -f "$STATUS_FILE.bak"
 
 # 6. Rewrite build.gradle.kts.
-sed -i.bak -E "s|^(\s*namespace\s*=\s*\")[^\"]+(\")|\1$NEW_PACKAGE\2|" "$GRADLE"
-sed -i.bak -E "s|^(\s*applicationId\s*=\s*\")[^\"]+(\")|\1$NEW_PACKAGE\2|" "$GRADLE"
+sed -i.bak -E "s|^([[:space:]]*namespace[[:space:]]*=[[:space:]]*\")[^\"]+(\")|\1$NEW_PACKAGE\2|" "$GRADLE"
+sed -i.bak -E "s|^([[:space:]]*applicationId[[:space:]]*=[[:space:]]*\")[^\"]+(\")|\1$NEW_PACKAGE\2|" "$GRADLE"
 rm -f "$GRADLE.bak"
 
 # 7. Move kotlin source folder if the old path exists.
@@ -137,10 +137,20 @@ fi
 # 8. Rewrite `package` declaration in each .kt under the new path.
 if [[ -d "$NEW_PATH" ]]; then
     while IFS= read -r -d '' kt; do
-        sed -i.bak -E "s|^package\s+[A-Za-z0-9_.]+|package $NEW_PACKAGE|" "$kt"
+        sed -i.bak -E "s|^package[[:space:]]+[A-Za-z0-9_.]+|package $NEW_PACKAGE|" "$kt"
         rm -f "$kt.bak"
     done < <(find "$NEW_PATH" -maxdepth 1 -name '*.kt' -print0)
 fi
+
+# 8b. Rewrite MethodChannel / namespaced-string identifiers across Kotlin + Dart.
+# These are string literals like "com.cato.cato/haptics" that conventionally mirror
+# the package id and must stay in lockstep across the native + Dart side.
+OLD_ESC="$(printf '%s' "$CURRENT_PACKAGE" | sed -E 's/[.[\*^$()+?{|]/\\&/g')"
+while IFS= read -r -d '' file; do
+    sed -i.bak -E "s|\"${OLD_ESC}/|\"${NEW_PACKAGE}/|g" "$file"
+    sed -i.bak -E "s|'${OLD_ESC}/|'${NEW_PACKAGE}/|g" "$file"
+    rm -f "$file.bak"
+done < <(find "$ROOT/android/app/src" "$ROOT/lib" -type f \( -name '*.kt' -o -name '*.dart' \) -print0)
 
 # 9. Optional display name update.
 if [[ -n "$NEW_NAME" ]]; then

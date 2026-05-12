@@ -1,4 +1,4 @@
-package com.cato.cato
+package com.cato.habit
 
 import android.content.Context
 import android.os.Build
@@ -28,7 +28,7 @@ import io.flutter.plugin.common.MethodChannel
 class HapticEngine(private val context: Context) {
 
     companion object {
-        private const val CHANNEL = "com.cato.cato/haptics"
+        private const val CHANNEL = "com.cato.habit/haptics"
 
         // Per-call intensity quantization (§3 of the redesign doc).
         private const val INTENSITY_SOFT = 0.7f
